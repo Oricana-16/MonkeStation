@@ -39,3 +39,14 @@
 	crate_type = /obj/structure/closet/crate/secure/engineering
 	dangerous = TRUE
 
+/datum/supply_pack/science/ancient_artifact
+	name = "Artifact crate"
+	desc = "Ancient mysterious artifacts that we couldn't be bothered to figure out, sold for cheap! requires Research access to open."
+	cost = 30000
+	access = ACCESS_RESEARCH
+	var/num_contained = 1
+	contains = list(/obj/item/clothing/mask/daemon_mask)
+	crate_name = "Ancient Artifact Crate crate"
+	crate_type = /obj/structure/closet/crate/secure/science
+	contraband = TRUE
+
