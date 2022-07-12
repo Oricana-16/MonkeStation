@@ -213,7 +213,6 @@
 /obj/item/invisibility_matrix
 	name = "Busted Invisibility Matrix"
 	desc = "One of the Spider Clan's first attempts at invisibility, it was scrapped for always ending too early."
-	w_class = WEIGHT_CLASS_SMALL
 	icon = 'monkestation/icons/obj/device.dmi'
 	icon_state = "invisibility_matrix"
 	item_state = "invisibility_matrix"
@@ -221,20 +220,23 @@
 	pickup_sound = 'sound/items/handling/multitool_pickup.ogg'
 	COOLDOWN_DECLARE(invis_matrix_cooldown)
 
-/obj/item/clothing/mask/invisibility_matrix/attack_self(mob/user)
+/obj/item/invisibility_matrix/attack_self(mob/user)
 	if(!COOLDOWN_FINISHED(src, invis_matrix_cooldown))
-		to_chat(user, "<span class='warning'>You must wait [COOLDOWN_TIMELEFT(src, invis_matrix_cooldown)*0.1] seconds to use [src] again!</span>")
+		to_chat(user, "<span class='warning'>the [src] isn't ready yet!</span>")
 		return
+
 
 	user.visible_message("<span class='warning'>[user.name] starts to turn transparent!</span>", \
 						"<span class='notice'>Your skin turns transparent.</span>")
 
 	animate(user, alpha = 25,time = 3 SECONDS)
 
-	addtimer(CALLBACK(src, .proc/end_invis, user), rand(15 SECONDS, 100 SECONDS))
+	var/invisibility_time = rand(15 SECONDS, 100 SECONDS)
+	addtimer(CALLBACK(src, .proc/end_invis, user), invisibility_time)
+	COOLDOWN_START(src, invis_matrix_cooldown, invisibility_time + 30 SECONDS)
 
 
-/obj/item/clothing/mask/invisibility_matrix/attack_self(mob/user)
+/obj/item/invisibility_matrix/proc/end_invis(mob/user)
 
 	user.visible_message("<span class='warning'>[user.name] starts to appear out of nowhere!</span>", \
 						"<span class='notice'>Your skin turns opaque.</span>")

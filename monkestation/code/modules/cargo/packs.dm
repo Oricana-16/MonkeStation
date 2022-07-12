@@ -44,9 +44,12 @@
 	desc = "Ancient mysterious artifacts that we couldn't be bothered to figure out, sold for cheap! requires Research access to open."
 	cost = 30000
 	access = ACCESS_RESEARCH
-	var/num_contained = 1
-	contains = list(/obj/item/clothing/mask/daemon_mask)
+	contains = list(/obj/item/clothing/mask/daemon_mask,
+					/obj/item/invisibility_matrix)
 	crate_name = "Ancient Artifact Crate crate"
 	crate_type = /obj/structure/closet/crate/secure/science
 	contraband = TRUE
 
+/datum/supply_pack/science/ancient_artifact/fill(obj/structure/closet/crate/crate)
+	var/item = pick(contains)
+	new item(crate)
