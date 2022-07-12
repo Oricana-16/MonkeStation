@@ -54,7 +54,7 @@
 
 		enter_mask_mode()
 
-		to_chat(user, "<span class='notice'>[src] shines brighter before the light fades away, a spirit has been summoned</span>")
+		to_chat(user, "<span class='notice'>[src] shines brighter before dimming down, a spirit has been summoned</span>")
 		icon_state = "daemon_mask_on"
 		item_state = "daemon_mask_on"
 	else
