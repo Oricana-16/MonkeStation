@@ -45,7 +45,8 @@
 	cost = 30000
 	access = ACCESS_RESEARCH
 	contains = list(/obj/item/clothing/mask/daemon_mask,
-					/obj/item/invisibility_matrix)
+					/obj/item/invisibility_matrix,
+					/obj/item/damage_thief)
 	crate_name = "Ancient Artifact Crate crate"
 	crate_type = /obj/structure/closet/crate/secure/science
 	contraband = TRUE

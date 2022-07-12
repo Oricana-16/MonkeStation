@@ -8,15 +8,19 @@
 	item_state = "daemon_mask"
 	clothing_flags = SHOWEROKAY
 	var/new_role = "Daemon Mask"
-	var/possessed = FALSE //Whether a spirit is in the mask or not
+	//Whether a spirit is in the mask or not
+	var/possessed = FALSE
 	var/welcome_message = "<span class='warning'>ALL PAST LIVES ARE FORGOTTEN.</span>\n\
 	<b>You are a spirit inhabiting the daemon mask.\n\
 	You're on your own side, do whatever it takes to survive.\n\
 	You can choose to help the crew, or you can betray them as you see fit.</b>"
+	//spells only while you possess someone
 	var/list/possession_spells = list(
-		/obj/effect/proc_holder/spell/targeted/mask_lunge) //spells only while you possess someone
-	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune) //spells only while youre a mask
-	var/list/constant_spells = list(/obj/effect/proc_holder/spell/self/mask_possession) //spells that you always have
+		/obj/effect/proc_holder/spell/targeted/mask_lunge)
+	//spells only while youre a mask
+	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune)
+	//spells that you always have
+	var/list/constant_spells = list(/obj/effect/proc_holder/spell/self/mask_possession)
 	var/mob/living/simple_animal/shade/spirit = null
 
 /obj/item/clothing/mask/daemon_mask/attack_self(mob/user)
@@ -215,7 +219,6 @@
 	desc = "One of the Spider Clan's first attempts at invisibility, it was scrapped for always ending too early."
 	icon = 'monkestation/icons/obj/device.dmi'
 	icon_state = "invisibility_matrix"
-	item_state = "invisibility_matrix"
 	drop_sound = 'sound/items/handling/multitool_drop.ogg'
 	pickup_sound = 'sound/items/handling/multitool_pickup.ogg'
 	COOLDOWN_DECLARE(invis_matrix_cooldown)
@@ -243,3 +246,74 @@
 
 
 	animate(user, alpha = 255,time = 1 SECONDS)
+
+//Damage Thief
+/obj/item/damage_thief
+	name = "Damage Thief"
+	desc = "A healing device that follows equivalent exchange."
+	icon = 'monkestation/icons/obj/device.dmi'
+	icon_state = "dmg_thief"
+	drop_sound = 'sound/items/handling/multitool_drop.ogg'
+	pickup_sound = 'sound/items/handling/multitool_pickup.ogg'
+	var/damage_type = null
+
+/obj/item/damage_thief/attack_self(mob/living/carbon/user)
+	var/damage_type_list = list("Brute","Burn","Toxin","Suffocation")
+	var/chosen_damage_type = input(user, "Choose an Damage Type:", "Damage Thief") in damage_type_list
+	switch(chosen_damage_type)
+		if("Brute")
+			icon_state = "dmg_thief_brute"
+			damage_type = BRUTE
+		if("Burn")
+			icon_state = "dmg_thief_burn"
+			damage_type = BURN
+		if("Toxin")
+			icon_state = "dmg_thief_toxin"
+			damage_type = TOX
+		if("Suffocation")
+			icon_state = "dmg_thief_oxy"
+			damage_type = OXY
+
+	to_chat(user, "<span class=danger>The device's display changes colors!</span>")
+
+/obj/item/damage_thief/attack(mob/living/target, mob/living/user)
+	if(target==user)
+		to_chat(user,"<spawn class='warning'>You can't use this on yourself!</span>")
+		return
+	if(!istype(target))
+		return
+	if(target.stat == DEAD)
+		to_chat(user,"<spawn class='warning'>[target] is dead!</span>")
+		return
+
+	var/damage = 0
+
+	switch(damage_type)
+		if(BRUTE)
+			damage = target.getBruteLoss()
+			target.adjustBruteLoss(-damage)
+		if(BURN)
+			damage = target.getFireLoss()
+			target.adjustFireLoss(-damage)
+		if(TOX)
+			if(HAS_TRAIT(user,TRAIT_TOXIMMUNE)) //Can't have players immune to this just get rid of the damage.
+				to_chat(user,"<span class='warning'>You can't take this damage type!</span>")
+				return
+			damage = target.getToxLoss()
+			target.adjustToxLoss(-damage)
+		if(OXY)
+			if(HAS_TRAIT(user,TRAIT_NOBREATH))
+				to_chat(user,"<span class='warning'>You can't take this damage type!</span>")
+				return
+			damage = target.getOxyLoss()
+			target.adjustOxyLoss(-damage)
+		else
+			to_chat(user,"<span class='warning'>You must select a damage type first!</span>")
+			return
+
+	user.apply_damage(damage,damage_type)
+	if(damage >= 1)
+		user.visible_message("<span class='notice'>[target]'s wounds disappear, as [user] looks more damaged.</span>", \
+							"<span class='notice'>[target] starts to look better, while you feel a little more hurt.</span>")
+	else
+		to_chat(user,"<span class='notice'>Nothing happened, [target] must not've been hurt.</span>")
