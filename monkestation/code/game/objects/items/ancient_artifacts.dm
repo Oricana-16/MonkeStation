@@ -12,7 +12,7 @@
 	var/welcome_message = "<span class='warning'>ALL PAST LIVES ARE FORGOTTEN.</span>\n\
 	<b>You are a spirit inhabiting the daemon mask.\n\
 	You're on your own side, do whatever it takes to survive.\n\
-	You can choose to help the crew, or you can betray them as you wish.</b>"
+	You can choose to help the crew, or you can betray them as you see fit.</b>"
 	var/list/possession_spells = list(
 		/obj/effect/proc_holder/spell/targeted/mask_lunge) //spells only while you possess someone
 	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune) //spells only while youre a mask
