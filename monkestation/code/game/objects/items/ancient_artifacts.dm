@@ -333,7 +333,7 @@
 			inhabitant.forceMove(tumble_tile)
 			inhabitant.Knockdown(3 SECONDS)
 	else
-		user.to_chat("<span class='warning'>There's no one inside!</span>")
+		to_chat(user,"<span class='warning'>There's no one inside!</span>")
 
 /obj/item/organics_smuggling_bag/afterattack(mob/living/target, mob/living/user, proximity)
 	if(!proximity || !isliving(target))
@@ -344,7 +344,7 @@
 
 	target.visible_message("<span class='warning'>[user] is trying to stuff [target]\s body into \the [src]!</span>", \
 							"<span class='danger'>[user] is trying to stuff you into \the [src]!</span>")
-	if(do_mob(user, target, 10 SECONDS))
+	if(do_mob(user, target, 15 SECONDS))
 		. = ..()
 		target.forceMove(src)
 
