@@ -253,8 +253,6 @@
 	desc = "A healing device that follows equivalent exchange."
 	icon = 'monkestation/icons/obj/device.dmi'
 	icon_state = "dmg_thief"
-	drop_sound = 'sound/items/handling/multitool_drop.ogg'
-	pickup_sound = 'sound/items/handling/multitool_pickup.ogg'
 	var/damage_type = null
 
 /obj/item/damage_thief/attack_self(mob/living/carbon/user)
@@ -317,3 +315,43 @@
 							"<span class='notice'>[target] starts to look better, while you feel a little more hurt.</span>")
 	else
 		to_chat(user,"<span class='notice'>Nothing happened, [target] must not've been hurt.</span>")
+
+//Damage Thief
+/obj/item/organics_smuggling_bag
+	name = "Organics Smuggling Bag"
+	desc = "A bag scientists made while on tons of space drugs. Can fit a lot of people inside."
+	slot_flags = ITEM_SLOT_BACK //Its totally a normal backpack :)
+	icon = 'icons/obj/storage.dmi'
+	icon_state = "backpack"
+	item_state = "backpack"
+
+/obj/item/organics_smuggling_bag/attack_self(mob/living/carbon/user)
+	if(src.contents.len >= 1)
+		user.visible_message("<span class='warning'>Everyone inside \the [src] tumbles out!</span>")
+		var/turf/tumble_tile = get_turf(user)
+		for(var/mob/living/inhabitant in contents)
+			inhabitant.forceMove(tumble_tile)
+			inhabitant.Knockdown(3 SECONDS)
+	else
+		user.to_chat("<span class='warning'>There's no one inside!</span>")
+
+/obj/item/organics_smuggling_bag/afterattack(mob/living/target, mob/living/user, proximity)
+	if(!proximity || !isliving(target))
+		return
+	if(target == user)
+		to_chat(user, "<span class='notice'>You can't get yourself inside!</span>")
+		return
+
+	target.visible_message("<span class='warning'>[user] is trying to stuff [target]\s body into \the [src]!</span>", \
+							"<span class='danger'>[user] is trying to stuff you into \the [src]!</span>")
+	if(do_mob(user, target, 10 SECONDS))
+		. = ..()
+		target.forceMove(src)
+
+/obj/item/organics_smuggling_bag/examine(mob/user)
+	. = ..()
+	var/number_of_people = src.contents.len
+	if(number_of_people >= 1)
+		. +=  "It currently has [number_of_people] people inside."
+	else
+		. += "There's no one inside."
