@@ -269,6 +269,8 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/adjustHealth(amount, updating_health, forced)
 	if(amount>0) //if you take damage run
+		if(buckled)
+			resist_buckle()
 		SSmove_manager.move_away(src, target, 15, speed)
 	..()
 
