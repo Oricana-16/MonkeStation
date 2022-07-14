@@ -1,4 +1,5 @@
 #define MIMIC_HEALTH_FLEE_AMOUNT 30
+#define MIMIC_JITTER_CHANCE 0.8
 
 /mob/living/simple_animal/hostile/alien_mimic
 	name = "mimic"
@@ -212,6 +213,9 @@
 		var/mob/living/living_food = buckled
 		if(living_food.stat == DEAD)
 			resist_buckle()
+	if(disguised * prob(MIMIC_JITTER_CHANCE))
+		visible_message("<span class='danger'>[src] jitters a bit...</span>",\
+				"<span class='userdanger'>You jitter a bit!</span>", null)
 	. = ..()
 
 
