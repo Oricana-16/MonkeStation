@@ -11,7 +11,7 @@
 	icon_state = "mimic"
 	icon_living = "mimic"
 	icon_dead = "morph_dead"
-	speed = 2
+	speed = 1
 	a_intent = INTENT_HARM
 	stop_automated_movement = 1
 	status_flags = CANPUSH
@@ -28,23 +28,34 @@
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	wander = FALSE
-	attacktext = "absorbs"
+	attacktext = "consumes"
 	attack_sound = 'sound/effects/tableslam.ogg'
 
 	var/disguised = FALSE
 	var/atom/movable/form = null
 	var/people_absorbed = 0
 	var/list/blacklist_typecache = list(
-		/obj/item/radio/intercom
+		/obj/item/radio/intercom,
+		/obj/item/wallframe/intercom
 	)
-	//The target npc mimic's try to disguise ass.
+	var/list/table_typecache = list(
+		/obj/structure/rack,
+		/obj/structure/table
+	)
+	var/list/blacklisted_table_typecache = list(
+		/obj/structure/table/glass,
+		/obj/structure/table/optable
+	)
+	//The target npc mimic's try to disguise as.
 	var/atom/movable/ai_disg_target = null
 	//attempts to reach a disguise target
 	var/ai_disg_reach_attempts = 0
 	mobchatspan = "blob"
 	discovery_points = 2000
 	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
-							You may take the form of anything nearby by shift-clicking it.</b>"
+							You may take the form of any item nearby by clicking on it. You can latch onto people by clicking on them, \
+							which is instant when you're disguised. When you latch onto someone, they can't hurt you, but other people\
+							can. After someone dies, you can absorb their body and reproduce to make more mimics.</b>"
 
 /mob/living/simple_animal/hostile/alien_mimic/examine(mob/user)
 	if(disguised)
@@ -67,16 +78,21 @@
 		return //we hide medical hud while disguised
 	..()
 
-/mob/living/simple_animal/hostile/alien_mimic/ClickOn(atom/A)
-	if(isitem(target)) //Become Items
-		var/obj/item/item = target
+/mob/living/simple_animal/hostile/alien_mimic/ClickOn(atom/target_item)
+	if(allowed(target_item)) //Become Items
+		if(disguised)
+			restore()
+		var/obj/item/item = target_item
 		if(!item.anchored)
 			disguise(item)
 			return
 	. = ..()
 
-/mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target) // make it into property/proc ? not sure if worth it
-	return !is_type_in_typecache(target, blacklist_typecache) && isitem(target)
+/mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target_item) // make it into property/proc ? not sure if worth it
+	return !is_type_in_typecache(target_item, blacklist_typecache) && isitem(target_item)
+
+/mob/living/simple_animal/hostile/alien_mimic/proc/is_table(atom/movable/possible_table)
+	return is_type_in_typecache(possible_table, table_typecache) && !is_type_in_typecache(possible_table, blacklisted_table_typecache)
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/should_heal()
 	return health <= MIMIC_HEALTH_FLEE_AMOUNT
@@ -94,9 +110,12 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/attempt_reproduce()
 	if(people_absorbed > 0)
-		var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(src.loc)
-		split_mimic.ping_ghosts()
-		people_absorbed--
+		if(do_mob(src, src, 5 SECONDS))
+			var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(src.loc)
+			split_mimic.ping_ghosts()
+			people_absorbed--
+			return
+		return
 	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
 
 /mob/living/simple_animal/hostile/alien_mimic/attack_ghost(mob/user)
@@ -157,7 +176,7 @@
 	else
 		mobchatspan = initial(mobchatspan)
 
-	set_varspeed(speed*2)
+	set_varspeed(speed*4) //4x slower when disguised
 	med_hud_set_health()
 	med_hud_set_status() //we're an object honest
 	return
@@ -299,6 +318,14 @@
 			var/atom/movable/picked_thing = pick(things)
 			ai_disg_target = picked_thing
 		if(Adjacent(ai_disg_target) || ai_disg_reach_attempts >= 10) //give it 10 tries before just turning into it
+			//Get on any nearby tables after disguising
+			var/list/tables = list()
+			for(var/atom/possible_table as() in view(1,src))
+				if(is_table(possible_table))
+					tables += possible_table
+			if(tables.len)
+				var/atom/movable/chosen_table = pick(tables)
+				Move(get_turf(chosen_table))
 			ai_disg_reach_attempts = 0
 			disguise(ai_disg_target)
 		else
@@ -378,7 +405,6 @@
 	icon_icon = 'icons/mob/actions/actions_minor_antag.dmi'
 	button_icon_state = "separate"
 	background_icon_state = "bg_alien"
-
 
 /datum/action/innate/mimic_reproduce/Activate()
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic = owner
