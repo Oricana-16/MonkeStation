@@ -11,8 +11,8 @@
 	icon = 'monkestation/icons/mob/animal.dmi'
 	icon_state = "mimic"
 	icon_living = "mimic"
-	icon_dead = "morph_dead"
-	speed = 1
+	icon_dead = "mimic_dead"
+	move_to_delay = 2
 	a_intent = INTENT_HARM
 	stop_automated_movement = 1
 	status_flags = CANPUSH
@@ -24,8 +24,8 @@
 	maxbodytemp = T0C + 40
 	maxHealth = 75
 	health = 75
-	melee_damage = 20
-	obj_damage = 10
+	melee_damage = 10 //For some reason it does double damage so leave it at half of what you want it. I'll try to figure out hopefully before this is out.
+	obj_damage = 5
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	wander = FALSE
@@ -35,22 +35,11 @@
 	var/disguised = FALSE
 	var/atom/movable/form = null
 	var/people_absorbed = 0
-	var/list/blacklist_typecache = list(
-		/obj/item/radio/intercom,
-		/obj/item/wallframe/intercom
-	)
-	var/list/table_typecache = list(
-		/obj/structure/rack,
-		/obj/structure/table
-	)
-	var/list/blacklisted_table_typecache = list(
-		/obj/structure/table/glass,
-		/obj/structure/table/optable
-	)
 	//The target npc mimic's try to disguise as.
 	var/atom/movable/ai_disg_target = null
 	//attempts to reach a disguise target
 	var/ai_disg_reach_attempts = 0
+	var/fleeing = FALSE
 	mobchatspan = "blob"
 	discovery_points = 2000
 	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
@@ -90,10 +79,10 @@
 	. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target_item) // make it into property/proc ? not sure if worth it
-	return !is_type_in_typecache(target_item, blacklist_typecache) && isitem(target_item)
+	return isitem(target_item) & !istype(target_item, /obj/item/radio/intercom)
 
-/mob/living/simple_animal/hostile/alien_mimic/proc/is_table(atom/movable/possible_table)
-	return is_type_in_typecache(possible_table, table_typecache) && !is_type_in_typecache(possible_table, blacklisted_table_typecache)
+/mob/living/simple_animal/hostile/alien_mimic/proc/is_table(atom/possible_table)
+	return istype(possible_table, /obj/structure/table) || istype(possible_table, /obj/structure/rack)
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/should_heal()
 	return health <= MIMIC_HEALTH_FLEE_AMOUNT
@@ -177,7 +166,7 @@
 	else
 		mobchatspan = initial(mobchatspan)
 
-	set_varspeed(speed*4) //4x slower when disguised
+	set_varspeed(move_to_delay*4) //4x slower when disguised
 	med_hud_set_health()
 	med_hud_set_status() //we're an object honest
 	return
@@ -199,7 +188,7 @@
 	icon_state = initial(icon_state)
 	cut_overlays()
 
-	set_varspeed(initial(speed))
+	set_varspeed(initial(move_to_delay))
 	med_hud_set_health()
 	med_hud_set_status() //we are not an object
 
@@ -218,6 +207,21 @@
 				"<span class='userdanger'>You jitter a bit!</span>", null)
 	. = ..()
 
+
+/mob/living/simple_animal/hostile/alien_mimic/MoveToTarget(list/possible_targets)
+	if(fleeing)
+		SSmove_manager.move_away(src, target, 15, move_to_delay)
+		stop_automated_movement = 1
+		if(!target || !CanAttack(target))
+			LoseTarget()
+			return FALSE
+	else
+		..()
+
+/mob/living/simple_animal/hostile/alien_mimic/LoseTarget()
+	if(fleeing)
+		fleeing = FALSE
+	..()
 
 /mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
 	if(AIStatus == AI_OFF)
@@ -240,9 +244,10 @@
 /mob/living/simple_animal/hostile/alien_mimic/attacked_by(obj/item/item, mob/living/target)
 	if(src in target.buckled_mobs) //Can't attack if its Got ya
 		return FALSE
+	..()
 
 /mob/living/simple_animal/hostile/alien_mimic/attack_hand(mob/living/target)
-	if(src in target.buckled_mobs) //Can't attack if its Got ya
+	if(src in target.buckled_mobs)
 		return FALSE
 	if(disguised)
 		to_chat(target, "<span class='userdanger'>[src] latches onto you!</span>")
@@ -275,7 +280,9 @@
 	if(amount>0) //if you take damage run
 		if(buckled)
 			resist_buckle()
-		SSmove_manager.move_away(src, target, 15, speed)
+		if(!target)
+			FindTarget()
+		fleeing = TRUE
 	..()
 
 /mob/living/simple_animal/hostile/alien_mimic/AttackingTarget()
@@ -321,8 +328,11 @@
 			for(var/atom/thing as() in view(src))
 				if(allowed(thing))
 					things += thing
-			var/atom/movable/picked_thing = pick(things)
-			ai_disg_target = picked_thing
+			if(things.len)
+				var/atom/movable/picked_thing = pick(things)
+				ai_disg_target = picked_thing
+			else
+				return TRUE //just give up if there's nothin
 		if(Adjacent(ai_disg_target) || ai_disg_reach_attempts >= 10) //give it 10 tries before just turning into it
 			//Get on any nearby tables after disguising
 			var/list/tables = list()
@@ -338,7 +348,7 @@
 			if(buckled)
 				resist_buckle()
 			ai_disg_reach_attempts++
-			Goto(ai_disg_target, speed, 1) //Go right next to it
+			Goto(ai_disg_target, move_to_delay, 1) //Go right next to it
 			return FALSE
 		return TRUE
 	return FALSE
