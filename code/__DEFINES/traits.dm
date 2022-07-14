@@ -386,6 +386,7 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 // Monkestation Changes Start
 #define TRAIT_TRASH_EATER "trash_eater" //goat.dm symptom requirement
 #define TRAIT_VAULTING "vaulting" //simian trait
+#define MIMIC_ABSORB "absorb" //alien_mimic absorbing
 // Monkestation Changes End
 #define TRAIT_PRESERVE_UI_WITHOUT_CLIENT "preserve_ui_without_client" //this mob should never close ui even if it doesn't have a client
 
