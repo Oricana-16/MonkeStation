@@ -23,7 +23,7 @@
 	maxbodytemp = T0C + 40
 	maxHealth = 75
 	health = 75
-	melee_damage = 10
+	melee_damage = 20
 	obj_damage = 10
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
@@ -92,10 +92,48 @@
 	return FALSE
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/attempt_reproduce()
-	// if(people_absorbed > 0)
-
+	if(people_absorbed > 0)
+		var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(src.loc)
+		split_mimic.ping_ghosts()
+		people_absorbed--
 	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
 
+/mob/living/simple_animal/hostile/alien_mimic/attack_ghost(mob/user)
+	possess_mimic(user)
+
+/mob/living/simple_animal/hostile/alien_mimic/proc/ping_ghosts()
+	notify_ghosts("[name] created in [get_area(src)]!", enter_link = "<a href=?src=[REF(src)];activate=1>(Click to enter)</a>", source = src, action = NOTIFY_ATTACK, flashwindow = FALSE, notify_suiciders = FALSE)
+
+/mob/living/simple_animal/hostile/alien_mimic/proc/possess_mimic(mob/user)
+	if(QDELETED(src))
+		return
+	if(key)
+		return
+	var/possess_ask = alert("Become a [name]? (Warning, You can no longer be cloned, and all past lives will be forgotten!)","Are you positive?","Yes","No")
+	if(possess_ask == "No" || QDELETED(src))
+		return
+	if(suiciding) //clear suicide status if the old occupant suicided.
+		set_suicide(FALSE)
+	transfer_personality(user)
+
+/mob/living/simple_animal/hostile/alien_mimic/proc/transfer_personality(mob/candidate)
+	if(QDELETED(src))
+		return
+	if(key) //Prevents hostile takeover if two ghosts get the prompt or link for the same mimic.
+		to_chat(candidate, "<span class='warning'>This [name] was taken over before you could get to it!</span>")
+		return FALSE
+	if(candidate.mind && !isobserver(candidate))
+		candidate.mind.transfer_to(src)
+	else
+		ckey = candidate.ckey
+	to_chat(src, playstyle_string)
+	mind.assigned_role = "Mimic"
+	set_stat(CONSCIOUS)
+	remove_from_dead_mob_list()
+	add_to_alive_mob_list()
+	toggle_ai(AI_OFF)
+
+	return TRUE
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/disguise(atom/movable/target)
 	ai_disg_target = null
@@ -150,10 +188,12 @@
 	. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/Life()
+	if(isliving(buckled))
+		var/mob/living/living_food = buckled
+		if(living_food.stat == DEAD)
+			resist_buckle()
 	. = ..()
-	if(!.) //dead
-		SSmove_manager.stop_looping(src)
-		return FALSE
+
 
 /mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
 	if(AIStatus == AI_OFF)
@@ -187,7 +227,7 @@
 		..()
 
 /mob/living/simple_animal/hostile/alien_mimic/bullet_act(obj/item/projectile/proj)
-	SSmovement.move_away(src,src.loc,5,speed)
+	SSmove_manager.move_away(src,src.loc,5,speed)
 	return ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/CanAttack(atom/the_target)
@@ -219,7 +259,7 @@
 		if(iscarbon(victim) & victim.stat == DEAD) //Absorb someone to heal
 			visible_message("<span class='warning'>[src] starts absorbing [victim]!</span>", \
 						"<span class='userdanger'>You start absorbing [victim].</span>")
-			if(do_mob(src, victim, 10 SECONDS) & !HAS_TRAIT(victim, TRAIT_HUSK))
+			if(!HAS_TRAIT(victim, TRAIT_HUSK) & do_mob(src, victim, 10 SECONDS))
 				victim.become_husk(MIMIC_ABSORB)
 				people_absorbed++
 				adjustHealth(-30)
