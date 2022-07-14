@@ -29,6 +29,7 @@
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	wander = FALSE
 	attacktext = "absorbs"
+	attack_sound = 'sound/effects/tableslam.ogg'
 
 	var/disguised = FALSE
 	var/atom/movable/form = null
@@ -67,12 +68,12 @@
 	..()
 
 /mob/living/simple_animal/hostile/alien_mimic/ClickOn(atom/A)
-	. = ..()
 	if(isitem(target)) //Become Items
 		var/obj/item/item = target
 		if(!item.anchored)
 			disguise(item)
 			return
+	. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target) // make it into property/proc ? not sure if worth it
 	return !is_type_in_typecache(target, blacklist_typecache) && isitem(target)
@@ -216,6 +217,10 @@
 /mob/living/simple_animal/hostile/alien_mimic/attacked_by(obj/item/item, mob/living/target)
 	if(src in target.buckled_mobs) //Can't attack if its Got ya
 		return FALSE
+
+/mob/living/simple_animal/hostile/alien_mimic/attack_hand(mob/living/target)
+	if(src in target.buckled_mobs) //Can't attack if its Got ya
+		return FALSE
 	if(disguised)
 		to_chat(target, "<span class='userdanger'>[src] latches onto you!</span>")
 		visible_message("<span class='danger'>[src] latches onto [target]!</span>",\
@@ -226,11 +231,9 @@
 	else
 		..()
 
-/mob/living/simple_animal/hostile/alien_mimic/bullet_act(obj/item/projectile/proj)
-	SSmove_manager.move_away(src,src.loc,5,speed)
-	return ..()
-
 /mob/living/simple_animal/hostile/alien_mimic/CanAttack(atom/the_target)
+	if(the_target == buckled)
+		return TRUE //fixes it jumping off of people immediately
 	if(iscarbon(the_target))
 		var/mob/living/carbon/carbon_target = the_target
 		if(carbon_target.stat == DEAD & should_heal() & !HAS_TRAIT(carbon_target, TRAIT_HUSK))
@@ -256,10 +259,10 @@
 		return
 	if(isliving(target) & !buckled) //Latch onto people
 		var/mob/living/victim = target
-		if(iscarbon(victim) & victim.stat == DEAD) //Absorb someone to heal
+		if(iscarbon(victim) & victim.stat == DEAD & !HAS_TRAIT(victim, TRAIT_HUSK)) //Absorb someone to heal
 			visible_message("<span class='warning'>[src] starts absorbing [victim]!</span>", \
 						"<span class='userdanger'>You start absorbing [victim].</span>")
-			if(!HAS_TRAIT(victim, TRAIT_HUSK) & do_mob(src, victim, 10 SECONDS))
+			if(do_mob(src, victim, 10 SECONDS))
 				victim.become_husk(MIMIC_ABSORB)
 				people_absorbed++
 				adjustHealth(-30)
@@ -277,8 +280,6 @@
 		latch(target)
 		restore()
 		toggle_ai(AI_ON)
-
-//////////////END HOSTILE MOB TARGETTING AND AGGRESSION////////////
 
 /mob/living/simple_animal/hostile/alien_mimic/death(gibbed)
 	if(disguised)
