@@ -4,8 +4,8 @@
 	name = "mimic"
 	real_name = "mimic"
 	desc = "A morphing mass of black gooey tendrils."
-	speak_emote = list("gurgles")
-	emote_hear = list("gurgles")
+	speak_emote = list("warbles")
+	emote_hear = list("warbles")
 	faction = list("aliens") //don't wanna have them attack eachother
 	icon = 'monkestation/icons/mob/animal.dmi'
 	icon_state = "mimic"
@@ -24,6 +24,7 @@
 	maxHealth = 75
 	health = 75
 	melee_damage = 10
+	obj_damage = 10
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	wander = FALSE
@@ -31,28 +32,18 @@
 
 	var/disguised = FALSE
 	var/atom/movable/form = null
-
 	var/people_absorbed = 0
-
 	var/list/blacklist_typecache = list(
 		/obj/item/radio/intercom
 	)
-
-	//The target npc mimic's go for.
+	//The target npc mimic's try to disguise ass.
 	var/atom/movable/ai_disg_target = null
 	//attempts to reach a disguise target
 	var/ai_disg_reach_attempts = 0
-
-	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
-							You may take the form of anything nearby by shift-clicking it.</b>"
-
 	mobchatspan = "blob"
 	discovery_points = 2000
-
-/mob/living/simple_animal/hostile/alien_mimic/Initialize(mapload)
-	var/datum/action/innate/mimic_reproduce/ability = new
-	ability.Grant(src)
-	. = ..()
+	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
+							You may take the form of anything nearby by shift-clicking it.</b>"
 
 /mob/living/simple_animal/hostile/alien_mimic/examine(mob/user)
 	if(disguised)
@@ -75,6 +66,14 @@
 		return //we hide medical hud while disguised
 	..()
 
+/mob/living/simple_animal/hostile/alien_mimic/ClickOn(atom/A)
+	. = ..()
+	if(isitem(target)) //Become Items
+		var/obj/item/item = target
+		if(!item.anchored)
+			disguise(item)
+			return
+
 /mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target) // make it into property/proc ? not sure if worth it
 	return !is_type_in_typecache(target, blacklist_typecache) && isitem(target)
 
@@ -84,7 +83,7 @@
 /mob/living/simple_animal/hostile/alien_mimic/proc/latch(mob/living/target)
 	if(target)
 		if(target.buckle_mob(src, TRUE))
-			target.Knockdown(10 SECONDS) //Really get em down
+			target.Knockdown(10 SECONDS)
 			layer = target.layer+0.01
 			visible_message("<span class='warning'>[src] latches onto [target]!</span>")
 			return TRUE
@@ -102,7 +101,6 @@
 	ai_disg_target = null
 	disguised = TRUE
 	form = target
-
 	visible_message("<span class='warning'>[src] changes shape, becoming a copy of [target]!</span>", \
 					"<span class='notice'>You assume the form of [target].</span>")
 	appearance = target.appearance
@@ -115,13 +113,12 @@
 	density = target.density
 
 	if(isliving(target))
-		var/mob/living/L = target
-		mobchatspan = L.mobchatspan
+		var/mob/living/living_target = target
+		mobchatspan = living_target.mobchatspan
 	else
 		mobchatspan = initial(mobchatspan)
 
 	set_varspeed(speed*2)
-
 	med_hud_set_health()
 	med_hud_set_status() //we're an object honest
 	return
@@ -143,12 +140,105 @@
 	icon_state = initial(icon_state)
 	cut_overlays()
 
-	//Baseline stats
-	melee_damage = initial(melee_damage)
 	set_varspeed(initial(speed))
-
 	med_hud_set_health()
 	med_hud_set_status() //we are not an object
+
+/mob/living/simple_animal/hostile/alien_mimic/Initialize(mapload)
+	var/datum/action/innate/mimic_reproduce/ability = new
+	ability.Grant(src)
+	. = ..()
+
+/mob/living/simple_animal/hostile/alien_mimic/Life()
+	. = ..()
+	if(!.) //dead
+		SSmove_manager.stop_looping(src)
+		return FALSE
+
+/mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
+	if(AIStatus == AI_OFF)
+		return 0
+	var/list/possible_targets = ListTargets() //we look around for potential targets and make it a list for later use.
+
+	if(environment_smash)
+		EscapeConfinement()
+
+	if(AICanContinue(possible_targets))
+		var/atom/target_from = GET_TARGETS_FROM(src)
+		if(!QDELETED(target) && !target_from.Adjacent(target))
+			DestroyPathToTarget()
+		if(!MoveToTarget(possible_targets))     //if we lose our target
+			if(AIShouldSleep(possible_targets))	// we try to acquire a new one
+				toggle_ai(AI_IDLE)			// otherwise we go idle
+	return TRUE
+
+
+/mob/living/simple_animal/hostile/alien_mimic/attacked_by(obj/item/item, mob/living/target)
+	if(src in target.buckled_mobs) //Can't attack if its Got ya
+		return FALSE
+	if(disguised)
+		to_chat(target, "<span class='userdanger'>[src] latches onto you!</span>")
+		visible_message("<span class='danger'>[src] latches onto [target]!</span>",\
+				"<span class='userdanger'>You latch onto [target]!</span>", null, COMBAT_MESSAGE_RANGE)
+		latch(target)
+		restore()
+		toggle_ai(AI_ON)
+	else
+		..()
+
+/mob/living/simple_animal/hostile/alien_mimic/bullet_act(obj/item/projectile/proj)
+	SSmovement.move_away(src,src.loc,5,speed)
+	return ..()
+
+/mob/living/simple_animal/hostile/alien_mimic/CanAttack(atom/the_target)
+	if(iscarbon(the_target))
+		var/mob/living/carbon/carbon_target = the_target
+		if(carbon_target.stat == DEAD & should_heal() & !HAS_TRAIT(carbon_target, TRAIT_HUSK))
+			return TRUE
+	if(isliving(the_target))
+		var/mob/living/living_target = the_target
+		var/mob/living/simple_animal/hostile/alien_mimic/attacking_friend = locate() in living_target.buckled_mobs
+		if(attacking_friend & attacking_friend != src)
+			return FALSE
+		var/faction_check = faction_check_mob(living_target)
+		if((faction_check && !attack_same) || living_target.stat)
+			return FALSE
+	return TRUE
+
+/mob/living/simple_animal/hostile/alien_mimic/adjustHealth(amount, updating_health, forced)
+	if(amount>0) //if you take damage run
+		SSmove_manager.move_away(src, target, 15, speed)
+	..()
+
+/mob/living/simple_animal/hostile/alien_mimic/AttackingTarget()
+	if(target == src) //Remove your disguise
+		restore()
+		return
+	if(isliving(target) & !buckled) //Latch onto people
+		var/mob/living/victim = target
+		if(iscarbon(victim) & victim.stat == DEAD) //Absorb someone to heal
+			visible_message("<span class='warning'>[src] starts absorbing [victim]!</span>", \
+						"<span class='userdanger'>You start absorbing [victim].</span>")
+			if(do_mob(src, victim, 10 SECONDS) & !HAS_TRAIT(victim, TRAIT_HUSK))
+				victim.become_husk(MIMIC_ABSORB)
+				people_absorbed++
+				adjustHealth(-30)
+		if(disguised) //Insta latch if youre disguised
+			latch(victim)
+			restore()
+			return
+		else if(do_mob(src, target, 3 SECONDS)) //Latch after a bit if you arent
+			latch(victim)
+			return
+	return ..() //If you're buckled, just attack normally
+
+/mob/living/simple_animal/hostile/alien_mimic/Aggro()
+	if(disguised & get_dist(src,target)<=1) //Instantly latch onto them
+		latch(target)
+		restore()
+		toggle_ai(AI_ON)
+
+//////////////END HOSTILE MOB TARGETTING AND AGGRESSION////////////
 
 /mob/living/simple_animal/hostile/alien_mimic/death(gibbed)
 	if(disguised)
@@ -157,59 +247,10 @@
 		restore()
 	..()
 
-/mob/living/simple_animal/hostile/alien_mimic/AttackingTarget()
-	if(target == src)
-		restore()
-		return
-	if(isliving(target) & !buckled) //Latch onto people
-		to_chat(world,"Attacking Someone")
-		var/mob/living/victim = target
-		if(iscarbon(victim) & victim.stat == DEAD)
-			visible_message("<span class='warning'>[src] starts absorbing [victim]!</span>", \
-						"<span class='userdanger'>You start absorbing [victim].</span>")
-			if(do_mob(src, victim, 10 SECONDS) & !HAS_TRAIT(victim, TRAIT_HUSK))
-				victim.become_husk(MIMIC_ABSORB)
-				people_absorbed++
-				adjustHealth(-30) //Heal for 30
-		if(disguised)
-			to_chat(world,"Latched!")
-			latch(victim)
-			restore()
-			return
-		else if(do_mob(src, target, 3 SECONDS))
-			to_chat(world,"Latching...")
-			latch(victim)
-			return
-	return ..()
-
-/mob/living/simple_animal/hostile/alien_mimic/ClickOn(atom/A)
-	. = ..()
-	if(isitem(target)) //Become Items
-		var/obj/item/item = target
-		if(!item.anchored)
-			disguise(item)
-			return
-
-//AI Related procs
-/mob/living/simple_animal/hostile/alien_mimic/Aggro()
-	to_chat(world,"ANGRY")
-	if(disguised & get_dist(src,target)<=1) //Instantly latch onto them
-		latch(target)
-		restore()
-	..()
-	// restore()
-
-/mob/living/simple_animal/hostile/alien_mimic/LoseAggro()
-	to_chat(world,"Lost ya")
-	vision_range = initial(vision_range)
-
 /mob/living/simple_animal/hostile/alien_mimic/AIShouldSleep(var/list/possible_targets)
 	var/should_sleep = !FindTarget(possible_targets, 1)
-
 	if(should_sleep) //Attempt to disguise
-		to_chat(world,"Going to hide")
 		if(!ai_disg_target)
-			to_chat(world,"Finding Disg Targ")
 			var/list/things = list()
 			for(var/atom/thing as() in view(src))
 				if(allowed(thing))
@@ -217,7 +258,6 @@
 			var/atom/movable/picked_thing = pick(things)
 			ai_disg_target = picked_thing
 		if(Adjacent(ai_disg_target) || ai_disg_reach_attempts >= 10) //give it 10 tries before just turning into it
-			to_chat(world,"Found the Disg Targ")
 			ai_disg_reach_attempts = 0
 			disguise(ai_disg_target)
 		else
@@ -233,64 +273,31 @@
 	var/list/target_list
 
 	target_list = ListTargets()
-
-	if(target_list.len>1) //Wait until they're alone
-		to_chat(world,"They aren't alone...")
+	//Wait until they're alone
+	if(target_list.len>1)
 		return
+
 	FindTarget(target_list, 1)
-	// if(iscarbon(target))
-	// 	var/mob/living/carbon/victim = target
-	// 	if(victim.stat == DEAD & should_heal() & !HAS_TRAIT(victim, TRAIT_HUSK)) //Heal if you're supposed to
-	// 		toggle_ai(AI_ON)
-	// 		restore()
-	// 		to_chat(world,"Dead person Spotted.")
-	// 		return
+	if(iscarbon(target))
+		var/mob/living/carbon/victim = target
+
+		if(victim.stat == DEAD & should_heal() & !HAS_TRAIT(victim, TRAIT_HUSK)) //Heal if you're supposed to
+			toggle_ai(AI_ON)
+			restore()
+			return
+
 	var/target_dist = get_dist(target,src)
-	if(target_dist>1) //Only attack when they get close
-		to_chat(world,"Get closer... ([target_dist], [target], [src])")
+	//Only attack when they get close
+	if(target_dist>1)
 		return
 	..()
 
-/mob/living/simple_animal/hostile/alien_mimic/CanAttack(atom/the_target)
-	to_chat(world,"Can I Attack?")
-	if(isliving(the_target))
-		var/mob/living/living_target = the_target
-		var/mob/living/simple_animal/hostile/alien_mimic/attacking_friend = locate() in living_target.buckled_mobs
-		if(attacking_friend & attacking_friend != src)
-			to_chat(world,"Occupied")
-			return FALSE
-	if(iscarbon(the_target))
-		var/mob/living/carbon/carbon_target = the_target
-		if(carbon_target.stat == DEAD & should_heal() & !HAS_TRAIT(carbon_target, TRAIT_HUSK)) //Heal when you're health is low enough
-			to_chat(world,"Going to heal")
-			return TRUE
-	..()
-
-//If the AI can track the mob.
+//AI can't track mimics
 /mob/living/simple_animal/hostile/alien_mimic/can_track(mob/living/user)
 	if(disguised)
 		return FALSE
 	return ..()
 
-/mob/living/simple_animal/hostile/alien_mimic/adjustHealth(amount, updating_health, forced)
-	if(amount>0) //if you take damage run
-		to_chat(world,"YOWCH!")
-		SSmove_manager.move_away(src, target, 15, speed)
-	. = ..()
-
-//Ambush attack
-/mob/living/simple_animal/hostile/alien_mimic/attack_hand(mob/living/carbon/human/target)
-	if(src in target.buckled_mobs) //Can't attack if its Got ya
-		return FALSE
-	if(disguised)
-		to_chat(target, "<span class='userdanger'>[src] latches onto you!</span>")
-		visible_message("<span class='danger'>[src] latches onto [target]!</span>",\
-				"<span class='userdanger'>You latch onto [target]!</span>", null, COMBAT_MESSAGE_RANGE)
-		latch(target)
-		restore()
-		toggle_ai(AI_ON)
-	else
-		..()
 
 //Spawn Event
 /datum/round_event_control/alien_mimic
