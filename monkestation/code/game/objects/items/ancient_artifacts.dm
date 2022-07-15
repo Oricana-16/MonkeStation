@@ -316,10 +316,10 @@
 	else
 		to_chat(user,"<span class='notice'>Nothing happened, [target] must not've been hurt.</span>")
 
-//Damage Thief
+//Organics Smuggling Bag
 /obj/item/organics_smuggling_bag
 	name = "Organics Smuggling Bag"
-	desc = "A bag scientists made while on tons of space drugs. Can fit a lot of people inside."
+	desc = "A bag made with bluespace tech scientists made while on tons of space drugs. Can fit a lot of people inside."
 	slot_flags = ITEM_SLOT_BACK //Its totally a normal backpack :)
 	icon = 'icons/obj/storage.dmi'
 	icon_state = "backpack"
@@ -345,8 +345,8 @@
 	target.visible_message("<span class='warning'>[user] is trying to stuff [target]\s body into \the [src]!</span>", \
 							"<span class='danger'>[user] is trying to stuff you into \the [src]!</span>")
 	if(do_mob(user, target, 15 SECONDS))
-		. = ..()
 		target.forceMove(src)
+	..()
 
 /obj/item/organics_smuggling_bag/examine(mob/user)
 	. = ..()
@@ -355,3 +355,27 @@
 		. +=  "It currently has [number_of_people] people inside."
 	else
 		. += "There's no one inside."
+
+//Soul Binding Contract
+/obj/item/soul_link_contract
+	name = "Soul Binding Contract"
+	desc = "A contract from Hell itself. If you get a corpse to sign it, it binds your souls together and brings them back."
+	icon = 'icons/obj/bureaucracy.dmi'
+	icon_state = "paper_onfire"
+	item_state = "paper"
+
+/obj/item/soul_link_contract/afterattack(mob/living/target, mob/living/user)
+	if(target.stat != DEAD)
+		to_chat(user, "<span class='warning'>[target] isn't dead!</span>")
+		return
+
+	user.visible_message("<span class='warning'>[user] helps [target] sign \the [src].</span>",
+						"<span class='warning'>you start to use [target]'s hand to sign \the [src].</span>")
+
+	if(do_mob(user, target, 30 SECONDS))
+		target.revive(full_heal = 1)
+		soullink(/datum/soullink/sharedfate, user, target)
+		user.visible_message("<span class='warning'>[target] finished 'signing' \the [src].</span>",
+						"<span class='warning'>The contract is complete, your souls are now linked.</span>")
+		to_chat(target, "<span class='warning'>You're soul is now linked to [user]'s. If one of you dies for any reason, so does the other.</span>")
+		qdel(src)
