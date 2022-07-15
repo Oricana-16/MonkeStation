@@ -225,7 +225,7 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
 	if(AIStatus == AI_OFF)
-		return 0
+		return FALSE
 	var/list/possible_targets = ListTargets() //we look around for potential targets and make it a list for later use.
 
 	if(environment_smash)
@@ -277,7 +277,7 @@
 	return TRUE
 
 /mob/living/simple_animal/hostile/alien_mimic/adjustHealth(amount, updating_health, forced)
-	if(amount>0) //if you take damage run
+	if(amount > 0) //if you take damage, run
 		if(buckled)
 			resist_buckle()
 		if(!target)
@@ -316,7 +316,7 @@
 /mob/living/simple_animal/hostile/alien_mimic/death(gibbed)
 	if(disguised)
 		visible_message("<span class='warning'>[src] explodes in a pile of black goo!</span>", \
-						"<span class='userdanger'>You feel weak as your tendrils start to dissolve.</span>")
+						"<span class='userdanger'>You feel weak as your disguise start to dissolve.</span>")
 		restore()
 	..()
 
