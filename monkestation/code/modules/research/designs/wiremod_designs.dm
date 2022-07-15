@@ -67,3 +67,16 @@
 		/datum/material/gold = 250,
 	)
 	category = list(WIREMOD_CIRCUITRY, WIREMOD_SHELLS)
+
+/datum/design/handcuffs_shell
+	name = "Handcuff Circuit Shell"
+	desc = "A small shell used to restrain people."
+	id = "handcuff_shell"
+	build_type = PROTOLATHE | COMPONENT_PRINTER
+	materials = list(
+		/datum/material/glass = 2000,
+		/datum/material/iron = 1250,
+		/datum/material/gold = 500
+	)
+	build_path = /obj/item/restraints/handcuffs/circuit
+	category = list(WIREMOD_CIRCUITRY, WIREMOD_SHELLS)
