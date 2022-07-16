@@ -108,12 +108,6 @@
 	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
 
 /mob/living/simple_animal/hostile/alien_mimic/attack_ghost(mob/user)
-	possess_mimic(user)
-
-/mob/living/simple_animal/hostile/alien_mimic/proc/ping_ghosts()
-	notify_ghosts("[name] created in [get_area(src)]!", enter_link = "<a href=?src=[REF(src)];activate=1>(Click to enter)</a>", source = src, action = NOTIFY_ATTACK, flashwindow = FALSE, notify_suiciders = FALSE)
-
-/mob/living/simple_animal/hostile/alien_mimic/proc/possess_mimic(mob/user)
 	if(QDELETED(src))
 		return
 	if(key)
@@ -131,18 +125,18 @@
 	if(key) //Prevents hostile takeover if two ghosts get the prompt or link for the same mimic.
 		to_chat(candidate, "<span class='warning'>This [name] was taken over before you could get to it!</span>")
 		return FALSE
-	if(candidate.mind && !isobserver(candidate))
-		candidate.mind.transfer_to(src)
-	else
-		ckey = candidate.ckey
+	ckey = candidate.ckey
 	to_chat(src, playstyle_string)
 	mind.assigned_role = "Mimic"
 	set_stat(CONSCIOUS)
 	remove_from_dead_mob_list()
 	add_to_alive_mob_list()
-	toggle_ai(AI_OFF)
+	toggle_ai(AI_OFF) //Turns the AI off so it doesn't move without player input
 
 	return TRUE
+
+/mob/living/simple_animal/hostile/alien_mimic/proc/ping_ghosts()
+	notify_ghosts("[name] created in [get_area(src)]!", enter_link = "<a href=?src=[REF(src)];activate=1>(Click to enter)</a>", source = src, action = NOTIFY_ATTACK, flashwindow = FALSE, notify_suiciders = FALSE)
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/disguise(atom/movable/target)
 	ai_disg_target = null
