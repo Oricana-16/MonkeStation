@@ -84,7 +84,7 @@
 //Daemon Mask - Spells
 /obj/effect/proc_holder/spell/self/mask_possession
 	name = "Mask Possession"
-	desc = "Take control of your wearer for a short time."
+	desc = "Take control of your wearer for a short time. When you possess your wearer, you give them a small boost against stuns."
 	clothes_req = FALSE
 	charge_max = 1500 //1 minute for possession + 1 minute 30 seconds for the cooldown after
 	action_icon = 'monkestation/icons/mob/actions/actions_spells.dmi'
