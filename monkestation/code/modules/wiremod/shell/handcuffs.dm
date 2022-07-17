@@ -4,6 +4,11 @@
  * Shell that can detect when someone is breaking out, or let them free early.
  */
 
+/*
+Port of a closed /tg/station PR
+Port: #65210
+*/
+
 /obj/item/restraints/handcuffs/circuit
 	name = "circuit handcuffs"
 	icon = 'monkestation/icons/obj/wiremod.dmi'
