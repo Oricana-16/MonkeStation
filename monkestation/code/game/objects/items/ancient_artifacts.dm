@@ -48,7 +48,7 @@
 		new_spirit.set_stat(CONSCIOUS)
 		new_spirit.remove_from_dead_mob_list()
 		new_spirit.add_to_alive_mob_list()
-		grant_all_languages(TRUE, TRUE, TRUE)
+		grant_all_languages()
 
 		to_chat(new_spirit, welcome_message)
 
@@ -84,7 +84,7 @@
 //Daemon Mask - Spells
 /obj/effect/proc_holder/spell/self/mask_possession
 	name = "Mask Possession"
-	desc = "Take control of your wearer for a short time. When you possess your wearer, you give them a small boost against stuns."
+	desc = "Take control of your wearer for a short time. Possessing your wearer gives them a boost against any active stuns."
 	clothes_req = FALSE
 	charge_max = 1500 //1 minute for possession + 1 minute 30 seconds for the cooldown after
 	action_icon = 'monkestation/icons/mob/actions/actions_spells.dmi'
@@ -151,7 +151,7 @@
 
 /obj/effect/proc_holder/spell/targeted/mask_lunge
 	name = "Daemon Lunge"
-	desc = "Use demonic power to appear on a person nearby, knocking them down."
+	desc = "Use daemonic power to appear on a person nearby, knocking them down."
 	school = "abjuration"
 	charge_max = 250 //about twice per possession
 	clothes_req = FALSE
@@ -170,14 +170,17 @@
 
 	var/mob/living/carbon/target = targets[1]
 
+	if(!istype(target))
+		return
+
 	if(!(target in oview(range)))
 		to_chat(user, "<span class='notice'>[target.p_theyre(TRUE)] too far away!</span>")
 		revert_cast()
 		return
 
 	target.Knockdown(3 SECONDS)
-	target.visible_message("<span class='danger'>Someone appears above [target], knocking them down!</span>", \
-						   "<span class='danger'>You fall violently as someone appears above you!</span>")
+	target.visible_message("<span class='danger'>[user] appears above [target], knocking them down!</span>", \
+						   "<span class='danger'>You fall violently as [user] appears above you!</span>")
 	do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT)
 
 /obj/effect/proc_holder/spell/self/mask_commune
@@ -359,7 +362,7 @@
 //Soul Binding Contract
 /obj/item/soul_link_contract
 	name = "Soul Binding Contract"
-	desc = "A contract from Hell itself. If you get a corpse to sign it, it binds your souls together and brings them back."
+	desc = "A contract from Hell itself. If you get a corpse to sign it, it binds your souls together and brings them back from beyond the grave."
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "paper_onfire"
 	item_state = "paper"
@@ -369,11 +372,19 @@
 		to_chat(user, "<span class='warning'>[target] isn't dead!</span>")
 		return
 
+	if(!(target.key || target.client) || isanimal(target)) //No SSD's but Ian and such are allowed
+		to_chat(user, "<span class='warning'>[target]'s body doesn't respond.!</span>")
+		return
+
+	if(target.ishellbound())
+		to_chat(user, "<span class='warning'>[target] has no soul!</span>")
+		return
+
 	user.visible_message("<span class='warning'>[user] helps [target] sign \the [src].</span>",
 						"<span class='warning'>you start to use [target]'s hand to sign \the [src].</span>")
 
 	if(do_mob(user, target, 30 SECONDS))
-		target.revive(full_heal = 1)
+		target.revive(TRUE)
 		soullink(/datum/soullink/sharedfate, user, target)
 		user.visible_message("<span class='warning'>[target] finished 'signing' \the [src].</span>",
 						"<span class='warning'>The contract is complete, your souls are now linked.</span>")
