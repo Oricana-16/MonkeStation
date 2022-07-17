@@ -178,6 +178,7 @@
 		revert_cast()
 		return
 
+	playsound(get_turf(user), 'sound/magic/blink.ogg', 50, 1)
 	target.Knockdown(3 SECONDS)
 	target.visible_message("<span class='danger'>[user] appears above [target], knocking them down!</span>", \
 						   "<span class='danger'>You fall violently as [user] appears above you!</span>")
