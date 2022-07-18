@@ -17,7 +17,7 @@
 	var/list/possession_spells = list(
 		/obj/effect/proc_holder/spell/targeted/mask_lunge)
 	//spells only while youre a mask
-	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune, /obj/effect/proc_holder/spell/aoe_turf/repulse/mask)
+	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune, /obj/effect/proc_holder/spell/self/mask_fear)
 	//spells that you always have
 	var/list/constant_spells = list(/obj/effect/proc_holder/spell/self/mask_possession)
 	var/mob/living/simple_animal/shade/spirit = null
@@ -85,7 +85,7 @@
 	name = "Mask Possession"
 	desc = "Take control of your wearer for a short time. Possessing your wearer makes them unable to go into crit until possession ends."
 	clothes_req = FALSE
-	charge_max = 1500 //1 minute for possession + 1 minute 30 seconds for the cooldown after
+	charge_max = 3 MINUTES //1 minute for possession + 2 minutes for the cooldown after
 	action_icon = 'monkestation/icons/mob/actions/actions_spells.dmi'
 	action_icon_state = "mask_possession"
 	invocation = "none"
@@ -185,7 +185,7 @@
 
 	var/mob/living/carbon/target = targets[1]
 
-	if(!istype(target))
+	if(!isliving(target))
 		revert_cast()
 		return
 
@@ -201,7 +201,7 @@
 	target.adjustBruteLoss(10)
 	target.visible_message("<span class='danger'>[user] appears above [target], knocking them down!</span>", \
 						   "<span class='danger'>You fall violently as [user] appears above you!</span>")
-	!do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT)
+	do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT)
 
 /obj/effect/proc_holder/spell/self/mask_commune
 	name = "Commune"
@@ -233,11 +233,44 @@
 	to_chat(user, "<span class='notice'><b>You whisper to your wielder:</b> [input]</span>")
 	user.log_talk(input, LOG_SAY, tag="daemon mask")
 
-/obj/effect/proc_holder/spell/aoe_turf/repulse/mask
-	name = "Repulse"
-	desc = "Send out a wave of daemonic energy, knocking everyone around you back."
+/obj/effect/proc_holder/spell/self/mask_fear
+	name = "Fear"
+	desc = "Strike fear into those who dare challenge your status."
+	action_icon = 'icons/mob/actions/actions_changeling.dmi'
+	action_icon_state = "resonant_shriek"
 	clothes_req = FALSE
-	invocation_type = "none"
+	charge_max = 1 MINUTES
+	invocation = "FEAR ME"
+	invocation_type = "whisper"
+	school = "transmutation"
+	var/list/noises = list('sound/hallucinations/i_see_you2.ogg','sound/hallucinations/look_up1.ogg','sound/hallucinations/look_up2.ogg','sound/hallucinations/behind_you1.ogg')
+
+/obj/effect/proc_holder/spell/self/mask_fear/cast(mob/living/user)
+	var/obj/item/clothing/mask/daemon_mask/mask = user.loc
+	playsound(get_turf(mask), pick(noises), 200, 1)
+	for(var/mob/living/carbon/target in oviewers(7,mask))
+		if(HAS_TRAIT(target, TRAIT_FEARLESS))
+			to_chat(target,"<span class='warning'>You don't feel scared in the slightest as you stare into [mask].</span>")
+			return
+
+		if(HAS_TRAIT(target, TRAIT_STUNIMMUNE))
+			to_chat(target,"<span class='warning'>A chill runs through your body as you stare into [mask].</span>")
+			return
+
+		if(target.mind?.assigned_role == "Chaplain")
+			to_chat(target,"<span class='warning'>Your faith protects you as you stare into [mask].</span>")
+			return
+
+		if(prob(25))
+			to_chat(target,"<span class='warning'>You crumple to the ground as you stare into [mask].</span>")
+			target.Unconscious(10 SECONDS)
+		else
+			to_chat(target,"<span class='warning'>Your joints lock up as you stare into [mask].</span>")
+			target.Immobilize(5 SECONDS)
+
+		if(prob(50))
+			target.emote("scream")
+
 
 //Busted Invisibility Matrix
 /obj/item/invisibility_matrix
