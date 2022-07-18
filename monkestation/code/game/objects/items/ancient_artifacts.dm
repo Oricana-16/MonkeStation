@@ -7,7 +7,6 @@
 	icon_state = "daemon_mask"
 	item_state = "daemon_mask"
 	clothing_flags = SHOWEROKAY
-	var/new_role = "Daemon Mask"
 	//Whether a spirit is in the mask or not
 	var/possessed = FALSE
 	var/welcome_message = "<span class='warning'>ALL PAST LIVES ARE FORGOTTEN.</span>\n\
@@ -18,7 +17,7 @@
 	var/list/possession_spells = list(
 		/obj/effect/proc_holder/spell/targeted/mask_lunge)
 	//spells only while youre a mask
-	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune)
+	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune, /obj/effect/proc_holder/spell/aoe_turf/repulse/mask)
 	//spells that you always have
 	var/list/constant_spells = list(/obj/effect/proc_holder/spell/self/mask_possession)
 	var/mob/living/simple_animal/shade/spirit = null
@@ -39,12 +38,10 @@
 	if(LAZYLEN(candidates))
 		var/mob/dead/observer/candidate = pick(candidates)
 		var/mob/living/simple_animal/shade/new_spirit = new(src)
-		spirit = new_spirit
 		new_spirit.key = candidate.key
 		new_spirit.fully_replace_character_name(null, "The spirit of [src]")
 		new_spirit.status_flags |= GODMODE
-		new_spirit.update_atom_languages()
-		new_spirit.mind.assigned_role = new_role
+		new_spirit.mind.assigned_role = "daemon mask"
 		new_spirit.set_stat(CONSCIOUS)
 		new_spirit.remove_from_dead_mob_list()
 		new_spirit.add_to_alive_mob_list()
@@ -61,6 +58,8 @@
 		to_chat(user, "<span class='notice'>[src] shines brighter before dimming down, a spirit has been summoned</span>")
 		icon_state = "daemon_mask_on"
 		item_state = "daemon_mask_on"
+
+		spirit = new_spirit
 	else
 		to_chat(user, "<span class='notice'>[src] stops glowing. Maybe you can try again later.</span>")
 		possessed = FALSE
@@ -84,7 +83,7 @@
 //Daemon Mask - Spells
 /obj/effect/proc_holder/spell/self/mask_possession
 	name = "Mask Possession"
-	desc = "Take control of your wearer for a short time. Possessing your wearer gives them a boost against any active stuns."
+	desc = "Take control of your wearer for a short time. Possessing your wearer makes them unable to go into crit until possession ends."
 	clothes_req = FALSE
 	charge_max = 1500 //1 minute for possession + 1 minute 30 seconds for the cooldown after
 	action_icon = 'monkestation/icons/mob/actions/actions_spells.dmi'
@@ -92,6 +91,9 @@
 	invocation = "none"
 	invocation_type = "none"
 	school = "transmutation"
+	//Whether the spell added traits or not, as not to mess up other trait giving things.
+	var/added_soft_crit = FALSE
+	var/added_hard_crit = FALSE
 
 /obj/effect/proc_holder/spell/self/mask_possession/cast(mob/living/user)
 	var/obj/item/clothing/mask/daemon_mask/mask = user.loc
@@ -133,13 +135,16 @@
 	wearer.set_resting(FALSE)
 	wearer.update_mobility()
 
+	if(!HAS_TRAIT(wearer,TRAIT_NOSOFTCRIT))
+		ADD_TRAIT(wearer, TRAIT_NOSOFTCRIT, "daemon_mask")
+		added_soft_crit = TRUE
+	if(!HAS_TRAIT(wearer,TRAIT_NOHARDCRIT))
+		ADD_TRAIT(wearer, TRAIT_NOHARDCRIT, "daemon_mask")
+		added_hard_crit = TRUE
+
 	addtimer(CALLBACK(src, .proc/undo_possession, user, wearer, mask), 60 SECONDS)
 
 /obj/effect/proc_holder/spell/self/mask_possession/proc/undo_possession(mob/living/swapper, mob/living/carbon/victim, obj/item/clothing/mask/daemon_mask/mask)
-	to_chat(swapper,"<span class='notice'>Your control wears off.<span>")
-	to_chat(victim,"<span class='notice'>You gain control of your body once again.<span>")
-
-
 	var/mob/dead/observer/ghost = swapper.ghostize(0)
 	victim.mind.transfer_to(swapper)
 
@@ -148,6 +153,16 @@
 		victim.key = ghost.key
 	qdel(ghost)
 	mask.enter_mask_mode()
+
+	to_chat(swapper,"<span class='notice'>Your control wears off.<span>")
+	to_chat(victim,"<span class='notice'>You regain control of your body.<span>")
+
+	if(added_soft_crit)
+		REMOVE_TRAIT(victim, TRAIT_NOSOFTCRIT, "daemon_mask")
+		added_soft_crit = FALSE
+	if(added_hard_crit)
+		REMOVE_TRAIT(victim, TRAIT_NOHARDCRIT, "daemon_mask")
+		added_hard_crit = FALSE
 
 /obj/effect/proc_holder/spell/targeted/mask_lunge
 	name = "Daemon Lunge"
@@ -178,11 +193,17 @@
 		revert_cast()
 		return
 
+	if(!do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT))
+		to_chat(user, "<span class='notice'>That is not a valid target!</span>")
+		revert_cast()
+		return
+
 	playsound(get_turf(user), 'sound/magic/blink.ogg', 50, 1)
-	target.Knockdown(3 SECONDS)
+	target.Knockdown(5 SECONDS)
+	target.Stun(3 SECONDS)
+	target.adjustBruteLoss(10)
 	target.visible_message("<span class='danger'>[user] appears above [target], knocking them down!</span>", \
 						   "<span class='danger'>You fall violently as [user] appears above you!</span>")
-	do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT)
 
 /obj/effect/proc_holder/spell/self/mask_commune
 	name = "Commune"
@@ -201,7 +222,6 @@
 	if(!ishuman(mask.loc))
 		to_chat(user,"<span class='warning'>No one is wearing you!</span>")
 		return
-
 	var/input = stripped_input(usr, "Talk to your wielder.", "Voice of the mask", "")
 	if(!input)
 		return
@@ -209,13 +229,17 @@
 		to_chat(usr, "<span class='warning'>You cannot send a message that contains a word prohibited in IC chat!</span>")
 		return
 
-
 	var/mob/living/wearer = mask.loc
 
 	to_chat(wearer, "<span class='notice'><b>The Daemon Mask whispers to you:</b> [input]</span>")
 	to_chat(user, "<span class='notice'><b>You whisper to your wielder:</b> [input]</span>")
-
 	user.log_talk(input, LOG_SAY, tag="daemon mask")
+
+/obj/effect/proc_holder/spell/aoe_turf/repulse/mask
+	name = "Repulse"
+	desc = "Send out a wave of daemonic energy, knocking everyone around you back."
+	clothes_req = FALSE
+	invocation_type = "none"
 
 //Busted Invisibility Matrix
 /obj/item/invisibility_matrix
