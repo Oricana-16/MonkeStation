@@ -38,6 +38,7 @@
 	if(LAZYLEN(candidates))
 		var/mob/dead/observer/candidate = pick(candidates)
 		var/mob/living/simple_animal/shade/new_spirit = new(src)
+		spirit = new_spirit
 		new_spirit.key = candidate.key
 		new_spirit.fully_replace_character_name(null, "The spirit of [src]")
 		new_spirit.status_flags |= GODMODE
@@ -59,7 +60,6 @@
 		icon_state = "daemon_mask_on"
 		item_state = "daemon_mask_on"
 
-		spirit = new_spirit
 	else
 		to_chat(user, "<span class='notice'>[src] stops glowing. Maybe you can try again later.</span>")
 		possessed = FALSE
@@ -186,6 +186,7 @@
 	var/mob/living/carbon/target = targets[1]
 
 	if(!istype(target))
+		revert_cast()
 		return
 
 	if(!(target in oview(range)))
@@ -193,10 +194,6 @@
 		revert_cast()
 		return
 
-	if(!do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT))
-		to_chat(user, "<span class='notice'>That is not a valid target!</span>")
-		revert_cast()
-		return
 
 	playsound(get_turf(user), 'sound/magic/blink.ogg', 50, 1)
 	target.Knockdown(5 SECONDS)
@@ -204,6 +201,7 @@
 	target.adjustBruteLoss(10)
 	target.visible_message("<span class='danger'>[user] appears above [target], knocking them down!</span>", \
 						   "<span class='danger'>You fall violently as [user] appears above you!</span>")
+	!do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT)
 
 /obj/effect/proc_holder/spell/self/mask_commune
 	name = "Commune"
