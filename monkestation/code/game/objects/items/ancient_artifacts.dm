@@ -291,7 +291,7 @@
 	user.visible_message("<span class='warning'>[user.name] starts to turn transparent!</span>", \
 						"<span class='notice'>Your skin turns transparent.</span>")
 
-	animate(user, alpha = 25,time = 3 SECONDS)
+	animate(user, alpha = 25,time = 1 SECONDS)
 
 	var/invisibility_time = rand(15 SECONDS, 100 SECONDS)
 	addtimer(CALLBACK(src, .proc/end_invis, user), invisibility_time)
@@ -334,7 +334,7 @@
 	to_chat(user, "<span class=danger>The device's display changes colors!</span>")
 
 /obj/item/damage_thief/attack(mob/living/target, mob/living/user)
-	if(target==user)
+	if(target == user)
 		to_chat(user,"<spawn class='warning'>You can't use this on yourself!</span>")
 		return
 	if(!istype(target))
@@ -353,7 +353,7 @@
 			damage = target.getFireLoss()
 			target.adjustFireLoss(-damage)
 		if(TOX)
-			if(HAS_TRAIT(user,TRAIT_TOXIMMUNE)) //Can't have players immune to this just get rid of the damage.
+			if(HAS_TRAIT(user,TRAIT_TOXIMMUNE)) //Can't have immune players just get rid of the damage.
 				to_chat(user,"<span class='warning'>You can't take this damage type!</span>")
 				return
 			damage = target.getToxLoss()
@@ -385,7 +385,7 @@
 	item_state = "backpack"
 
 /obj/item/organics_smuggling_bag/attack_self(mob/living/carbon/user)
-	if(src.contents.len >= 1)
+	if(contents.len >= 1)
 		user.visible_message("<span class='warning'>Everyone inside \the [src] tumbles out!</span>")
 		var/turf/tumble_tile = get_turf(user)
 		for(var/mob/living/inhabitant in contents)
@@ -394,24 +394,28 @@
 	else
 		to_chat(user,"<span class='warning'>There's no one inside!</span>")
 
-/obj/item/organics_smuggling_bag/afterattack(mob/living/target, mob/living/user, proximity)
-	if(!proximity || !isliving(target))
+/obj/item/organics_smuggling_bag/attack(mob/living/target, mob/living/user)
+	if(!isliving(target))
 		return
 	if(target == user)
 		to_chat(user, "<span class='notice'>You can't get yourself inside!</span>")
 		return
+	if(contents.len>10)
+		to_chat(user, "<span class='warning'>There are too many people inside!</span>")
+		return
 
-	target.visible_message("<span class='warning'>[user] is trying to stuff [target]\s body into \the [src]!</span>", \
-							"<span class='danger'>[user] is trying to stuff you into \the [src]!</span>")
+	target.visible_message("<span class='warning'>[user] is trying to stuff [target]\s body into the [src]!</span>", \
+							"<span class='danger'>[user] is trying to stuff you into the [src]!</span>")
 	if(do_mob(user, target, 15 SECONDS))
 		target.forceMove(src)
+		user.visible_message("<span class='warning'>[user] put [target] inside the [src]!</span>")
 	..()
 
 /obj/item/organics_smuggling_bag/examine(mob/user)
 	. = ..()
-	var/number_of_people = src.contents.len
+	var/number_of_people = contents.len
 	if(number_of_people >= 1)
-		. +=  "It currently has [number_of_people] people inside."
+		. +=  "It currently has [number_of_people] [number_of_people == 1 ? "person" : "people"] inside."
 	else
 		. += "There's no one inside."
 
