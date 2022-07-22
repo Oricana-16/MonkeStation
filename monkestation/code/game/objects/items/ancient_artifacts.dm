@@ -302,7 +302,7 @@
 
 /obj/item/invisibility_matrix/proc/end_invis(mob/user)
 
-	user.visible_message("<span class='warning'>[user.name] starts to appear out of nowhere!</span>", \
+	user.visible_message("<span class='warning'>[user.name] appears out of nowhere!</span>", \
 						"<span class='notice'>Your skin turns opaque.</span>")
 
 
@@ -337,7 +337,7 @@
 
 /obj/item/damage_thief/attack(mob/living/target, mob/living/user)
 	if(target == user)
-		to_chat(user,"<spawn class='warning'>You can't use this on yourself!</span>")
+		to_chat(user,"<spawn class='warning'>You can't use \the [src] on yourself!</span>")
 		return
 	if(!istype(target))
 		return
@@ -402,15 +402,15 @@
 	if(target == user)
 		to_chat(user, "<span class='notice'>You can't get yourself inside!</span>")
 		return
-	if(contents.len>10)
+	if(contents.len > 10)
 		to_chat(user, "<span class='warning'>There are too many people inside!</span>")
 		return
 
-	target.visible_message("<span class='warning'>[user] is trying to stuff [target]\s body into the [src]!</span>", \
-							"<span class='danger'>[user] is trying to stuff you into the [src]!</span>")
+	target.visible_message("<span class='warning'>[user] is trying to stuff [target]\s body into \the [src]!</span>", \
+							"<span class='danger'>[user] is trying to stuff you into \the [src]!</span>")
 	if(do_mob(user, target, 15 SECONDS))
 		target.forceMove(src)
-		user.visible_message("<span class='warning'>[user] put [target] inside the [src]!</span>")
+		user.visible_message("<span class='warning'>[user] put [target] inside \the [src]!</span>")
 	..()
 
 /obj/item/organics_smuggling_bag/examine(mob/user)
@@ -434,7 +434,7 @@
 		to_chat(user, "<span class='warning'>[target] isn't dead!</span>")
 		return
 
-	if(!(target.key || target.client) || isanimal(target)) //No SSD's but Ian and such are allowed
+	if(!(target.key || target.client) || isanimal(target)) //No SSD's but Ian and the gang are allowed
 		to_chat(user, "<span class='warning'>[target]'s body doesn't respond!</span>")
 		return
 
@@ -450,5 +450,6 @@
 		soullink(/datum/soullink/sharedfate, user, target)
 		user.visible_message("<span class='warning'>[target] finished 'signing' \the [src].</span>",
 						"<span class='warning'>The contract is complete, your souls are now linked.</span>")
-		to_chat(target, "<span class='warning'>You're soul is now linked to [user]'s. If one of you dies for any reason, so does the other.</span>")
+		to_chat(target, "<span class='warning'>You're soul is now linked to [user]'s. If one of you dies, so does the other.</span>")
+		to_chat(user, "<span class='warning'>You're soul is now linked to [target]'s. If one of you dies, so does the other.</span>")
 		qdel(src)
