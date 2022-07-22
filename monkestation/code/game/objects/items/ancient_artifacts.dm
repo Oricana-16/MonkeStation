@@ -276,7 +276,7 @@
 
 //Busted Invisibility Matrix
 /obj/item/invisibility_matrix
-	name = "Busted Invisibility Matrix"
+	name = "busted invisibility matrix"
 	desc = "One of the Spider Clan's first attempts at invisibility, it was scrapped for always ending too early."
 	icon = 'monkestation/icons/obj/device.dmi'
 	icon_state = "invisibility_matrix"
@@ -310,7 +310,7 @@
 
 //Damage Thief
 /obj/item/damage_thief
-	name = "Damage Thief"
+	name = "damage thief"
 	desc = "A healing device that follows equivalent exchange."
 	icon = 'monkestation/icons/obj/device.dmi'
 	icon_state = "dmg_thief"
@@ -379,7 +379,7 @@
 
 //Organics Smuggling Bag
 /obj/item/organics_smuggling_bag
-	name = "Organics Smuggling Bag"
+	name = "organics smuggling bag"
 	desc = "A bag made with bluespace tech scientists made while on tons of space drugs. Can fit a lot of people inside."
 	slot_flags = ITEM_SLOT_BACK //Its totally a normal backpack :)
 	icon = 'icons/obj/storage.dmi'
@@ -423,7 +423,7 @@
 
 //Soul Binding Contract
 /obj/item/soul_link_contract
-	name = "Soul Binding Contract"
+	name = "soul binding contract"
 	desc = "A contract from Hell itself. If you get a corpse to sign it, it brings them back from beyond the grave and binds your souls together."
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "paper_onfire"
