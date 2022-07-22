@@ -13,6 +13,8 @@
 	<b>You are a spirit inhabiting the daemon mask.\n\
 	You're on your own side, do whatever it takes to survive.\n\
 	You can choose to help the crew, or you can betray them as you see fit.</b>"
+	var/mob/living/simple_animal/shade/spirit = null
+
 	//spells only while you possess someone
 	var/list/possession_spells = list(
 		/obj/effect/proc_holder/spell/targeted/mask_lunge)
@@ -20,7 +22,6 @@
 	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune, /obj/effect/proc_holder/spell/self/mask_fear)
 	//spells that you always have
 	var/list/constant_spells = list(/obj/effect/proc_holder/spell/self/mask_possession)
-	var/mob/living/simple_animal/shade/spirit = null
 
 /obj/item/clothing/mask/daemon_mask/attack_self(mob/user)
 	if(possessed)
@@ -50,7 +51,7 @@
 
 		to_chat(new_spirit, welcome_message)
 
-		for(var/ability in constant_spells) //Mask Spells too since you start as a mask
+		for(var/ability in constant_spells) //Constant Spells
 			var/obj/effect/proc_holder/spell/spell = new ability
 			new_spirit.mind.AddSpell(spell)
 
@@ -65,7 +66,8 @@
 		possessed = FALSE
 
 /obj/item/clothing/mask/daemon_mask/proc/enter_mask_mode()
-	REMOVE_TRAIT(src, TRAIT_NODROP, CURSED_MASK_TRAIT)
+	if(HAS_TRAIT(src,TRAIT_NODROP))
+		REMOVE_TRAIT(src, TRAIT_NODROP, CURSED_MASK_TRAIT)
 	for(var/ability in possession_spells)
 		spirit.mind.RemoveSpell(ability)
 	for(var/ability in mask_spells)
@@ -73,7 +75,8 @@
 		spirit.mind.AddSpell(spell)
 
 /obj/item/clothing/mask/daemon_mask/proc/enter_possession_mode()
-	ADD_TRAIT(src, TRAIT_NODROP, CURSED_MASK_TRAIT) //Can't take the mask off while you are in control
+	if(!HAS_TRAIT(src,TRAIT_NODROP))
+		ADD_TRAIT(src, TRAIT_NODROP, CURSED_MASK_TRAIT) //Can't take the mask off while you are in control
 	for(var/ability in mask_spells)
 		spirit.mind.RemoveSpell(ability)
 	for(var/ability in possession_spells)
@@ -115,7 +118,7 @@
 		revert_cast()
 		return
 
-	to_chat(wearer,"<span class='warning'>[mask] takes control!/span>")
+	to_chat(wearer,"<span class='userdanger'>[mask] takes control!</span>")
 
 	var/mob/living/spirit = user
 
@@ -198,7 +201,6 @@
 	playsound(get_turf(user), 'sound/magic/blink.ogg', 50, 1)
 	target.Knockdown(5 SECONDS)
 	target.Stun(3 SECONDS)
-	target.adjustBruteLoss(10)
 	target.visible_message("<span class='danger'>[user] appears above [target], knocking them down!</span>", \
 						   "<span class='danger'>You fall violently as [user] appears above you!</span>")
 	do_teleport(user, target, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT)
@@ -241,7 +243,7 @@
 	clothes_req = FALSE
 	charge_max = 1 MINUTES
 	invocation = "FEAR ME"
-	invocation_type = "whisper"
+	invocation_type = "shout"
 	school = "transmutation"
 	var/list/noises = list('sound/hallucinations/i_see_you2.ogg','sound/hallucinations/look_up1.ogg','sound/hallucinations/look_up2.ogg','sound/hallucinations/behind_you1.ogg')
 
@@ -422,7 +424,7 @@
 //Soul Binding Contract
 /obj/item/soul_link_contract
 	name = "Soul Binding Contract"
-	desc = "A contract from Hell itself. If you get a corpse to sign it, it binds your souls together and brings them back from beyond the grave."
+	desc = "A contract from Hell itself. If you get a corpse to sign it, it brings them back from beyond the grave and binds your souls together."
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "paper_onfire"
 	item_state = "paper"
@@ -433,7 +435,7 @@
 		return
 
 	if(!(target.key || target.client) || isanimal(target)) //No SSD's but Ian and such are allowed
-		to_chat(user, "<span class='warning'>[target]'s body doesn't respond.!</span>")
+		to_chat(user, "<span class='warning'>[target]'s body doesn't respond!</span>")
 		return
 
 	if(target.ishellbound())
