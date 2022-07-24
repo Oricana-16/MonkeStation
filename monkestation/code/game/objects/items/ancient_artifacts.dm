@@ -248,7 +248,7 @@
 			to_chat(target,"<span class='warning'>A chill runs through your body as you stare into [mask].</span>")
 			return
 
-		if(target.mind?.assigned_role == "Chaplain")
+		if(target?.mind?.assigned_role == "Chaplain")
 			to_chat(target,"<span class='warning'>Your faith protects you as you stare into [mask].</span>")
 			return
 
