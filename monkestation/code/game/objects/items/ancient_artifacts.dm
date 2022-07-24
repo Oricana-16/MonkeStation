@@ -9,10 +9,6 @@
 	clothing_flags = SHOWEROKAY
 	//Whether a spirit is in the mask or not
 	var/possessed = FALSE
-	var/welcome_message = "<span class='warning'>ALL PAST LIVES ARE FORGOTTEN.</span>\n\
-	<b>You are a spirit inhabiting the daemon mask.\n\
-	You're on your own side, do whatever it takes to survive.\n\
-	You can choose to help the crew, or you can betray them as you see fit.</b>"
 	var/mob/living/simple_animal/shade/spirit = null
 
 	//spells only while you possess someone
@@ -49,21 +45,26 @@
 		new_spirit.add_to_alive_mob_list()
 		grant_all_languages()
 
-		to_chat(new_spirit, welcome_message)
+		new_spirit.mind.add_antag_datum(/datum/antagonist/survivalist/daemon_mask)
 
 		for(var/ability in constant_spells) //Constant Spells
-			var/obj/effect/proc_holder/spell/spell = new ability
-			new_spirit.mind.AddSpell(spell)
+			var/obj/effect/proc_holder/spell/spell_to_add = new ability
+			new_spirit.mind.AddSpell(spell_to_add)
 
 		enter_mask_mode()
 
-		to_chat(user, "<span class='notice'>[src] shines brighter before dimming down, a spirit has been summoned</span>")
+		to_chat(user, "<span class='notice'>[src] shines brighter before dimming down, a spirit has been summoned!</span>")
 		icon_state = "daemon_mask_on"
 		item_state = "daemon_mask_on"
 
 	else
 		to_chat(user, "<span class='notice'>[src] stops glowing. Maybe you can try again later.</span>")
 		possessed = FALSE
+
+/obj/item/clothing/mask/daemon_mask/Destroy()
+	. = ..()
+	qdel(spirit) //if the mask dies you die
+	spirit = null
 
 /obj/item/clothing/mask/daemon_mask/proc/enter_mask_mode()
 	if(HAS_TRAIT(src,TRAIT_NODROP))
@@ -153,8 +154,8 @@
 	to_chat(swapper,"<span class='notice'>Your control wears off.<span>")
 	to_chat(victim,"<span class='notice'>You regain control of your body.<span>")
 
-		REMOVE_TRAIT(victim, TRAIT_NOSOFTCRIT, "daemon_mask")
-		REMOVE_TRAIT(victim, TRAIT_NOHARDCRIT, "daemon_mask")
+	REMOVE_TRAIT(victim, TRAIT_NOSOFTCRIT, "daemon_mask")
+	REMOVE_TRAIT(victim, TRAIT_NOHARDCRIT, "daemon_mask")
 
 /obj/effect/proc_holder/spell/targeted/mask_lunge
 	name = "Daemon Lunge"
@@ -264,7 +265,7 @@
 
 
 //Busted Invisibility Matrix
-/obj/item/invisibility_matrix
+/obj/item/ancient_artifact/invisibility_matrix
 	name = "busted invisibility matrix"
 	desc = "One of the Spider Clan's first attempts at invisibility, it was scrapped for always ending too early."
 	icon = 'monkestation/icons/obj/device.dmi'
@@ -273,7 +274,7 @@
 	pickup_sound = 'sound/items/handling/multitool_pickup.ogg'
 	COOLDOWN_DECLARE(invis_matrix_cooldown)
 
-/obj/item/invisibility_matrix/attack_self(mob/user)
+/obj/item/ancient_artifact/invisibility_matrix/attack_self(mob/user)
 	if(!COOLDOWN_FINISHED(src, invis_matrix_cooldown))
 		to_chat(user, "<span class='warning'>the [src] isn't ready yet!</span>")
 		return
@@ -284,12 +285,12 @@
 
 	animate(user, alpha = 25,time = 1 SECONDS)
 
-	var/invisibility_time = rand(15 SECONDS, 100 SECONDS)
+	var/invisibility_time = rand(5 SECONDS, 15 SECONDS)
 	addtimer(CALLBACK(src, .proc/end_invis, user), invisibility_time)
 	COOLDOWN_START(src, invis_matrix_cooldown, invisibility_time + 30 SECONDS)
 
 
-/obj/item/invisibility_matrix/proc/end_invis(mob/user)
+/obj/item/ancient_artifact/invisibility_matrix/proc/end_invis(mob/user)
 
 	user.visible_message("<span class='warning'>[user.name] appears out of nowhere!</span>", \
 						"<span class='notice'>Your skin turns opaque.</span>")
@@ -298,14 +299,14 @@
 	animate(user, alpha = 255,time = 1 SECONDS)
 
 //Damage Thief
-/obj/item/damage_thief
+/obj/item/ancient_artifact/damage_thief
 	name = "damage thief"
 	desc = "A healing device that follows equivalent exchange."
 	icon = 'monkestation/icons/obj/device.dmi'
 	icon_state = "dmg_thief"
 	var/damage_type = null
 
-/obj/item/damage_thief/attack_self(mob/living/carbon/user)
+/obj/item/ancient_artifact/damage_thief/attack_self(mob/living/carbon/user)
 	var/damage_type_list = list("Brute","Burn","Toxin","Suffocation")
 	var/chosen_damage_type = input(user, "Choose an Damage Type:", "Damage Thief") in damage_type_list
 	switch(chosen_damage_type)
@@ -324,7 +325,7 @@
 
 	to_chat(user, "<span class=danger>The device's display changes colors!</span>")
 
-/obj/item/damage_thief/attack(mob/living/target, mob/living/user)
+/obj/item/ancient_artifact/damage_thief/attack(mob/living/target, mob/living/user)
 	if(target == user)
 		to_chat(user,"<spawn class='warning'>You can't use \the [src] on yourself!</span>")
 		return
@@ -367,7 +368,7 @@
 		to_chat(user,"<span class='notice'>Nothing happened, [target] must not've been hurt.</span>")
 
 //Organics Smuggling Bag
-/obj/item/organics_smuggling_bag
+/obj/item/ancient_artifact/organics_smuggling_bag
 	name = "organics smuggling bag"
 	desc = "A bag made with bluespace tech scientists made while on tons of space drugs. Can fit a lot of people inside."
 	slot_flags = ITEM_SLOT_BACK //Its totally a normal backpack :)
@@ -375,7 +376,7 @@
 	icon_state = "backpack"
 	item_state = "backpack"
 
-/obj/item/organics_smuggling_bag/attack_self(mob/living/carbon/user)
+/obj/item/ancient_artifact/organics_smuggling_bag/attack_self(mob/living/carbon/user)
 	if(contents.len >= 1)
 		user.visible_message("<span class='notice'>[user] open's \the [src], and everyone inside \the [src] tumbles out.</span>")
 		var/turf/tumble_tile = get_turf(user)
@@ -385,7 +386,7 @@
 	else
 		to_chat(user,"<span class='warning'>There's no one inside!</span>")
 
-/obj/item/organics_smuggling_bag/attack(mob/living/target, mob/living/user)
+/obj/item/ancient_artifact/organics_smuggling_bag/attack(mob/living/target, mob/living/user)
 	if(!isliving(target))
 		return
 	if(target == user)
@@ -402,7 +403,7 @@
 		user.visible_message("<span class='warning'>[user] put [target] inside \the [src]!</span>")
 	..()
 
-/obj/item/organics_smuggling_bag/examine(mob/user)
+/obj/item/ancient_artifact/organics_smuggling_bag/examine(mob/user)
 	. = ..()
 	var/number_of_people = contents.len
 	if(number_of_people >= 1)
@@ -410,20 +411,29 @@
 	else
 		. += "There's no one inside."
 
+/obj/item/ancient_artifact/organics_smuggling_bag/container_resist(mob/living/user)
+	to_chat(user, "<span class='notice'>You begin to crawl out of \the [src].</span>")
+	to_chat(loc, "<span class='warning'>You see [user] trying to get out of \the [src]!</span>")
+	if(do_after(user, 5 SECONDS, target = user))
+		to_chat(user, "<span class='notice'>You fall out of \the [src].</span>")
+		var/exit_turf = get_turf(user)
+		user.forceMove(exit_turf)
+		user.Knockdown(1 SECONDS)
+
 //Soul Binding Contract
-/obj/item/soul_link_contract
+/obj/item/ancient_artifact/soul_link_contract
 	name = "soul binding contract"
 	desc = "A contract from Hell itself. If you get a corpse to sign it, it brings them back from beyond the grave and binds your souls together."
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "paper_onfire"
 	item_state = "paper"
 
-/obj/item/soul_link_contract/afterattack(mob/living/target, mob/living/user)
+/obj/item/ancient_artifact/soul_link_contract/afterattack(mob/living/target, mob/living/user)
 	if(target.stat != DEAD)
 		to_chat(user, "<span class='warning'>[target] isn't dead!</span>")
 		return
 
-	if(!(target.key || target.client) || isanimal(target)) //No SSD's but Ian and the gang are allowed
+	if(!(target.key || target.client) & !isanimal(target)) //No SSD's but Ian and the gang are allowed
 		to_chat(user, "<span class='warning'>[target]'s body doesn't respond!</span>")
 		return
 
@@ -434,7 +444,25 @@
 	user.visible_message("<span class='warning'>[user] helps [target] sign \the [src].</span>",
 						"<span class='warning'>you start to use [target]'s hand to sign \the [src].</span>")
 
-	if(do_mob(user, target, 30 SECONDS))
+	var/mob/dead/observer/ghost = target.get_ghost()
+	var/response = "No"
+	if(ghost)
+		if(!ghost.can_reenter_corpse)
+			to_chat(user, "<span class='warning'>[target]'s soul has departed!</span>")
+			return
+		ghost.notify_cloning("[user] is offering to bind your souls together.",'sound/effects/genetics.ogg', target)
+		response = tgalert(ghost, "[user] is offering to bind your souls together to bring you back from death, do you accept?", "Soul Binding Contract", "Yes", "No", StealFocus = FALSE, Timeout = 30 SECONDS)
+		if(!ghost)
+			return
+	else
+		if(do_mob(user, target, 30 SECONDS))
+			log_combat(user, target, "revived with soul binding contract")
+			target.revive(TRUE)
+			soullink(/datum/soullink/sharedfate, user, target)
+			to_chat(user, "<span class='warning'>You're soul is now linked to [target]'s. If one of you dies, so does the other.</span>")
+			qdel(src)
+	if(response == "Yes")
+		log_combat(user, target, "revived with soul binding contract")
 		target.revive(TRUE)
 		soullink(/datum/soullink/sharedfate, user, target)
 		user.visible_message("<span class='warning'>[target] finished 'signing' \the [src].</span>",
@@ -442,3 +470,6 @@
 		to_chat(target, "<span class='warning'>You're soul is now linked to [user]'s. If one of you dies, so does the other.</span>")
 		to_chat(user, "<span class='warning'>You're soul is now linked to [target]'s. If one of you dies, so does the other.</span>")
 		qdel(src)
+	if(response == "No")
+		user.visible_message("<span class='warning'>[target] refused to sign \the [src]!</span>")
+
