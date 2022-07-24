@@ -94,9 +94,6 @@
 	invocation = "none"
 	invocation_type = "none"
 	school = "transmutation"
-	//Whether the spell added traits or not, as not to mess up other trait giving things.
-	var/added_soft_crit = FALSE
-	var/added_hard_crit = FALSE
 
 /obj/effect/proc_holder/spell/self/mask_possession/cast(mob/living/user)
 	var/obj/item/clothing/mask/daemon_mask/mask = user.loc
@@ -138,12 +135,8 @@
 	wearer.set_resting(FALSE)
 	wearer.update_mobility()
 
-	if(!HAS_TRAIT(wearer,TRAIT_NOSOFTCRIT))
-		ADD_TRAIT(wearer, TRAIT_NOSOFTCRIT, "daemon_mask")
-		added_soft_crit = TRUE
-	if(!HAS_TRAIT(wearer,TRAIT_NOHARDCRIT))
-		ADD_TRAIT(wearer, TRAIT_NOHARDCRIT, "daemon_mask")
-		added_hard_crit = TRUE
+	ADD_TRAIT(wearer, TRAIT_NOSOFTCRIT, "daemon_mask")
+	ADD_TRAIT(wearer, TRAIT_NOHARDCRIT, "daemon_mask")
 
 	addtimer(CALLBACK(src, .proc/undo_possession, user, wearer, mask), 60 SECONDS)
 
@@ -160,12 +153,8 @@
 	to_chat(swapper,"<span class='notice'>Your control wears off.<span>")
 	to_chat(victim,"<span class='notice'>You regain control of your body.<span>")
 
-	if(added_soft_crit)
 		REMOVE_TRAIT(victim, TRAIT_NOSOFTCRIT, "daemon_mask")
-		added_soft_crit = FALSE
-	if(added_hard_crit)
 		REMOVE_TRAIT(victim, TRAIT_NOHARDCRIT, "daemon_mask")
-		added_hard_crit = FALSE
 
 /obj/effect/proc_holder/spell/targeted/mask_lunge
 	name = "Daemon Lunge"
@@ -388,7 +377,7 @@
 
 /obj/item/organics_smuggling_bag/attack_self(mob/living/carbon/user)
 	if(contents.len >= 1)
-		user.visible_message("<span class='warning'>Everyone inside \the [src] tumbles out!</span>")
+		user.visible_message("<span class='notice'>[user] open's \the [src], and everyone inside \the [src] tumbles out.</span>")
 		var/turf/tumble_tile = get_turf(user)
 		for(var/mob/living/inhabitant in contents)
 			inhabitant.forceMove(tumble_tile)
