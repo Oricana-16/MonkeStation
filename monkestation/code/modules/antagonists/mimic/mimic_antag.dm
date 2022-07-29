@@ -3,4 +3,6 @@
 	show_name_in_check_antagonists = TRUE
 	show_in_antagpanel = FALSE
 
-//It does nothing! (Besides tracking)
+/datum/antagonist/mimic/greet()
+	var/mob/living/simple_animal/hostile/alien_mimic/spawned_mimic = owner.current
+	to_chat(spawned_mimic, spawned_mimic.playstyle_string)

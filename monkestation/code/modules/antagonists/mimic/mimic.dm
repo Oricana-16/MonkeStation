@@ -1,5 +1,6 @@
 #define MIMIC_HEALTH_FLEE_AMOUNT 30
 #define MIMIC_JITTER_CHANCE 0.8
+#define MIMIC_DISGUISE_COOLDOWN 5 SECONDS
 
 /mob/living/simple_animal/hostile/alien_mimic
 	name = "mimic"
@@ -24,15 +25,21 @@
 	maxHealth = 75
 	health = 75
 	melee_damage = 10 //For some reason it does double damage so leave it at half of what you want it. I'll try to figure out hopefully before this is out.
-	obj_damage = 20
+	obj_damage = 21 //21 is the minimum damage to hurt doors, which they need since they can't vent crawl.
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	wander = FALSE
 	attacktext = "consumes"
 	attack_sound = 'sound/effects/tableslam.ogg'
 
+	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
+							You may take the form of any item nearby by clicking on it. You can latch onto people by clicking on them, \
+							which is instant when you're disguised. When you latch onto someone, they can't hurt you, but other people\
+							can. After someone dies, you can absorb their body and reproduce to make more mimics.</b>"
+
 	var/disguised = FALSE
 	var/atom/movable/form = null
+	var/disguise_time = 0
 	var/people_absorbed = 0
 	//The target npc mimic's try to disguise as.
 	var/atom/movable/ai_disg_target = null
@@ -41,10 +48,6 @@
 	var/fleeing = FALSE
 	mobchatspan = "blob"
 	discovery_points = 2000
-	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
-							You may take the form of any item nearby by clicking on it. You can latch onto people by clicking on them, \
-							which is instant when you're disguised. When you latch onto someone, they can't hurt you, but other people\
-							can. After someone dies, you can absorb their body and reproduce to make more mimics.</b>"
 
 /mob/living/simple_animal/hostile/alien_mimic/examine(mob/user)
 	if(disguised)
@@ -52,6 +55,10 @@
 		. += "<span class='warning'>It jitters a little bit...</span>"
 	else
 		. = ..()
+
+/mob/living/simple_animal/hostile/alien_mimic/Destroy()
+	. = ..()
+	ai_disg_target = null
 
 /mob/living/simple_animal/hostile/alien_mimic/med_hud_set_health()
 	if(disguised && !isliving(form))
@@ -69,6 +76,9 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/ClickOn(atom/target_item)
 	if(allowed(target_item)) //Become Items
+		if(disguise_time > world.time)
+			to_chat(src, "<span class='warning'>You diguised too recently, wait a little longer!</span>")
+			return
 		if(disguised)
 			restore()
 		var/obj/item/item = target_item
@@ -142,6 +152,7 @@
 	ai_disg_target = null
 	disguised = TRUE
 	form = target
+	disguise_time = world.time + MIMIC_DISGUISE_COOLDOWN
 	visible_message("<span class='warning'>[src] changes shape, becoming a copy of [target]!</span>", \
 					"<span class='notice'>You assume the form of [target].</span>")
 	appearance = target.appearance
@@ -174,13 +185,13 @@
 	animate_movement = SLIDE_STEPS
 	maptext = null
 	density = initial(density)
+	disguise_time = world.time + MIMIC_DISGUISE_COOLDOWN
 	visible_message("<span class='warning'>A mimic jumps out of \the [src]!</span>", \
 					"<span class='notice'>You reform to your normal body.</span>")
 	name = initial(name)
 	icon = initial(icon)
 	icon_state = initial(icon_state)
 	cut_overlays()
-
 	set_varspeed(initial(move_to_delay))
 	med_hud_set_health()
 	med_hud_set_status() //we are not an object
@@ -188,6 +199,7 @@
 /mob/living/simple_animal/hostile/alien_mimic/Initialize(mapload)
 	var/datum/action/innate/mimic_reproduce/ability = new
 	ability.Grant(src)
+	ADD_TRAIT(src, TRAIT_SHOCKIMMUNE, INNATE_TRAIT) //Needs this so breaking down a single door doesnt kill em
 	. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/Life()
