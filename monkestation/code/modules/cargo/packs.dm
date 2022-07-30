@@ -42,10 +42,10 @@
 /datum/supply_pack/science/ancient_artifact
 	name = "Artifact crate"
 	desc = "Ancient mysterious artifacts that we couldn't be bothered to figure out, sold for cheap! requires Research access to open."
-	cost = 30000
+	cost = 300000 //Should be hard to buy
 	access = ACCESS_RESEARCH
 	contains = list()
-	crate_name = "Ancient Artifact Crate crate"
+	crate_name = "Ancient Artifact Crate"
 	crate_type = /obj/structure/closet/crate/secure/science
 	contraband = TRUE
 
