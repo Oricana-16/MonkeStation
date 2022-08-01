@@ -355,19 +355,6 @@
 	icon_state = "bhole3"
 	lifespan = 20 SECONDS //about maybe 5 walters
 	var/active = TRUE
-	var/static/list/walter_spawns = list(
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/saulter = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/negative = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/syndicate = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/doom = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/space = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/clown = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/french = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/british = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/wizard = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/smallter = 5,
-		/mob/living/simple_animal/pet/dog/bullterrier/walter/sus = 1, //:(
-		)
 
 /obj/effect/anomaly/walterverse/anomalyEffect(delta_time)
 	..()
@@ -377,7 +364,7 @@
 
 	if(active)
 		active = FALSE
-		var/selected_spawn = pickweight(walter_spawns)
+		var/selected_spawn = pick(subtypesof(/mob/living/simple_animal/pet/dog/bullterrier/walter))
 		new selected_spawn(src.loc)
 		return
 	active = TRUE

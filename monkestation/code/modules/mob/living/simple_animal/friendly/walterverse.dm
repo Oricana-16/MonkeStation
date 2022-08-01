@@ -7,7 +7,6 @@
 	icon_living = "saulter"
 	icon_dead = "saulter_dead"
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	speak = list("barks!", "Hi, i'm Saul Goodman.", "Did you know you have rights?", "Based!")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/negative
@@ -19,7 +18,6 @@
 	icon_living = "negative"
 	icon_dead = "negative_dead"
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	deathmessage = "starts moving"
 	speak = list("skrab!", "sfoow!", "retlaW", "skcurterif", "skcurtretsnom")
 
@@ -32,7 +30,6 @@
 	icon_living = "syndie"
 	icon_dead = "syndie_dead"
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	speak = list("barks!", "woofs!", "Walter", "Down with Nanotrasen!", "For the Syndicate!")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/doom
@@ -44,7 +41,6 @@
 	icon_living = "doom"
 	icon_dead = "doom_dead"
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	speak = list("...")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/space
@@ -59,7 +55,6 @@
 	minbodytemp = TCMB
 	maxbodytemp = T0C + 40
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	speak = list("barks!", "woofs!", "spess!", "Walter", "firetrucks", "monstertrucks", "spaceships")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/sus
@@ -71,7 +66,6 @@
 	icon_living = "sus"
 	icon_dead = "sus_dead"
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	ventcrawler = VENTCRAWLER_ALWAYS
 	deathmessage = "gets ejected"
 	speak = list("barks!", "woofs!", "sus!", "Walter", "firetrucks", "monstertrucks", "tasks")
@@ -85,29 +79,7 @@
 	icon_living = "clown"
 	icon_dead = "clown_dead"
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	speak = list("barks!", "woofs!", "honks!", "Walter", "firetrucks", "monstertrucks")
-
-
-/mob/living/simple_animal/pet/dog/bullterrier/walter/french
-	name = "French Walter"
-	real_name = "French Walter"
-	desc = "Nar'sie et rat'var ne sont rien comparés à la puissance de ce chien qui aime les monstertrucks."
-	icon = 'monkestation/icons/mob/walterverse.dmi'
-	icon_state = "french"
-	icon_living = "french"
-	icon_dead = "french_dead"
-	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
-	speak = list("aboiement!", "aboyer!", "Walter", "camions de pompiers", "camions monstres")
-
-/mob/living/simple_animal/pet/dog/bullterrier/walter/british
-	name = "Bri'ish Wal'ah"
-	real_name = "Bri'ish Wal'ah"
-	desc = "Nar'sie and like ra''var are naw'hin' compared 'o 'he migh' of 'hiz mons'er'ruck lovin' dog."
-	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
-	speak = list("barks!", "woofs!", "Wal'ah", "fire'rucks", "mons'er'rucks")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/wizard
 	name = "Magic Walter"
@@ -118,18 +90,109 @@
 	icon_living = "wizard"
 	icon_dead = "wizard_dead"
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
 	speak = list("ONI SOMA", "CLANG!", "UN'LTD P'WAH", "AULIE OXIN FIERA", "GIN'YU`CAPAN")
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/ookter
+	name = "Ookter"
+	real_name = "Ookter"
+	desc = "Security has captured this banana loving monkey-dog!"
+	icon = 'monkestation/icons/mob/walterverse.dmi'
+	icon_state = "ookter"
+	icon_living = "ookter"
+	icon_dead = "ookter_dead"
+	gold_core_spawnable = FRIENDLY_SPAWN
+	speak = list("OOK!", "EEP!", "OOP!", "AHH OOP!")
+
+//Special Walters - Below here so the less special ones are easier to manage
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/smallter
 	name = "Smallter"
 	real_name = "Smallter"
 	desc = "Nar'sie and rat'var are nothing compared to the might of this tiny dog."
 	gold_core_spawnable = FRIENDLY_SPAWN
-	unique_pet = TRUE
+	ventcrawler = VENTCRAWLER_ALWAYS //little guy fits in the vents
 	speak = list("barks", "woofs", "walter", "firetrucks", "monstertrucks")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/smallter/Initialize(mapload)
 	. = ..()
 	resize = 0.5
 	update_transform()
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/french
+	name = "French Walter"
+	real_name = "French Walter"
+	desc = "Nar'sie et rat'var ne sont rien comparés à la puissance de ce chien qui aime les monstertrucks."
+	icon = 'monkestation/icons/mob/walterverse.dmi'
+	icon_state = "french"
+	icon_living = "french"
+	icon_dead = "french_dead"
+	gold_core_spawnable = FRIENDLY_SPAWN
+	speak = list("aboiement!", "aboyer!", "Walter", "camions de pompiers", "camions monstres")
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/french/Initialize(mapload)
+	. = ..()
+	RegisterSignal(src, COMSIG_MOB_SAY, .proc/handle_speech)
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/french/proc/handle_speech(datum/source, list/speech_args)
+	SIGNAL_HANDLER
+
+	var/message = speech_args[SPEECH_MESSAGE]
+	if(message[1] != "*")
+		message = " [message]"
+		var/list/french_words = strings(FRENCH_TALK_FILE, "french")
+
+		for(var/key in french_words)
+			var/value = french_words[key]
+			if(islist(value))
+				value = pick(value)
+
+			message = replacetextEx(message, " [uppertext(key)]", " [uppertext(value)]")
+			message = replacetextEx(message, " [capitalize(key)]", " [capitalize(value)]")
+			message = replacetextEx(message, " [key]", " [value]")
+
+		if(prob(3))
+			message += pick(" Honh honh honh!"," Honh!"," Zut Alors!")
+	speech_args[SPEECH_MESSAGE] = trim(message)
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/british
+	name = "Bri'ish Wal'ah"
+	real_name = "Bri'ish Wal'ah"
+	desc = "Nar'sie and like ra''var are naw'hin' compared 'o 'he migh' of 'hiz mons'er'ruck lovin' dog."
+	gold_core_spawnable = FRIENDLY_SPAWN
+	speak = list("barks!", "woofs!", "Wal'ah", "fire'rucks", "mons'er'rucks")
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/british/Initialize(mapload)
+	. = ..()
+	RegisterSignal(src, COMSIG_MOB_SAY, .proc/handle_speech)
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/british/proc/handle_speech(datum/source, list/speech_args)
+	SIGNAL_HANDLER
+
+	var/message = speech_args[SPEECH_MESSAGE]
+	if(message[1] != "*")
+		message = " [message]"
+		var/list/whole_words = strings(BRIISH_TALK_FILE, "words")
+		var/list/british_sounds = strings(BRIISH_TALK_FILE, "sounds")
+		var/list/british_appends = strings(BRIISH_TALK_FILE, "appends")
+
+		for(var/key in whole_words)
+			var/value = whole_words[key]
+			if(islist(value))
+				value = pick(value)
+
+			message = replacetextEx(message, " [uppertext(key)]", " [uppertext(value)]")
+			message = replacetextEx(message, " [capitalize(key)]", " [capitalize(value)]")
+			message = replacetextEx(message, " [key]", " [value]")
+
+		for(var/key in british_sounds)
+			var/value = british_sounds[key]
+			if(islist(value))
+				value = pick(value)
+
+			message = replacetextEx(message, "[uppertext(key)]", "[uppertext(value)]")
+			message = replacetextEx(message, "[capitalize(key)]", "[capitalize(value)]")
+			message = replacetextEx(message, "[key]", "[value]")
+
+		if(prob(8))
+			message += pick(british_appends)
+	speech_args[SPEECH_MESSAGE] = trim(message)
