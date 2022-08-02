@@ -111,6 +111,8 @@
 	if(people_absorbed > 0)
 		to_chat(src,"<span class='warning'>You start splitting yourself in two!</span>")
 		if(do_mob(src, src, 5 SECONDS))
+			if(people_absorbed <= 0) //Spamming can be Busted
+				return
 			to_chat(src,"<span class='warning'>You make another mimic!</span>")
 			var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(loc)
 			split_mimic.ping_ghosts()
@@ -306,6 +308,8 @@
 			visible_message("<span class='warning'>[src] starts absorbing [victim]!</span>", \
 						"<span class='userdanger'>You start absorbing [victim].</span>")
 			if(do_mob(src, victim, 10 SECONDS))
+				if(HAS_TRAIT(victim, TRAIT_HUSK)) //Can't let em spam click em
+					return
 				visible_message("<span class='warning'>[src] absorbs [victim]!</span>", \
 							"<span class='userdanger'>[victim] turns gray as you absorb the nutrients from their body.</span>")
 				victim.become_husk(MIMIC_ABSORB)
