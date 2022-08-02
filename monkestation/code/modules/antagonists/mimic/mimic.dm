@@ -116,8 +116,8 @@
 			split_mimic.ping_ghosts()
 			people_absorbed--
 			return
+		to_chat(src,"<span class='warning'>You fail to split!</span>")
 		return
-		to_chat(src,"<span class='warning'>You fail to reproduce!</span>")
 	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
 
 /mob/living/simple_animal/hostile/alien_mimic/attack_ghost(mob/user)
@@ -311,6 +311,7 @@
 				victim.become_husk(MIMIC_ABSORB)
 				people_absorbed++
 				adjustHealth(-30)
+			return
 		if(disguised) //Insta latch if youre disguised
 			latch(victim)
 			restore()
