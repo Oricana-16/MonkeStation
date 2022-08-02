@@ -4,5 +4,6 @@
 	show_in_antagpanel = FALSE
 
 /datum/antagonist/mimic/greet()
+	owner.current.playsound_local(get_turf(owner.current), 'monkestation/sound/ambience/antag/mimic.ogg',100,0, use_reverb = FALSE)
 	var/mob/living/simple_animal/hostile/alien_mimic/spawned_mimic = owner.current
 	to_chat(spawned_mimic, spawned_mimic.playstyle_string)

@@ -18,6 +18,7 @@
 	stop_automated_movement = 1
 	status_flags = CANPUSH
 	stat_attack = UNCONSCIOUS
+	mob_size = MOB_SIZE_SMALL
 	pass_flags = PASSTABLE | PASSMOB
 	unsuitable_atmos_damage = 0 //They won't die in Space!
 	minbodytemp = TCMB
@@ -30,7 +31,9 @@
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	wander = FALSE
 	attacktext = "consumes"
-	attack_sound = 'sound/effects/tableslam.ogg'
+	attack_sound = 'monkestation/sound/creatures/mimic/mimicattack.ogg'
+	var/absorb_sound = 'monkestation/sound/creatures/mimic/mimicabsorb.ogg'
+	var/split_sound = 'monkestation/sound/creatures/mimic/mimicsplit.ogg'
 
 	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
 							You can take the form of any item you can see by clicking on it. You can latch onto people by clicking on them, \
@@ -108,10 +111,14 @@
 	return FALSE
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/attempt_reproduce()
+	if(disguised)
+		to_chat(src,"<span class='warning'>You can't reproduce while disguised!</span>")
+		return
 	if(people_absorbed > 0)
 		to_chat(src,"<span class='warning'>You start splitting yourself in two!</span>")
+		playsound(get_turf(src), split_sound,100)
 		if(do_mob(src, src, 5 SECONDS))
-			if(people_absorbed <= 0) //Spamming can be Busted
+			if(people_absorbed <= 0 && !disguised)
 				return
 			to_chat(src,"<span class='warning'>You make another mimic!</span>")
 			var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(loc)
@@ -314,8 +321,9 @@
 			if(do_mob(src, carbon_victim, 10 SECONDS))
 				if(HAS_TRAIT(carbon_victim, TRAIT_HUSK)) //Can't let em spam click em
 					return
+				playsound(get_turf(src), absorb_sound,100)
 				visible_message("<span class='warning'>[src] absorbs [carbon_victim]!</span>", \
-							"<span class='userdanger'>[carbon_victim]'s corpse shrivels as you absorb the nutrients from their body.</span>")
+							"<span class='userdanger'>[carbon_victim]'s corpse shrivels up as you absorb the nutrients from their body.</span>")
 				carbon_victim.become_husk(MIMIC_ABSORB)
 				people_absorbed++
 				adjustHealth(-30)
