@@ -207,7 +207,7 @@
 		var/mob/living/living_food = buckled
 		if(living_food.stat == DEAD)
 			resist_buckle()
-	if(disguised * prob(MIMIC_JITTER_CHANCE))
+	if(disguised && prob(MIMIC_JITTER_CHANCE))
 		visible_message("<span class='danger'>[src] jitters a bit...</span>",\
 				"<span class='userdanger'>You jitter a bit!</span>", null)
 	. = ..()
