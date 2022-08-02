@@ -34,7 +34,7 @@
 
 	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
 							You may take the form of any item nearby by clicking on it. You can latch onto people by clicking on them, \
-							which is instant when you're disguised. When you latch onto someone, they can't hurt you, but other people\
+							which is instant when you're disguised. When you latch onto someone, they can't hurt you, but other people \
 							can. After someone dies, you can absorb their body and reproduce to make more mimics.</b>"
 
 	var/disguised = FALSE
@@ -50,15 +50,13 @@
 	discovery_points = 2000
 
 /mob/living/simple_animal/hostile/alien_mimic/examine(mob/user)
+	. = ..()
 	if(disguised)
-		. = form.examine(user)
 		. += "<span class='warning'>It jitters a little bit...</span>"
-	else
-		. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/Destroy()
-	. = ..()
 	ai_disg_target = null
+	. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/med_hud_set_health()
 	if(disguised && !isliving(form))
@@ -97,6 +95,8 @@
 	return health <= MIMIC_HEALTH_FLEE_AMOUNT
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/latch(mob/living/target)
+	if(!istype(target))
+		return
 	if(target)
 		if(target.buckle_mob(src, TRUE))
 			target.Knockdown(10 SECONDS)
@@ -109,12 +109,15 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/attempt_reproduce()
 	if(people_absorbed > 0)
+		to_chat(src,"<span class='warning'>You start splitting yourself in two!</span>")
 		if(do_mob(src, src, 5 SECONDS))
-			var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(src.loc)
+			to_chat(src,"<span class='warning'>You make another mimic!</span>")
+			var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(loc)
 			split_mimic.ping_ghosts()
 			people_absorbed--
 			return
 		return
+		to_chat(src,"<span class='warning'>You fail to reproduce!</span>")
 	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
 
 /mob/living/simple_animal/hostile/alien_mimic/attack_ghost(mob/user)
@@ -152,6 +155,7 @@
 	ai_disg_target = null
 	disguised = TRUE
 	form = target
+	desc = target.desc
 	disguise_time = world.time + MIMIC_DISGUISE_COOLDOWN
 	visible_message("<span class='warning'>[src] changes shape, becoming a copy of [target]!</span>", \
 					"<span class='notice'>You assume the form of [target].</span>")
@@ -189,6 +193,7 @@
 	visible_message("<span class='warning'>A mimic jumps out of \the [src]!</span>", \
 					"<span class='notice'>You reform to your normal body.</span>")
 	name = initial(name)
+	desc = initial(desc)
 	icon = initial(icon)
 	icon_state = initial(icon_state)
 	cut_overlays()
@@ -260,7 +265,8 @@
 				"<span class='userdanger'>You latch onto [target]!</span>", null, COMBAT_MESSAGE_RANGE)
 		latch(target)
 		restore()
-		toggle_ai(AI_ON)
+		if(!mind) //If you click on it, trigger the AI (unless its controlled)
+			toggle_ai(AI_ON)
 	else
 		..()
 
@@ -300,6 +306,8 @@
 			visible_message("<span class='warning'>[src] starts absorbing [victim]!</span>", \
 						"<span class='userdanger'>You start absorbing [victim].</span>")
 			if(do_mob(src, victim, 10 SECONDS))
+				visible_message("<span class='warning'>[src] absorbs [victim]!</span>", \
+							"<span class='userdanger'>[victim] turns gray as you absorb the nutrients from their body.</span>")
 				victim.become_husk(MIMIC_ABSORB)
 				people_absorbed++
 				adjustHealth(-30)
@@ -310,7 +318,8 @@
 		else if(do_mob(src, target, 3 SECONDS)) //Latch after a bit if you arent
 			latch(victim)
 			return
-	return ..() //If you're buckled, just attack normally
+	if(buckled || !ismob(target)) //If you're buckled or attacking a non-human
+		return ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/Aggro()
 	if(disguised & get_dist(src,target)<=1) //Instantly latch onto them
