@@ -13,6 +13,8 @@
 	icon_state = "component"
 	item_state = "electronic"
 
+	var/required_shells
+
 	/// The name of the component shown on the UI
 	var/display_name = "Generic"
 
@@ -220,6 +222,10 @@
 	if(!removable)
 		. += create_ui_notice("Unremovable", "red", "lock")
 
+	if(length(required_shells))
+		. += create_ui_notice("Supported Shells:", "green", "notes-medical")
+		for(var/atom/movable/shell as anything in required_shells)
+			. += create_ui_notice(initial(shell.name), "green", "plus-square")
 
 	if(length(input_ports))
 		. += create_ui_notice("Power Usage Per Input: [power_usage_per_input]", "orange", "bolt")

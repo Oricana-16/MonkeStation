@@ -50,6 +50,7 @@
 		else
 			qdel(replaced)
 
+	SEND_SIGNAL(src, COMSIG_ORGAN_IMPLANTED, M) //MONKESTATION EDIT
 	SEND_SIGNAL(M, COMSIG_CARBON_GAIN_ORGAN, src)
 
 	owner = M
@@ -74,6 +75,7 @@
 		var/datum/action/A = X
 		A.Remove(M)
 
+	SEND_SIGNAL(src, COMSIG_ORGAN_REMOVED, M)
 	SEND_SIGNAL(M, COMSIG_CARBON_LOSE_ORGAN, src)
 
 	START_PROCESSING(SSobj, src)

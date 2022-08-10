@@ -41,3 +41,10 @@
 #define COMSIG_LIVING_STATUS_SLEEP "living_sleeping"
 	//For all of them
 	#define COMPONENT_NO_STUN 1
+
+//MONKESTATION EDIT
+/// Called on the organ when it is implanted into someone (mob/living/carbon/M)
+#define COMSIG_ORGAN_IMPLANTED "comsig_organ_implanted"
+/// Called on the organ when it is removed from someone (mob/living/carbon/M)
+#define COMSIG_ORGAN_REMOVED "comsig_organ_removed"
+//MONKESTATION EDIT END

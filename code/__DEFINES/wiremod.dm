@@ -25,6 +25,12 @@
 // Other datatypes
 /// Atom datatype
 #define PORT_TYPE_ATOM "entity"
+
+//MONKESTATION EDIT
+/// Used for types with a set list of inputs
+#define PORT_TYPE_OPTION "option"
+//MONKESTATION EDIT END
+
 /// Any datatype (USED ONLY FOR DISPLAY, DO NOT USE)
 #define COMP_TYPE_ANY "any"
 
