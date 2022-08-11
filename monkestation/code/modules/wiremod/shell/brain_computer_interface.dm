@@ -1,11 +1,10 @@
 /*TODO
-Get BCI Working (bci/initialize)
-Give BCI a sprite
+Fix the BCI Action Icons
+Move BCI Action to another file
 Add BCI Tech Node + Lathe Crafting
-Make BCI Take Out-able from the machine
-
-Make sure you know what to do (add more to TODO list) Tomorrow
-
+Add Vox BCI Component
+Add Thought Listener Component
+Add Overlays
 */
 
 /*
@@ -15,7 +14,7 @@ PR #60338
 /obj/item/organ/cyberimp/bci
 	name = "brain-computer interface"
 	desc = "An implant that can be placed in a user's head to control circuits using their brain."
-	icon = 'icons/obj/wiremod.dmi'
+	icon = 'monkestation/icons/obj/wiremod.dmi'
 	icon_state = "bci"
 	zone = BODY_ZONE_HEAD
 	w_class = WEIGHT_CLASS_TINY
@@ -23,12 +22,11 @@ PR #60338
 /obj/item/organ/cyberimp/bci/Initialize()
 	. = ..()
 
-	var/obj/item/integrated_circuit/circuit = new(src)
-	circuit.add_component(new /obj/item/circuit_component/bci_action(null, "One"))
-
-	AddComponent(/datum/component/shell, list(
-		new /obj/item/circuit_component/bci_core,
-	), SHELL_CAPACITY_SMALL, starting_circuit = circuit)
+	AddComponent( \
+		/datum/component/shell, \
+		unremovable_circuit_components = list(new /obj/item/circuit_component/bci_core), \
+		capacity = SHELL_CAPACITY_SMALL, \
+	)
 
 /obj/item/organ/cyberimp/bci/Insert(mob/living/carbon/reciever, special, drop_if_replaced)
 	. = ..()
@@ -60,9 +58,6 @@ PR #60338
 
 	/// A reference to the action button itself
 	var/datum/action/innate/bci_action/bci_action
-
-	/// The icon of the button
-	var/list/icon_options
 
 /obj/item/circuit_component/bci_action/Initialize(mapload)
 	. = ..()
@@ -111,7 +106,7 @@ PR #60338
 		"Sleep",
 		"Wireless",
 	)
-	icon_options = action_options
+	options = action_options
 
 /obj/item/circuit_component/bci_action/register_shell(atom/movable/shell)
 	var/obj/item/organ/cyberimp/bci/bci = shell
@@ -137,11 +132,11 @@ PR #60338
 
 /obj/item/circuit_component/bci_action/proc/update_action()
 	bci_action.name = button_name.input_value
-	bci_action.button_icon_state = "bci_[replacetextEx(lowertext(icon_options[current_option]), " ", "_")]"
+	bci_action.button_icon_state = "bci_[replacetextEx(lowertext(options[current_option]), " ", "_")]"
 
 /datum/action/innate/bci_action
 	name = "Action"
-	icon_icon = 'icons/mob/actions/actions_items.dmi'
+	icon_icon = 'monkestation/icons/mob/actions/bci_actions.dmi'
 	check_flags = AB_CHECK_CONSCIOUS
 	button_icon_state = "bci_power"
 
@@ -363,7 +358,7 @@ PR #60338
 	if (isnull(bci_to_implant?.resolve()))
 		. += span_notice("There is no BCI inserted.")
 	else
-		. += span_notice("Right-click to remove current BCI.")
+		. += span_notice("Alt-click to remove current BCI.")
 
 /obj/machinery/bci_implanter/proc/set_busy(status, working_icon)
 	busy = status
@@ -397,30 +392,18 @@ PR #60338
 
 	return overlays
 
-/*
-/obj/machinery/bci_implanter/attack_hand_secondary(mob/user, list/modifiers)
-	. = ..()
-	if (. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
-		return .
-
-	if(!user.Adjacent(src))
-		return
-
-	if (locked)
+/obj/machinery/bci_implanter/AltClick(mob/user)
+	if(locked)
 		balloon_alert(user, "it's locked!")
-		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 	var/obj/item/organ/cyberimp/bci/bci_to_implant_resolved = bci_to_implant?.resolve()
-	if (isnull(bci_to_implant_resolved))
+	if(isnull(bci_to_implant_resolved))
 		balloon_alert(user, "no bci inserted!")
 	else
 		user.put_in_hands(bci_to_implant_resolved)
 		balloon_alert(user, "ejected bci")
 
 	bci_to_implant = null
-
-	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
-*/
 
 /obj/machinery/bci_implanter/attackby(obj/item/weapon, mob/user, params)
 	var/obj/item/organ/cyberimp/bci/new_bci = weapon
@@ -432,7 +415,7 @@ PR #60338
 		var/obj/item/organ/cyberimp/bci/previous_bci_to_implant = bci_to_implant?.resolve()
 
 		bci_to_implant = WEAKREF(weapon)
-		weapon.forceMove(src)
+		weapon.moveToNullspace()
 
 		if (isnull(previous_bci_to_implant))
 			balloon_alert(user, "inserted bci")
