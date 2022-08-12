@@ -24,10 +24,8 @@
 
 /obj/machinery/computer/secure_data/Initialize(mapload, obj/item/circuitboard/C)
 	. = ..()
-	AddComponent(/datum/component/usb_port, list(
-		/obj/item/circuit_component/arrest_console_data,
-		/obj/item/circuit_component/arrest_console_arrest,
-	))
+	AddComponent(/datum/component/shell,list(new /obj/item/circuit_component/arrest_console_data,
+					new /obj/item/circuit_component/arrest_console_arrest), SHELL_CAPACITY_MEDIUM)
 
 /obj/item/circuit_component/arrest_console_data
 	display_name = "Security Records Data"
@@ -40,8 +38,6 @@
 	/// Sends a signal on failure
 	var/datum/port/output/on_fail
 
-	var/obj/machinery/computer/secure_data/attached_console
-
 /obj/item/circuit_component/arrest_console_data/Initialize(mapload)
 	. = ..()
 	records = add_output_port("Security Records", PORT_TYPE_TABLE)
@@ -50,16 +46,6 @@
 /obj/item/circuit_component/arrest_console_data/Destroy()
 	records = null
 	on_fail = null
-	return ..()
-
-
-/obj/item/circuit_component/arrest_console_data/register_usb_parent(atom/movable/parent)
-	. = ..()
-	if(istype(parent, /obj/machinery/computer/secure_data))
-		attached_console = parent
-
-/obj/item/circuit_component/arrest_console_data/unregister_usb_parent(atom/movable/parent)
-	attached_console = null
 	return ..()
 
 /obj/item/circuit_component/arrest_console_data/get_ui_notices()
@@ -75,13 +61,17 @@
 		"fingerprint",
 	))
 
-
 /obj/item/circuit_component/arrest_console_data/input_received(datum/port/input/port)
 	. = ..()
 	if(.)
 		return
 
-	if(!attached_console || !attached_console.authenticated)
+	var/obj/machinery/computer/secure_data/shell = parent.shell
+	if(!istype(shell))
+		on_fail.set_output(COMPONENT_SIGNAL)
+		return
+
+	if(!shell.authenticated)
 		on_fail.set_output(COMPONENT_SIGNAL)
 		return
 
@@ -125,17 +115,6 @@
 	/// Sends a signal on failure
 	var/datum/port/output/on_fail
 
-	var/obj/machinery/computer/secure_data/attached_console
-
-/obj/item/circuit_component/arrest_console_arrest/register_usb_parent(atom/movable/parent)
-	. = ..()
-	if(istype(parent, /obj/machinery/computer/secure_data))
-		attached_console = parent
-
-/obj/item/circuit_component/arrest_console_arrest/unregister_usb_parent(atom/movable/parent)
-	attached_console = null
-	return ..()
-
 /obj/item/circuit_component/arrest_console_arrest/populate_options()
 	var/static/list/component_options = list(
 		COMP_STATE_ARREST,
@@ -165,7 +144,12 @@
 	if(.)
 		return
 
-	if(!attached_console || !attached_console.authenticated)
+	var/obj/machinery/computer/secure_data/shell = parent.shell
+	if(!istype(shell))
+		on_fail.set_output(COMPONENT_SIGNAL)
+		return
+
+	if(!shell.authenticated)
 		on_fail.set_output(COMPONENT_SIGNAL)
 		return
 
@@ -194,7 +178,7 @@
 		investigate_log("[names_of_entries.Join(", ")] have been set to [status_to_set] by [parent.get_creator()].", INVESTIGATE_RECORDS)
 		if(successful_set > COMP_SECURITY_ARREST_AMOUNT_TO_FLAG)
 			message_admins("[successful_set] security entries have been set to [status_to_set] by [parent.get_creator_admin()]. [ADMIN_COORDJMP(src)]")
-		for(var/mob/living/carbon/human/human as anything in GLOB.carbon_list)
+		for(var/mob/living/carbon/human/human in GLOB.carbon_list)
 			human.sec_hud_set_security_status()
 
 /obj/machinery/computer/secure_data/examine(mob/user)
