@@ -25,7 +25,7 @@
 	maxbodytemp = T0C + 40
 	maxHealth = 75
 	health = 75
-	melee_damage = 10 //For some reason it does double damage so leave it at half of what you want it. I'll try to figure out hopefully before this is out.
+	melee_damage = 5
 	obj_damage = 21 //21 is the minimum damage to hurt doors, which they need since they can't vent crawl.
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
@@ -98,6 +98,8 @@
 	return health <= MIMIC_HEALTH_FLEE_AMOUNT
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/latch(mob/living/target)
+	if(target.buckled)
+		target.buckled.unbuckle_mob(target,TRUE)
 	if(!istype(target))
 		return
 	if(target)
@@ -134,6 +136,8 @@
 		return
 	if(key)
 		return
+	if(stat == DEAD)
+		return
 	var/possess_ask = alert("Become a [name]? (Warning, You can no longer be cloned, and all past lives will be forgotten!)","Are you positive?","Yes","No")
 	if(possess_ask == "No" || QDELETED(src))
 		return
@@ -147,18 +151,22 @@
 	if(key) //Prevents hostile takeover if two ghosts get the prompt or link for the same mimic.
 		to_chat(candidate, "<span class='warning'>This [name] was taken over before you could get to it!</span>")
 		return FALSE
+	toggle_ai(AI_OFF) //Turns the AI off so it doesn't move without player input
+	SSmove_manager.stop_looping(src)
 	ckey = candidate.ckey
 	to_chat(src, playstyle_string)
 	mind.assigned_role = "Mimic"
-	set_stat(CONSCIOUS)
+	mind.add_antag_datum(/datum/antagonist/mimic)
+	remove_from_spawner_menu()
 	remove_from_dead_mob_list()
 	add_to_alive_mob_list()
-	toggle_ai(AI_OFF) //Turns the AI off so it doesn't move without player input
+	set_stat(CONSCIOUS)
 
 	return TRUE
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/ping_ghosts()
-	notify_ghosts("[name] created in [get_area(src)]!", enter_link = "<a href=?src=[REF(src)];activate=1>(Click to enter)</a>", source = src, action = NOTIFY_ATTACK, flashwindow = FALSE, notify_suiciders = FALSE)
+	set_playable()
+	// notify_ghosts("[name] created in [get_area(src)]!", enter_link = "<a href=?src=[REF(src)];activate=1>(Click to enter)</a>", source = src, action = NOTIFY_ATTACK, flashwindow = FALSE, notify_suiciders = FALSE)
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/disguise(atom/movable/target)
 	ai_disg_target = null
@@ -352,6 +360,8 @@
 	..()
 
 /mob/living/simple_animal/hostile/alien_mimic/AIShouldSleep(var/list/possible_targets)
+	if(mind)
+		return TRUE
 	var/should_sleep = !FindTarget(possible_targets, 1)
 	if(should_sleep) //Attempt to disguise
 		if(!ai_disg_target)
