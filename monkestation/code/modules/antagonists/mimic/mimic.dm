@@ -124,6 +124,9 @@
 		to_chat(src,"<span class='warning'>You can't reproduce while disguised!</span>")
 		return
 
+	if(splitting) //prevent stacking a bunch
+		return
+
 	if(people_absorbed > 0)
 		splitting = TRUE
 		to_chat(src,"<span class='warning'>You start splitting yourself in two!</span>")
@@ -298,12 +301,12 @@
 		return TRUE //fixes it jumping off of people immediately
 	if(iscarbon(the_target))
 		var/mob/living/carbon/carbon_target = the_target
-		if(carbon_target.stat == DEAD & should_heal() & !HAS_TRAIT(carbon_target, TRAIT_HUSK))
+		if(carbon_target.stat == DEAD && should_heal() && !HAS_TRAIT(carbon_target, TRAIT_HUSK))
 			return TRUE
 	if(isliving(the_target))
 		var/mob/living/living_target = the_target
 		var/mob/living/simple_animal/hostile/alien_mimic/attacking_friend = locate() in living_target.buckled_mobs
-		if(attacking_friend & attacking_friend != src)
+		if(attacking_friend && attacking_friend != src)
 			return FALSE
 		var/faction_check = faction_check_mob(living_target)
 		if((faction_check && !attack_same) || living_target.stat)
@@ -374,6 +377,16 @@
 	if(fleeing)
 		fleeing = FALSE
 	..()
+
+/mob/living/simple_animal/hostile/alien_mimic/ListTargets()
+	var/atom/target_from = GET_TARGETS_FROM(src)
+	if(!search_objects)
+		. = list()
+		for(var/atom/possible_target as() in dview(vision_range, get_turf(target_from), SEE_INVISIBLE_MINIMUM))
+			if(ismob(possible_target) && possible_target != src && !istype(possible_target,/mob/living/simple_animal/hostile/alien_mimic))
+				. += possible_target
+	else
+		. = oview(vision_range, target_from)
 
 /mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
 	if(AIStatus == AI_OFF)
