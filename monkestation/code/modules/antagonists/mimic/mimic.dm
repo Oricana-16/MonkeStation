@@ -88,22 +88,23 @@
 			return
 	. = ..()
 
-/mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target_item) // make it into property/proc ? not sure if worth it
+/mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target_item)
 	return isitem(target_item) & !istype(target_item, /obj/item/radio/intercom)
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/is_table(atom/possible_table)
 	return istype(possible_table, /obj/structure/table) || istype(possible_table, /obj/structure/rack)
 
+//Whether the AI should absorb a corpse when it gets the chance
 /mob/living/simple_animal/hostile/alien_mimic/proc/should_heal()
 	return health <= MIMIC_HEALTH_FLEE_AMOUNT
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/latch(mob/living/target)
+	if(!istype(target))
+		return
 	if(target.has_buckled_mobs())
 		unbuckle_all_mobs(force=TRUE)
 	if(target.buckled)
 		target.buckled.unbuckle_mob(target,TRUE)
-	if(!istype(target))
-		return
 	if(target)
 		if(target.buckle_mob(src, TRUE))
 			target.Knockdown(10 SECONDS)
