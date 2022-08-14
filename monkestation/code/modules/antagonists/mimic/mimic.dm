@@ -30,6 +30,7 @@
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	wander = FALSE
+	initial_language_holder = /datum/language_holder/mimic
 	attacktext = "consumes"
 	attack_sound = 'monkestation/sound/creatures/mimic/mimicattack.ogg'
 	var/absorb_sound = 'monkestation/sound/creatures/mimic/mimicabsorb.ogg'
@@ -44,6 +45,8 @@
 	var/atom/movable/form = null
 	var/disguise_time = 0
 	var/people_absorbed = 0
+	//If this is currently reproducing
+	var/splitting = FALSE
 	//The target npc mimic's try to disguise as.
 	var/atom/movable/ai_disg_target = null
 	//attempts to reach a disguise target
@@ -108,6 +111,7 @@
 	if(target)
 		if(target.buckle_mob(src, TRUE))
 			target.Knockdown(10 SECONDS)
+			target.drop_all_held_items()
 			layer = target.layer+0.01
 			visible_message("<span class='warning'>[src] latches onto [target]!</span>")
 			return TRUE
@@ -119,10 +123,13 @@
 	if(disguised)
 		to_chat(src,"<span class='warning'>You can't reproduce while disguised!</span>")
 		return
+
 	if(people_absorbed > 0)
+		splitting = TRUE
 		to_chat(src,"<span class='warning'>You start splitting yourself in two!</span>")
 		playsound(get_turf(src), split_sound,100)
 		if(do_mob(src, src, 5 SECONDS))
+			splitting = FALSE
 			if(people_absorbed <= 0 && !disguised)
 				return
 			to_chat(src,"<span class='warning'>You make another mimic!</span>")
@@ -130,6 +137,7 @@
 			split_mimic.ping_ghosts()
 			people_absorbed--
 			return
+		splitting = FALSE
 		to_chat(src,"<span class='warning'>You fail to split!</span>")
 		return
 	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
@@ -141,25 +149,31 @@
 		return
 	if(stat == DEAD)
 		return
+
 	var/possess_ask = alert("Become a [name]? (Warning, You can no longer be cloned, and all past lives will be forgotten!)","Are you positive?","Yes","No")
 	if(possess_ask == "No" || QDELETED(src))
 		return
+
 	if(suiciding) //clear suicide status if the old occupant suicided.
 		set_suicide(FALSE)
+
 	transfer_personality(user)
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/transfer_personality(mob/candidate)
 	if(QDELETED(src))
 		return
-	if(key) //Prevents hostile takeover if two ghosts get the prompt or link for the same mimic.
+	if(key)
 		to_chat(candidate, "<span class='warning'>This [name] was taken over before you could get to it!</span>")
 		return FALSE
+
 	toggle_ai(AI_OFF) //Turns the AI off so it doesn't move without player input
 	SSmove_manager.stop_looping(src)
+
 	ckey = candidate.ckey
-	to_chat(src, playstyle_string)
 	mind.assigned_role = "Mimic"
 	mind.add_antag_datum(/datum/antagonist/mimic)
+	to_chat(src, playstyle_string)
+
 	remove_from_spawner_menu()
 	remove_from_dead_mob_list()
 	add_to_alive_mob_list()
@@ -169,16 +183,16 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/ping_ghosts()
 	set_playable()
-	// notify_ghosts("[name] created in [get_area(src)]!", enter_link = "<a href=?src=[REF(src)];activate=1>(Click to enter)</a>", source = src, action = NOTIFY_ATTACK, flashwindow = FALSE, notify_suiciders = FALSE)
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/disguise(atom/movable/target)
+	if(splitting)
+		to_chat(src,"<span class='warning'>You can't disguise while splitting!</span>")
+		return
 	ai_disg_target = null
 	disguised = TRUE
 	form = target
 	desc = target.desc
 	disguise_time = world.time + MIMIC_DISGUISE_COOLDOWN
-	visible_message("<span class='warning'>[src] changes shape, becoming a copy of [target]!</span>", \
-					"<span class='notice'>You assume the form of [target].</span>")
 	appearance = target.appearance
 	if(length(target.vis_contents))
 		add_overlay(target.vis_contents)
@@ -188,6 +202,9 @@
 	pixel_x = initial(pixel_x)
 	density = target.density
 
+	visible_message("<span class='warning'>[src] changes shape, becoming a copy of [target]!</span>", \
+					"<span class='notice'>You assume the form of [target].</span>")
+
 	if(isliving(target))
 		var/mob/living/living_target = target
 		mobchatspan = living_target.mobchatspan
@@ -196,7 +213,7 @@
 
 	set_varspeed(move_to_delay*4) //4x slower when disguised
 	med_hud_set_health()
-	med_hud_set_status() //we're an object honest
+	med_hud_set_status()
 	return
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/restore()
@@ -209,13 +226,17 @@
 	animate_movement = SLIDE_STEPS
 	maptext = null
 	density = initial(density)
-	disguise_time = world.time + MIMIC_DISGUISE_COOLDOWN
-	visible_message("<span class='warning'>A mimic jumps out of \the [src]!</span>", \
-					"<span class='notice'>You reform to your normal body.</span>")
+
 	name = initial(name)
 	desc = initial(desc)
 	icon = initial(icon)
 	icon_state = initial(icon_state)
+
+	disguise_time = world.time + MIMIC_DISGUISE_COOLDOWN
+
+	visible_message("<span class='warning'>A mimic jumps out of \the [src]!</span>", \
+					"<span class='notice'>You reform to your normal body.</span>")
+
 	cut_overlays()
 	set_varspeed(initial(move_to_delay))
 	med_hud_set_health()
@@ -234,42 +255,8 @@
 			resist_buckle()
 	if(disguised && prob(MIMIC_JITTER_CHANCE))
 		visible_message("<span class='danger'>[src] jitters a bit...</span>",\
-				"<span class='userdanger'>You jitter a bit!</span>", null)
+				"<span class='userdanger'>You jitter a bit.</span>", null)
 	. = ..()
-
-
-/mob/living/simple_animal/hostile/alien_mimic/MoveToTarget(list/possible_targets)
-	if(fleeing)
-		SSmove_manager.move_away(src, target, 15, move_to_delay)
-		stop_automated_movement = 1
-		if(!target || !CanAttack(target))
-			LoseTarget()
-			return FALSE
-	else
-		..()
-
-/mob/living/simple_animal/hostile/alien_mimic/LoseTarget()
-	if(fleeing)
-		fleeing = FALSE
-	..()
-
-/mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
-	if(AIStatus == AI_OFF)
-		return FALSE
-	var/list/possible_targets = ListTargets() //we look around for potential targets and make it a list for later use.
-
-	if(environment_smash)
-		EscapeConfinement()
-
-	if(AICanContinue(possible_targets))
-		var/atom/target_from = GET_TARGETS_FROM(src)
-		if(!QDELETED(target) && !target_from.Adjacent(target))
-			DestroyPathToTarget()
-		if(!MoveToTarget(possible_targets))     //if we lose our target
-			if(AIShouldSleep(possible_targets))	// we try to acquire a new one
-				toggle_ai(AI_IDLE)			// otherwise we go idle
-	return TRUE
-
 
 /mob/living/simple_animal/hostile/alien_mimic/attacked_by(obj/item/item, mob/living/target)
 	if(src in target.buckled_mobs) //Can't attack if its Got ya
@@ -290,6 +277,22 @@
 	else
 		..()
 
+/mob/living/simple_animal/hostile/alien_mimic/death(gibbed)
+	if(disguised)
+		visible_message("<span class='warning'>[src] explodes in a pile of black goo!</span>", \
+						"<span class='userdanger'>You feel weak as your disguise start to dissolve.</span>")
+		restore()
+	..()
+
+//AI can't track disguised mimics
+/mob/living/simple_animal/hostile/alien_mimic/can_track(mob/living/user)
+	if(disguised)
+		return FALSE
+	return ..()
+
+/*
+	AI stuff below here
+*/
 /mob/living/simple_animal/hostile/alien_mimic/CanAttack(atom/the_target)
 	if(the_target == buckled)
 		return TRUE //fixes it jumping off of people immediately
@@ -308,7 +311,7 @@
 	return TRUE
 
 /mob/living/simple_animal/hostile/alien_mimic/adjustHealth(amount, updating_health, forced)
-	if(amount > 0) //if you take damage, run
+	if(amount > 0 && !mind) //if you take damage, run
 		if(buckled)
 			resist_buckle()
 		if(!target)
@@ -346,7 +349,9 @@
 		else if(do_mob(src, target, 3 SECONDS)) //Latch after a bit if you arent
 			latch(victim)
 			return
-	if(buckled || !ismob(target)) //If you're buckled or attacking a non-human
+	if(buckled || !ismob(target)) //If you're buckled to them, or attacking a non-human
+		if(target != buckled)
+			return
 		return ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/Aggro()
@@ -355,12 +360,37 @@
 		restore()
 		toggle_ai(AI_ON)
 
-/mob/living/simple_animal/hostile/alien_mimic/death(gibbed)
-	if(disguised)
-		visible_message("<span class='warning'>[src] explodes in a pile of black goo!</span>", \
-						"<span class='userdanger'>You feel weak as your disguise start to dissolve.</span>")
-		restore()
+/mob/living/simple_animal/hostile/alien_mimic/MoveToTarget(list/possible_targets)
+	if(fleeing)
+		SSmove_manager.move_away(src, target, 15, move_to_delay)
+		stop_automated_movement = 1
+		if(!target || !CanAttack(target))
+			LoseTarget()
+			return FALSE
+	else
+		..()
+
+/mob/living/simple_animal/hostile/alien_mimic/LoseTarget()
+	if(fleeing)
+		fleeing = FALSE
 	..()
+
+/mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
+	if(AIStatus == AI_OFF)
+		return FALSE
+	var/list/possible_targets = ListTargets() //we look around for potential targets and make it a list for later use.
+
+	if(environment_smash)
+		EscapeConfinement()
+
+	if(AICanContinue(possible_targets))
+		var/atom/target_from = GET_TARGETS_FROM(src)
+		if(!QDELETED(target) && !target_from.Adjacent(target))
+			DestroyPathToTarget()
+		if(!MoveToTarget(possible_targets))     //if we lose our target
+			if(AIShouldSleep(possible_targets))	// we try to acquire a new one
+				toggle_ai(AI_IDLE)			// otherwise we go idle
+	return TRUE
 
 /mob/living/simple_animal/hostile/alien_mimic/AIShouldSleep(var/list/possible_targets)
 	if(mind)
@@ -420,11 +450,7 @@
 		return
 	..()
 
-//AI can't track mimics
-/mob/living/simple_animal/hostile/alien_mimic/can_track(mob/living/user)
-	if(disguised)
-		return FALSE
-	return ..()
+
 
 /datum/action/innate/mimic_reproduce
 	name = "Reproduce"
