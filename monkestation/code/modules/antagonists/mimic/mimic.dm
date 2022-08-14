@@ -98,6 +98,8 @@
 	return health <= MIMIC_HEALTH_FLEE_AMOUNT
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/latch(mob/living/target)
+	if(target.has_buckled_mobs())
+		unbuckle_all_mobs(force=TRUE)
 	if(target.buckled)
 		target.buckled.unbuckle_mob(target,TRUE)
 	if(!istype(target))
