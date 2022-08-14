@@ -95,7 +95,7 @@
 /mob/living/simple_animal/pet/dog/bullterrier/walter/ookter
 	name = "Ookter"
 	real_name = "Ookter"
-	desc = "Security has captured this banana loving monkey-dog!"
+	desc = "Security is nothing compared to the might of this banana loving dog!"
 	icon = 'monkestation/icons/mob/walterverse.dmi'
 	icon_state = "ookter"
 	icon_living = "ookter"
@@ -110,12 +110,25 @@
 	real_name = "Smallter"
 	desc = "Nar'sie and rat'var are nothing compared to the might of this tiny dog."
 	gold_core_spawnable = FRIENDLY_SPAWN
+	mob_size = MOB_SIZE_TINY
 	ventcrawler = VENTCRAWLER_ALWAYS //little guy fits in the vents
 	speak = list("barks", "woofs", "walter", "firetrucks", "monstertrucks")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/smallter/Initialize(mapload)
 	. = ..()
 	resize = 0.5
+	update_transform()
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/big_walter
+	name = "Big Walter"
+	real_name = "Big Walter"
+	desc = "Nar'sie and rat'var are nothing compared to the might of this massive dog."
+	gold_core_spawnable = FRIENDLY_SPAWN
+	speak = list("BARKS", "WOOFS", "WALTER", "FIRETRUCKS", "MONSTERTRUCKS")
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/big_walter/Initialize(mapload)
+	. = ..()
+	resize = 2
 	update_transform()
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/french
