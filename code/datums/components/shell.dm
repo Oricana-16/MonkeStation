@@ -78,8 +78,11 @@
 	var/obj/item/stock_parts/cell/cell = attached_circuit.cell
 	examine_text += "<span class='notice'>The charge meter reads [cell ? round(cell.percent(), 1) : 0]%.</span>"
 
-	if (shell_flags & SHELL_FLAG_USB_PORT)
+	if(shell_flags & SHELL_FLAG_USB_PORT)
 		examine_text += "<span class='notice'>There is a <b>USB port</b> on the front.</span>"
+
+	if(shell.anchored)
+		examine_text += span_notice("The shell does not require a battery to function and will draw from the area's APC while anchored.")
 
 
 /**

@@ -189,6 +189,12 @@
 	if(!parent?.on)
 		return TRUE
 
+	if(parent.shell?.anchored)
+		var/area/location = get_area(parent)
+		if(location.powered(AREA_USAGE_EQUIP))
+			location.use_power(power_usage_per_input, AREA_USAGE_EQUIP)
+			return FALSE
+
 	var/obj/item/stock_parts/cell/cell = parent.get_cell()
 	if(!cell?.use(power_usage_per_input))
 		return TRUE
