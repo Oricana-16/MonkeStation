@@ -134,6 +134,9 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light_switch, 26)
 	if(.)
 		return
 
+	if(!COMPONENT_TRIGGERED_BY(trigger,port))
+		return
+
 	var/obj/machinery/light_switch/shell = parent.shell
 	if(!istype(shell))
 		return

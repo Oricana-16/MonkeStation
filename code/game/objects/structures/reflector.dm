@@ -293,6 +293,9 @@ Ported from /tg/station: PR #64037
 	if(.)
 		return
 
+	if(!COMPONENT_TRIGGERED_BY(trigger,port))
+		return
+
 	var/obj/structure/reflector/shell = parent.shell
 	if(!istype(shell))
 		return
