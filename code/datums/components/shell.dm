@@ -81,7 +81,7 @@
 	if(shell_flags & SHELL_FLAG_USB_PORT)
 		examine_text += "<span class='notice'>There is a <b>USB port</b> on the front.</span>"
 
-	if(parent.anchored)
+	if(shell_flags & SHELL_FLAG_REQUIRE_ANCHOR)
 		examine_text += span_notice("The shell does not require a battery to function and will draw from the area's APC while anchored.")
 
 
