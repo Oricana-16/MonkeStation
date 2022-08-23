@@ -67,7 +67,7 @@
 	. = ..()
 	mood_message = "<span class='warning'>[scramble_message_replace_chars("###### ### #### ###### #######", 100)]!</span>"
 
-/area/tear_in_reality/get_virtual_z(turf/T)
+/area/tear_in_reality/get_virtual_z(turf/tear_turf)
 	return REALITY_TEAR_VIRTUAL_Z
 
 //===================
@@ -123,11 +123,11 @@
 	effect_act_descs = list("in darkness")
 
 /datum/artifact_effect/soundindark/process(delta_time)
-	var/turf/T = get_turf(source_object)
-	if(!T || T.get_lumcount())
+	var/turf/source_turf = get_turf(source_object)
+	if(!source_turf || source_turf.get_lumcount())
 		return
 	if(prob(5))
-		playsound(T, pick('sound/voice/human/womanlaugh.ogg', 'sound/voice/human/manlaugh1.ogg'), 40)
+		playsound(source_turf, pick('sound/voice/human/womanlaugh.ogg', 'sound/voice/human/manlaugh1.ogg'), 40)
 
 //===================
 // Spasm inducing
@@ -158,8 +158,8 @@
 	callback = _callback
 	monitor?.hasprox_receiver = src
 
-/atom/movable/proximity_monitor_holder/HasProximity(atom/movable/AM)
-	return callback.Invoke(AM)
+/atom/movable/proximity_monitor_holder/HasProximity(atom/movable/possible_projectile)
+	return callback.Invoke(possible_projectile)
 
 /atom/movable/proximity_monitor_holder/Destroy()
 	QDEL_NULL(monitor)
@@ -181,9 +181,9 @@
 	QDEL_NULL(monitor_holder)
 	return ..()
 
-/datum/artifact_effect/projreflect/proc/HasProximity(atom/movable/AM)
-	if(istype(AM, /obj/item/projectile))
-		var/obj/item/projectile/P = AM
+/datum/artifact_effect/projreflect/proc/HasProximity(atom/movable/possible_projectile)
+	if(istype(possible_projectile, /obj/item/projectile))
+		var/obj/item/projectile/P = possible_projectile
 		P.setAngle(rand(0, 360))
 		P.ignore_source_check = TRUE //Allow the projectile to hit the shooter after it gets reflected
 
@@ -219,9 +219,9 @@
 	requires_processing = TRUE
 
 /datum/artifact_effect/atmosfix/process(delta_time)
-	var/turf/T = get_turf(source_object)
-	var/datum/gas_mixture/air = T.return_air()
-	air.parse_gas_string(T.initial_gas_mix)
+	var/turf/source_turf = get_turf(source_object)
+	var/datum/gas_mixture/air = source_turf.return_air()
+	air.parse_gas_string(source_turf.initial_gas_mix)
 
 //===================
 // Gravity Well
@@ -238,9 +238,9 @@
 /datum/artifact_effect/gravity_well/proc/suck(datum/source, mob/warper)
 	if(world.time < next_use_world_time)
 		return
-	var/turf/T = get_turf(warper)
-	if(T)
-		goonchem_vortex(T, FALSE, 8)
+	var/turf/user_turf = get_turf(warper)
+	if(user_turf)
+		goonchem_vortex(user_turf, FALSE, 8)
 		playsound(source_object, 'sound/magic/repulse.ogg', 60)
 		next_use_world_time = world.time + 150
 
@@ -297,9 +297,9 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 	GLOB.destabliization_exits += source
 
 /datum/artifact_effect/reality_destabilizer/Destroy()
-	for(var/atom/movable/AM as() in contained_things)
-		if(istype(get_area(AM), /area/tear_in_reality))
-			AM.forceMove(get_turf(source_object))
+	for(var/atom/movable/possible_target as() in contained_things)
+		if(istype(get_area(possible_target), /area/tear_in_reality))
+			possible_target.forceMove(get_turf(source_object))
 	contained_things.Cut()
 	GLOB.destabliization_exits -= source_object
 	. = ..()
@@ -308,39 +308,39 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 	if(world.time < cooldown)
 		return
 	cooldown = world.time + rand(0, 30 SECONDS)
-	var/turf/T = get_turf(source_object)
-	if(!T)
+	var/turf/source_turf = get_turf(source_object)
+	if(!source_turf)
 		return
-	for(var/atom/movable/AM in view(3, T))
-		if(AM == source_object)
+	for(var/atom/movable/possible_target in view(3, source_turf))
+		if(possible_target == source_object)
 			continue
-		if(isobj(AM))
-			var/obj/O = AM
+		if(isobj(possible_target))
+			var/obj/O = possible_target
 			if(O.resistance_flags & INDESTRUCTIBLE)
 				continue
-		if(AM.anchored)
+		if(possible_target.anchored)
 			continue
 		if(prob(3))
-			destabilize(AM)
+			destabilize(possible_target)
 
-/datum/artifact_effect/reality_destabilizer/proc/destabilize(atom/movable/AM)
+/datum/artifact_effect/reality_destabilizer/proc/destabilize(atom/movable/possible_target)
 	//Banish to the void
-	addtimer(CALLBACK(src, .proc/restabilize, AM, get_turf(AM)), rand(10 SECONDS, 90 SECONDS))
+	addtimer(CALLBACK(src, .proc/restabilize, possible_target, get_turf(possible_target)), rand(10 SECONDS, 90 SECONDS))
 	//Forcemove to ignore teleport checks
-	AM.forceMove(pick(GLOB.destabilization_spawns))
-	contained_things += AM
+	possible_target.forceMove(pick(GLOB.destabilization_spawns))
+	contained_things += possible_target
 
-/datum/artifact_effect/reality_destabilizer/proc/restabilize(atom/movable/AM, turf/T)
+/datum/artifact_effect/reality_destabilizer/proc/restabilize(atom/movable/possible_target, turf/source_turf)
 	if(QDELETED(src))
 		return
-	if(QDELETED(AM))
+	if(QDELETED(possible_target))
 		return
-	var/area/A = get_area(AM)
+	var/area/A = get_area(possible_target)
 	//already left the tear.
 	if(!istype(A, /area/tear_in_reality))
 		return
-	AM.forceMove(T)
-	contained_things -= AM
+	possible_target.forceMove(source_turf)
+	contained_things -= possible_target
 
 //===================
 // Teleport
@@ -357,9 +357,9 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 /datum/artifact_effect/warp/proc/teleport(datum/source, mob/warper)
 	if(world.time < next_use_world_time)
 		return
-	var/turf/T = get_turf(warper)
-	if(T)
-		do_teleport(warper, pick(RANGE_TURFS(10, T)), channel = TELEPORT_CHANNEL_FREE)
+	var/turf/user_turf = get_turf(warper)
+	if(user_turf)
+		do_teleport(warper, pick(RANGE_TURFS(10, user_turf)), channel = TELEPORT_CHANNEL_FREE)
 		next_use_world_time = world.time + 150
 
 //===================
@@ -412,8 +412,8 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 	output = pickweight(valid_outputs)
 
 /datum/artifact_effect/gas_remove/process(delta_time)
-	var/turf/T = get_turf(source_object)
-	var/datum/gas_mixture/air = T.return_air()
+	var/turf/source_turf = get_turf(source_object)
+	var/datum/gas_mixture/air = source_turf.return_air()
 	var/input_id = initial(input.id)
 	var/output_id = initial(output.id)
 	var/moles = min(air.get_moles(input_id), 5)
@@ -430,10 +430,10 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 	requires_processing = TRUE
 
 /datum/artifact_effect/recharger/process(delta_time)
-	var/turf/T = get_turf(source_object)
-	if(!T)
+	var/turf/source_turf = get_turf(source_object)
+	if(!source_turf)
 		return
-	for(var/atom/movable/thing in view(3, T))
+	for(var/atom/movable/thing in view(3, source_turf))
 		var/obj/item/stock_parts/cell/C = thing.get_cell()
 		if(C)
 			C.give(250 * delta_time)
@@ -451,11 +451,11 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 /datum/artifact_effect/light_breaker/process(delta_time)
 	if(world.time < next_world_time)
 		return
-	var/turf/T = get_turf(source_object)
-	for(var/datum/light_source/light_source in T.affecting_lights)
-		var/atom/movable/AM = light_source.source_atom
+	var/turf/source_turf = get_turf(source_object)
+	for(var/datum/light_source/light_source in source_turf.affecting_lights)
+		var/atom/movable/light_source_atom = light_source.source_atom
 		//Starts at light but gets stronger the longer it is in light.
-		AM.lighteater_act()
+		light_source_atom.lighteater_act()
 	next_world_time = world.time + rand(30 SECONDS, 5 MINUTES)
 
 //===================
@@ -483,18 +483,18 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 		return
 	SEND_SOUND(world, 'sound/magic/repulse.ogg')
 	next_use_time = world.time + cooldown
-	var/turf/T = get_turf(pulser)
-	log_attack("[key_name_admin(pulser)] activated an insanity pulse at [COORD(T)]. [first_time ? " (Effects were unknown)" : " (Artifact had been activated before)"]")
+	var/turf/pulser_turf = get_turf(pulser)
+	log_attack("[key_name_admin(pulser)] activated an insanity pulse at [COORD(pulser_turf)]. [first_time ? " (Effects were unknown)" : " (Artifact had been activated before)"]")
 	message_admins("[ADMIN_LOOKUPFLW(pulser)] activated an insanity pulse [first_time ? " (Effects were unknown)" : " (Artifact had been activated before)"].")
 	if(first_time)
 		var/research_reward = rand(5000, 20000)
-		priority_announce("Spacetime anomaly detected at [T.loc]. Data analysis completed, [research_reward] research points rewarded.", "Nanotrasen Research Division", ANNOUNCER_SPANOMALIES)
+		priority_announce("Spacetime anomaly detected at [pulser_turf.loc]. Data analysis completed, [research_reward] research points rewarded.", "Nanotrasen Research Division", ANNOUNCER_SPANOMALIES)
 		SSresearch.science_tech.add_points_all(research_reward)
 	first_time = FALSE
 	var/xrange = 50
 	var/yrange = 50
-	var/cx = T.x
-	var/cy = T.y
+	var/cx = pulser_turf.x
+	var/cy = pulser_turf.y
 	pulser.blind_eyes(300)
 	pulser.Stun(100)
 	pulser.emote("scream")
@@ -502,10 +502,10 @@ GLOBAL_LIST_EMPTY(destabliization_exits)
 	for(var/r in 1 to max(xrange, yrange))
 		var/xr = min(xrange, r)
 		var/yr = min(yrange, r)
-		var/turf/TL = locate(cx - xr, cy + yr, T.z)
-		var/turf/BL = locate(cx - xr, cy - yr, T.z)
-		var/turf/TR = locate(cx + xr, cy + yr, T.z)
-		var/turf/BR = locate(cx + xr, cy - yr, T.z)
+		var/turf/TL = locate(cx - xr, cy + yr, pulser_turf.z)
+		var/turf/BL = locate(cx - xr, cy - yr, pulser_turf.z)
+		var/turf/TR = locate(cx + xr, cy + yr, pulser_turf.z)
+		var/turf/BR = locate(cx + xr, cy - yr, pulser_turf.z)
 		var/list/turfs = list()
 		turfs += block(TL, TR)
 		turfs += block(TL, BL)
