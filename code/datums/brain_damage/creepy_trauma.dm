@@ -95,6 +95,7 @@
 					owner.Immobilize(5 SECONDS)
 					to_chat(owner,"<span class='warning'>You're too nervous around them, you lock up!</span>")
 				if(5)
+					to_chat(owner,"<span class='warning'>You're too nervous around them, you lock up!</span>")
 					//TODO: STUTTER
 
 /datum/brain_trauma/special/obsessed/proc/out_of_view()

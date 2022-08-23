@@ -100,6 +100,12 @@
 				jealous.find_target()//will reroll into a coworker on the objective itself
 				objectives += jealous
 				log_objective(owner, jealous.explanation_text)
+			if("protect")
+				var/datum/objective/protect_obsession/protect = new
+				protect.owner = owner
+				protect.set_target(obsessionmind)
+				objectives += protect
+				log_objective(owner, protect.explanation_text)
 
 	// objectives += kill//finally add the assassinate last, because you'd have to complete it last to greentext.
 	// log_objective(owner, kill.explanation_text)
@@ -287,6 +293,22 @@
 		explanation_text = "Steal [target.name]'s family heirloom, [steal_target] they cherish."
 	else
 		explanation_text = "Free Objective"
+
+/datum/objective/protect_obsession //take a picture of the target with you in it.
+	name = "protect_obsession"
+
+/datum/objective/protect_obsession/update_explanation_text()
+	..()
+	if(target && target.current)
+		explanation_text = "Keep [target.name] alive until the end of the shift."
+	else
+		explanation_text = "Free Objective"
+
+/datum/objective/protect_obsession/check_completion()
+	return ..() || !target || considered_alive(target)
+
+/datum/objective/protect_obsession/on_target_cryo()
+	qdel(src)
 
 /datum/antagonist/obsessed/proc/update_obsession_icons_added(var/mob/living/carbon/human/obsessed)
 	var/datum/atom_hud/antag/creephud = GLOB.huds[ANTAG_HUD_OBSESSED]
