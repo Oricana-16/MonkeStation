@@ -9,17 +9,17 @@
 	var/datum/brain_trauma/special/obsessed/trauma
 
 /datum/antagonist/obsessed/admin_add(datum/mind/new_owner,mob/admin)
-	var/mob/living/carbon/C = new_owner.current
-	if(!istype(C))
+	var/mob/living/carbon/new_current = new_owner.current
+	if(!istype(new_current))
 		to_chat(admin, "[roundend_category] come from a brain trauma, so they need to at least be a carbon!")
 		return
-	if(!C.getorgan(/obj/item/organ/brain)) // If only I had a brain
+	if(!new_current.getorgan(/obj/item/organ/brain)) // If only I had a brain
 		to_chat(admin, "[roundend_category] come from a brain trauma, so they need to HAVE A BRAIN.")
 		return
 	message_admins("[key_name_admin(admin)] made [key_name_admin(new_owner)] into [name].")
 	log_admin("[key_name(admin)] made [key_name(new_owner)] into [name].")
 	//PRESTO FUCKIN MAJESTO
-	C.gain_trauma(/datum/brain_trauma/special/obsessed)//ZAP
+	new_current.gain_trauma(/datum/brain_trauma/special/obsessed)//ZAP
 
 /datum/antagonist/obsessed/greet()
 	if(!trauma?.obsession)
@@ -40,15 +40,15 @@
 	. = ..()
 
 /datum/antagonist/obsessed/apply_innate_effects(mob/living/mob_override)
-	var/mob/living/M = mob_override || owner.current
-	update_obsession_icons_added(M)
+	var/mob/living/mob = mob_override || owner.current
+	update_obsession_icons_added(mob)
 
 /datum/antagonist/obsessed/remove_innate_effects(mob/living/mob_override)
-	var/mob/living/M = mob_override || owner.current
-	update_obsession_icons_removed(M)
+	var/mob/living/mob = mob_override || owner.current
+	update_obsession_icons_removed(mob)
 
 /datum/antagonist/obsessed/proc/forge_objectives(var/datum/mind/obsessionmind)
-	var/list/objectives_left = list("spendtime", "polaroid", "hug")
+	var/list/objectives_left = list("watch", "polaroid", "hug")
 	var/datum/objective/assassinate/obsessed/kill = new
 	kill.owner = owner
 	kill.set_target(obsessionmind)
@@ -58,6 +58,7 @@
 		if(istype(quirky, /datum/quirk/family_heirloom))
 			family_heirloom = quirky
 			break
+
 	if(family_heirloom)//oh, they have an heirloom? Well you know we have to steal that.
 		objectives_left += "heirloom"
 
@@ -65,15 +66,14 @@
 		objectives_left += "jealous"//if they have no coworkers, jealousy will pick someone else on the station. this will never be a free objective, nice.
 
 	for(var/i in 1 to 3)
-		var/chosen_objective = pick(objectives_left)
-		objectives_left.Remove(chosen_objective)
+		var/chosen_objective = pick_n_take(objectives_left)
 		switch(chosen_objective)
-			if("spendtime")
-				var/datum/objective/spendtime/spendtime = new
-				spendtime.owner = owner
-				spendtime.set_target(obsessionmind)
-				objectives += spendtime
-				log_objective(owner, spendtime.explanation_text)
+			if("watch")
+				var/datum/objective/watch/watch = new
+				watch.owner = owner
+				watch.set_target(obsessionmind)
+				objectives += watch
+				log_objective(owner, watch.explanation_text)
 			if("polaroid")
 				var/datum/objective/polaroid/polaroid = new
 				polaroid.owner = owner
@@ -101,10 +101,10 @@
 				objectives += jealous
 				log_objective(owner, jealous.explanation_text)
 
-	objectives += kill//finally add the assassinate last, because you'd have to complete it last to greentext.
-	log_objective(owner, kill.explanation_text)
-	for(var/datum/objective/O in objectives)
-		O.update_explanation_text()
+	// objectives += kill//finally add the assassinate last, because you'd have to complete it last to greentext.
+	// log_objective(owner, kill.explanation_text)
+	for(var/datum/objective/current_objective in objectives)
+		current_objective.update_explanation_text()
 
 /datum/antagonist/obsessed/roundend_report_header()
 	return 	"<span class='header'>Someone became obsessed!</span><br>"
@@ -209,33 +209,33 @@
 	update_explanation_text()
 	return target
 
-/datum/objective/spendtime //spend some time around someone, handled by the obsessed trauma since that ticks
-	name = "spendtime"
-	var/timer = 1800 //5 minutes
+/datum/objective/watch //spend some time around someone, handled by the obsessed trauma since that ticks
+	name = "watch"
+	var/timer = 3 MINUTES
 
-/datum/objective/spendtime/update_explanation_text()
+/datum/objective/watch/update_explanation_text()
 	if(timer == initial(timer))//just so admins can mess with it
-		timer += pick(-600, 0)
+		timer += pick(-1 MINUTES, 0)
 	var/datum/antagonist/obsessed/creeper = owner.has_antag_datum(/datum/antagonist/obsessed)
 	if(target && target.current && creeper)
-		creeper.trauma.attachedobsessedobj = src
-		explanation_text = "Spend [DisplayTimeText(timer)] around [target.name] while they're alive."
+		creeper.trauma.watching_objective = src
+		explanation_text = "Watch [target.name] for [DisplayTimeText(timer)]."
 	else
 		explanation_text = "Free Objective"
 
-/datum/objective/spendtime/check_completion()
+/datum/objective/watch/check_completion()
 	return timer <= 0 || explanation_text == "Free Objective" || ..()
 
-/datum/objective/spendtime/on_target_cryo()
+/datum/objective/watch/on_target_cryo()
 	qdel(src)
 
-/datum/objective/hug//this objective isn't perfect. hugging the correct amount of times, then switching bodies, might fail the objective anyway. maybe i'll come back and fix this sometime.
+/datum/objective/hug //this objective isn't perfect. hugging the correct amount of times, then switching bodies, might fail the objective anyway. maybe i'll come back and fix this sometime.
 	name = "hugs"
 	var/hugs_needed
 
 /datum/objective/hug/update_explanation_text()
 	..()
-	if(!hugs_needed)//just so admins can mess with it
+	if(!hugs_needed) //just so admins can mess with it
 		hugs_needed = rand(4,6)
 	var/datum/antagonist/obsessed/creeper = owner.has_antag_datum(/datum/antagonist/obsessed)
 	if(target && target.current && creeper)
