@@ -33,7 +33,7 @@
 		return
 	..()
 
-/obj/item/autosurgeon/attackby(obj/item/implant, mob/user, params)
+/obj/item/autosurgeon/neuromod/attackby(obj/item/implant, mob/user, params)
 	if(istype(implant, organ_type))
 		to_chat(user, "<span class='notice'>You can't fit the [implant] into [src].</span>")
 	else
@@ -188,3 +188,41 @@
 	ADD_TRAIT(owner, TRAIT_NOBREATH, "neuromod")
 	owner.visible_message("<span class='danger'>[owner] falls into [target]'s shadow!</span>","<span class='notice'>You enter [target]'s shadow.</span>")
 	owner.forceMove(target)
+
+//Smuggle
+
+/obj/item/autosurgeon/neuromod/smuggle
+	name = "smuggle neuromod"
+	starting_organ = list(/obj/item/organ/cyberimp/neuromod/smuggle)
+
+/obj/item/organ/cyberimp/neuromod/smuggle
+	name = "Smuggle"
+	desc = "This neuromod lets you store an item inside your body."
+	icon = 'icons/obj/abductor.dmi'
+	icon_state = "implant"
+	cooldown = 5 SECONDS
+	var/obj/item/stored_item
+	actions_types = list(/datum/action/item_action/organ_action/use)
+
+/obj/item/organ/cyberimp/neuromod/smuggle/ui_action_click()
+	. = ..()
+	if(.)
+		return
+	if(stored_item)
+		icon_state = initial(icon_state)
+		icon = initial(icon)
+		owner.put_in_hands(stored_item)
+		owner.visible_message("\The [stored_item] falls out of [owner]'s skin and into \his hand.","\The [stored_item] phases out of your skin and into your hand.")
+		stored_item = null
+	else
+		var/list/hand_items = list(owner.get_active_held_item(),owner.get_inactive_held_item())
+		for(var/obj/item/item in hand_items) //Put the item away
+			if(item.item_flags & ABSTRACT)
+				continue
+			stored_item = item
+			owner.visible_message("\The [item] disappears into [owner]'s into \his hand.","\The [item] sinks into your skin.")
+			icon_state = item.icon_state
+			icon = item.icon
+			item.moveToNullspace()
+			break
+	owner.update_action_buttons()
