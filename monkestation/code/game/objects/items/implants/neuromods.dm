@@ -1,6 +1,11 @@
 //TODO: Make the mimic organ work with the Experimentor
 //TODO: Make the mimic organ able to be surgeried out of the mimics
 
+#define NEUROMOD_SUPER_RARE 1
+#define NEUROMOD_RARE 4
+#define NEUROMOD_UNCOMMON 7
+#define NEUROMOD_COMMON 12
+
 /obj/item/mimic_organ
 	name = "mimic organ"
 	desc = "A mass of black goo. The E.X.P.E.R.I-MENTOR could probably do something with this."
@@ -8,6 +13,18 @@
 	icon_state = "stamp-clown"
 	item_state = "stamp-clown"
 	w_class = WEIGHT_CLASS_SMALL
+
+/obj/item/mimic_organ/proc/roll_neuromod()
+	var/static/list/neuromod_list = list(
+		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
+		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
+		/obj/item/autosurgeon/neuromod/scramble = NEUROMOD_COMMON
+	)
+	var/obj/item/autosurgeon/neuromod/new_neuromod = pickweight(neuromod_list)
+	new new_neuromod(get_turf(src))
+	qdel(src)
 
 /obj/item/autosurgeon/neuromod
 	name = "neuromod"
@@ -19,13 +36,10 @@
 	uses = 1
 	starting_organ = list(/obj/item/organ/cyberimp/neuromod)
 
-/obj/item/autosurgeon/neuromod/Initialize(mapload)
+/obj/item/autosurgeon/neuromod/examine(mob/user)
 	. = ..()
-	for(var/implant in starting_organ)
-		if(istype(implant,/obj/item/organ/cyberimp/neuromod))
-			var/obj/item/organ/cyberimp/neuromod/neuro_implant
-			name = "[neuro_implant.name] [name]"
-			desc = "[desc] [neuro_implant.desc]"
+	for(var/obj/item/organ in storedorgan)
+		. += organ.desc
 
 /obj/item/autosurgeon/neuromod/attack_self(mob/user)
 	if(user.getorganslot(ORGAN_SLOT_BRAIN_NEUROMOD))
@@ -110,7 +124,7 @@
 /obj/item/organ/cyberimp/neuromod/targeted/phantom_shift/activate(target)
 	..()
 	var/turf/target_turf = get_turf(target)
-	owner.visible_message("[owner] vanishes in a puff of black smoke!","You step into nothing and silently appear where you wanted to.")
+	owner.visible_message("[owner] vanishes in a puff of black smoke!","You step into nothing and silently appear in a new area.")
 	do_teleport(owner, target_turf, no_effects = TRUE)
 
 //Kinetic Blast
@@ -122,7 +136,7 @@
 /obj/item/organ/cyberimp/neuromod/kinetic_blast
 	name = "Kinetic Blast"
 	desc = "This neuromod blasts nearby people and objects away."
-	cooldown = 40 SECONDS
+	cooldown = 20 SECONDS
 	actions_types = list(/datum/action/item_action/organ_action/use)
 
 /obj/item/organ/cyberimp/neuromod/kinetic_blast/ui_action_click()
@@ -220,7 +234,7 @@
 		icon_state = initial(icon_state)
 		icon = initial(icon)
 		owner.put_in_hands(stored_item)
-		owner.visible_message("\The [stored_item] falls out of [owner]'s skin and into \his hand.","\The [stored_item] phases out of your skin and into your hand.")
+		owner.visible_message("<span class='notice'>\The [stored_item] falls out of [owner]'s skin and into \his hand.</span>","<span class='notice'>\The [stored_item] phases out of your skin and into your hand.</span>")
 		stored_item = null
 	else
 		var/list/hand_items = list(owner.get_active_held_item(),owner.get_inactive_held_item())
@@ -228,7 +242,7 @@
 			if(item.item_flags & ABSTRACT)
 				continue
 			stored_item = item
-			owner.visible_message("\The [item] disappears into [owner]'s into \his hand.","\The [item] sinks into your skin.")
+			owner.visible_message("<span class='notice'>\The [item] disappears into [owner]'s into \his hand.</span>","\<span class='notice'>The [item] sinks into your skin.</span>")
 			icon_state = item.icon_state
 			icon = item.icon
 			item.forceMove(owner)
@@ -239,6 +253,26 @@
 	icon_state = initial(icon_state)
 	icon = initial(icon)
 	stored_item.forceMove(get_turf(owner))
-	owner.visible_message("\The [stored_item] falls out of [owner]'s corpse")
+	owner.visible_message("<span class='notice'>\The [stored_item] falls out of [owner]'s corpse</span>")
 	stored_item = null
 
+//Scramble Electronics
+
+/obj/item/autosurgeon/neuromod/scramble
+	name = "scramble electronics neuromod"
+	starting_organ = list(/obj/item/organ/cyberimp/neuromod/targeted/scramble)
+
+/obj/item/organ/cyberimp/neuromod/targeted/scramble
+	name = "Scramble Electronics"
+	desc = "This neuromod allows to mess with nearby electronics."
+	cast_message = "<span class='notice'>You feel electricity spark behind your eyes. Click on a target area.</span>"
+	cancel_message = "<span class='notice'>You the electricity calms.</span>"
+	max_distance = 3
+	cooldown = 30 SECONDS
+	actions_types = list(/datum/action/item_action/organ_action/use)
+
+/obj/item/organ/cyberimp/neuromod/targeted/scramble/activate(target)
+	..()
+	var/atom/movable/movable_target = target
+	to_chat(owner,"<span class='notice'>You focus on \the [movable_target], messing with the electronics.</span")
+	movable_target.emp_act(EMP_HEAVY)
