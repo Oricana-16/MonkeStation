@@ -200,9 +200,17 @@
 	desc = "This neuromod lets you store an item inside your body."
 	icon = 'icons/obj/abductor.dmi'
 	icon_state = "implant"
-	cooldown = 5 SECONDS
+	cooldown = 3 SECONDS
 	var/obj/item/stored_item
 	actions_types = list(/datum/action/item_action/organ_action/use)
+
+/obj/item/organ/cyberimp/neuromod/smuggle/Insert(mob/living/carbon/M, special, drop_if_replaced)
+	. = ..()
+	RegisterSignal(owner, COMSIG_MOB_DEATH, .proc/owner_death)
+
+/obj/item/organ/cyberimp/neuromod/smuggle/Remove(mob/living/carbon/M, special)
+	. = ..()
+	UnregisterSignal(owner, COMSIG_MOB_DEATH)
 
 /obj/item/organ/cyberimp/neuromod/smuggle/ui_action_click()
 	. = ..()
@@ -223,6 +231,14 @@
 			owner.visible_message("\The [item] disappears into [owner]'s into \his hand.","\The [item] sinks into your skin.")
 			icon_state = item.icon_state
 			icon = item.icon
-			item.moveToNullspace()
+			item.forceMove(owner)
 			break
 	owner.update_action_buttons()
+
+/obj/item/organ/cyberimp/neuromod/smuggle/proc/owner_death()
+	icon_state = initial(icon_state)
+	icon = initial(icon)
+	stored_item.forceMove(get_turf(owner))
+	owner.visible_message("\The [stored_item] falls out of [owner]'s corpse")
+	stored_item = null
+
