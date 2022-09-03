@@ -311,6 +311,7 @@
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition/Insert(mob/living/carbon/user, special, drop_if_replaced)
 	. = ..()
+	to_chat(owner, "<span class='notice'>Your skin feels odd and slimy.</span>")
 	user.ventcrawler = VENTCRAWLER_ALWAYS
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition/Remove(mob/living/carbon/user, special)
