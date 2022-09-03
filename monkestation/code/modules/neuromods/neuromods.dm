@@ -211,7 +211,7 @@
 	. = ..()
 	user.ventcrawler = VENTCRAWLER_NONE
 
-//Mimic Composition
+//Electrostatic Burst
 
 /obj/item/autosurgeon/neuromod/electrostatic
 	name = "electrostatic burst neuromod"
@@ -244,7 +244,7 @@
 				carbon_target.Knockdown(rand(6 SECONDS, 8 SECONDS))
 		to_chat(possible_target,"<span class='danger'>A ball of energy appears from [owner.name] and zaps you!</span>")
 
-//Mimic Composition
+//Psychoshock
 
 /obj/item/autosurgeon/neuromod/psychoshock
 	name = "psychoshock neuromod"

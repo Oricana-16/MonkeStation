@@ -14,7 +14,7 @@
 //extract brain
 /datum/surgery_step/extract_mimic_organ
 	name = "extract organ"
-	implements = list(TOOL_HEMOSTAT = 100)
+	accept_hand = TRUE
 	time = 3 SECONDS
 
 /datum/surgery_step/extract_mimic_organ/preop(mob/user, mob/living/carbon/target, target_zone, obj/item/tool, datum/surgery/surgery)
