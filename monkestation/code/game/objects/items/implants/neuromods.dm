@@ -1,5 +1,4 @@
-//TODO: Make the mimic organ work with the Experimentor
-//TODO: Make the mimic organ able to be surgeried out of the mimics
+//Organ and Experimentor stuff
 
 #define NEUROMOD_SUPER_RARE 1
 #define NEUROMOD_RARE 4
@@ -26,6 +25,8 @@
 	new new_neuromod(get_turf(src))
 	qdel(src)
 
+//Autosurgeon
+
 /obj/item/autosurgeon/neuromod
 	name = "neuromod"
 	desc = "A device that rebuilds your brain to give you abilities latent in the mimic's dna."
@@ -46,6 +47,8 @@
 		to_chat(user,"<span class='warning'>You already have a neuromod, any more would ruin your brain!</span>")
 		return
 	..()
+	if(!uses)
+		name = "used [name]"
 
 /obj/item/autosurgeon/neuromod/attackby(obj/item/implant, mob/user, params)
 	if(istype(implant, organ_type))
@@ -56,9 +59,18 @@
 /obj/item/autosurgeon/neuromod/screwdriver_act(mob/user,obj/item/screwdriver)
 	return FALSE
 
+//Implant Status Effect
+
+/datum/status_effect/neuromod
+	id = "Neuromod"
+	examine_text = "<span class='danger'>SUBJECTPRONOUN has a eye that is red and swollen.</span>"
+	alert_type = null
+
+//Neuromod Implant
+
 /obj/item/organ/cyberimp/neuromod
-	name = "Neuromod"
 	desc = "This is a neuromod."
+	name = "Neuromod"
 	implant_color = "#c41ae6"
 	var/cooldown = 0 SECONDS
 	slot = ORGAN_SLOT_BRAIN_NEUROMOD
@@ -69,6 +81,16 @@
 		to_chat(owner, "<span class='warning'>You must wait [COOLDOWN_TIMELEFT(src, neuromod_cooldown)*0.1] seconds to use [src] again!</span>")
 		return TRUE
 	COOLDOWN_START(src, neuromod_cooldown, cooldown)
+
+/obj/item/organ/cyberimp/neuromod/Insert(mob/living/carbon/user, special, drop_if_replaced)
+	. = ..()
+	user.apply_status_effect(/datum/status_effect/neuromod)
+
+/obj/item/organ/cyberimp/neuromod/Remove(mob/living/carbon/user, special)
+	. = ..()
+	user.remove_status_effect(/datum/status_effect/neuromod)
+
+//Neuromod Implant - Targeted
 
 /obj/item/organ/cyberimp/neuromod/targeted
 	var/active = FALSE
@@ -242,7 +264,7 @@
 			if(item.item_flags & ABSTRACT)
 				continue
 			stored_item = item
-			owner.visible_message("<span class='notice'>\The [item] disappears into [owner]'s into \his hand.</span>","\<span class='notice'>The [item] sinks into your skin.</span>")
+			owner.visible_message("<span class='notice'>\The [item] disappears into [owner]'s into \his hand.</span>","<span class='notice'>The [item] sinks into your skin.</span>")
 			icon_state = item.icon_state
 			icon = item.icon
 			item.forceMove(owner)
@@ -274,5 +296,23 @@
 /obj/item/organ/cyberimp/neuromod/targeted/scramble/activate(target)
 	..()
 	var/atom/movable/movable_target = target
-	to_chat(owner,"<span class='notice'>You focus on \the [movable_target], messing with the electronics.</span")
+	to_chat(owner,"<span class='notice'>You focus on \the [movable_target], messing with [movable_target.p_their()] electronics.</span")
 	movable_target.emp_act(EMP_HEAVY)
+
+//Mimic Composition
+
+/obj/item/autosurgeon/neuromod/mimic_composition
+	name = "mimic composition neuromod"
+	starting_organ = list(/obj/item/organ/cyberimp/neuromod/mimic_composition)
+
+/obj/item/organ/cyberimp/neuromod/mimic_composition
+	name = "Mimic Composition"
+	desc = "This neuromod allows to ventcrawl."
+
+/obj/item/organ/cyberimp/neuromod/mimic_composition/Insert(mob/living/carbon/user, special, drop_if_replaced)
+	. = ..()
+	user.ventcrawler = VENTCRAWLER_ALWAYS
+
+/obj/item/organ/cyberimp/neuromod/mimic_composition/Remove(mob/living/carbon/user, special)
+	. = ..()
+	user.ventcrawler = VENTCRAWLER_NONE
