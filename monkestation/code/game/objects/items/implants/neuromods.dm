@@ -1,9 +1,10 @@
 //Organ and Experimentor stuff
 
-#define NEUROMOD_SUPER_RARE 1
-#define NEUROMOD_RARE 4
+#define NEUROMOD_SPECIAL 1
+#define NEUROMOD_SUPER_RARE 3
+#define NEUROMOD_RARE 5
 #define NEUROMOD_UNCOMMON 7
-#define NEUROMOD_COMMON 12
+#define NEUROMOD_COMMON 9
 
 /obj/item/mimic_organ
 	name = "mimic organ"
@@ -12,8 +13,6 @@
 	icon_state = "stamp-clown"
 	item_state = "stamp-clown"
 	w_class = WEIGHT_CLASS_SMALL
-
-/obj/item/mimic_organ/proc/roll_neuromod()
 	var/static/list/neuromod_list = list(
 		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/electrostatic = NEUROMOD_SUPER_RARE,
@@ -24,6 +23,8 @@
 		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/scramble = NEUROMOD_COMMON,
 	)
+
+/obj/item/mimic_organ/proc/roll_neuromod()
 	var/obj/item/autosurgeon/neuromod/new_neuromod = pickweight(neuromod_list)
 	new new_neuromod(get_turf(src))
 	qdel(src)
@@ -371,7 +372,7 @@
 //Mimic Composition
 
 /obj/item/autosurgeon/neuromod/psychoshock
-	name = "psychoshock burst neuromod"
+	name = "psychoshock neuromod"
 	starting_organ = list(/obj/item/organ/cyberimp/neuromod/targeted/psychoshock)
 
 /obj/item/organ/cyberimp/neuromod/targeted/psychoshock
