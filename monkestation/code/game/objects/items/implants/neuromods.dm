@@ -15,11 +15,13 @@
 
 /obj/item/mimic_organ/proc/roll_neuromod()
 	var/static/list/neuromod_list = list(
-		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
+		/obj/item/autosurgeon/neuromod/electrostatic = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
-		/obj/item/autosurgeon/neuromod/scramble = NEUROMOD_COMMON
+		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_UNCOMMON,
+		/obj/item/autosurgeon/neuromod/scramble = NEUROMOD_COMMON,
 	)
 	var/obj/item/autosurgeon/neuromod/new_neuromod = pickweight(neuromod_list)
 	new new_neuromod(get_turf(src))
@@ -288,7 +290,7 @@
 	name = "Scramble Electronics"
 	desc = "This neuromod allows to mess with nearby electronics."
 	cast_message = "<span class='notice'>You feel electricity spark behind your eyes. Click on a target area.</span>"
-	cancel_message = "<span class='notice'>You the electricity calms.</span>"
+	cancel_message = "<span class='notice'>The electricity calms.</span>"
 	max_distance = 3
 	cooldown = 30 SECONDS
 	actions_types = list(/datum/action/item_action/organ_action/use)
@@ -317,3 +319,36 @@
 /obj/item/organ/cyberimp/neuromod/mimic_composition/Remove(mob/living/carbon/user, special)
 	. = ..()
 	user.ventcrawler = VENTCRAWLER_NONE
+
+//Mimic Composition
+
+/obj/item/autosurgeon/neuromod/electrostatic
+	name = "electrostatic burst neuromod"
+	starting_organ = list(/obj/item/organ/cyberimp/neuromod/targeted/electrostatic)
+
+/obj/item/organ/cyberimp/neuromod/targeted/electrostatic
+	name = "Electrostatic Burst"
+	desc = "This neuromod allows to emit a focused burst of electricity."
+	cast_message = "<span class='notice'>You feel electricity under your skin. Click on a target area.</span>"
+	cancel_message = "<span class='notice'>The electricity calms.</span>"
+	max_distance = 9
+	cooldown = 80 SECONDS
+	actions_types = list(/datum/action/item_action/organ_action/use)
+
+/obj/item/organ/cyberimp/neuromod/targeted/electrostatic/activate(target)
+	..()
+	var/turf/target_turf = get_turf(target)
+	to_chat(owner,"<span class='notice'>Sparks appear in the air as you focus on an area.</span")
+	zap(target_turf)
+
+/obj/item/organ/cyberimp/neuromod/targeted/electrostatic/proc/zap(atom/target_turf)
+	for(var/mob/living/possible_target in view(4,target_turf))
+		if(!istype(possible_target) || possible_target == owner)
+			return
+		target_turf.Beam(possible_target, icon_state="lightning[rand(1,12)]", time=5, maxdistance = 32)
+		if(possible_target.electrocute_act(15, owner, 1, SHOCK_NOSTUN))
+			if(iscarbon(possible_target))
+				var/mob/living/carbon/carbon_target = possible_target
+				carbon_target.Stun(5 SECONDS)
+				carbon_target.Knockdown(rand(6 SECONDS, 8 SECONDS))
+		to_chat(possible_target,"<span class='danger'>A ball of energy appears from [owner.name] and zaps you!</span>")
