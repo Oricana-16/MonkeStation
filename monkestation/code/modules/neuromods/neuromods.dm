@@ -70,6 +70,9 @@
 	if(stalking) //Exit Stalk
 		owner.visible_message("<span class='danger'>[owner] emerges from [stalking]'s shadow!</span>","<span class='notice'>You leave the shadow.</span>")
 		REMOVE_TRAIT(owner, TRAIT_NOBREATH, "neuromod")
+		REMOVE_TRAIT(owner,TRAIT_PARALYSIS_R_ARM,"neuromod")
+		REMOVE_TRAIT(owner,TRAIT_PARALYSIS_L_ARM,"neuromod")
+		owner.update_disabled_bodyparts()
 		owner.forceMove(get_turf(owner))
 		UnregisterSignal(stalking, COMSIG_MOB_STATCHANGE)
 		stalking = null
@@ -92,6 +95,9 @@
 		return
 	..()
 	ADD_TRAIT(owner, TRAIT_NOBREATH, "neuromod") //Enter Stalk
+	ADD_TRAIT(owner,TRAIT_PARALYSIS_R_ARM,"neuromod") //Don't let em do stuff when they're in the shadow
+	ADD_TRAIT(owner,TRAIT_PARALYSIS_L_ARM,"neuromod")
+	owner.update_disabled_bodyparts()
 	owner.visible_message("<span class='danger'>[owner] falls into [target]'s shadow!</span>","<span class='notice'>You enter [target]'s shadow.</span>")
 	owner.forceMove(target)
 	RegisterSignal(target, COMSIG_MOB_STATCHANGE, .proc/fall_out)
@@ -104,6 +110,9 @@
 		return
 	owner.visible_message("<span class='danger'>[owner] falls out of [stalking]'s shadow!</span>","<span class='notice'>You clumsily fall out of the shadow.</span>")
 	REMOVE_TRAIT(owner, TRAIT_NOBREATH, "neuromod")
+	REMOVE_TRAIT(owner,TRAIT_PARALYSIS_R_ARM,"neuromod")
+	REMOVE_TRAIT(owner,TRAIT_PARALYSIS_L_ARM,"neuromod")
+	owner.update_disabled_bodyparts()
 	owner.forceMove(get_turf(owner))
 	UnregisterSignal(stalking, COMSIG_MOB_STATCHANGE)
 	owner.Knockdown(5 SECONDS)
