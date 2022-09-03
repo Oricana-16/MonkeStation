@@ -15,12 +15,13 @@
 
 /obj/item/mimic_organ/proc/roll_neuromod()
 	var/static/list/neuromod_list = list(
-		/obj/item/autosurgeon/neuromod/electrostatic = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
+		/obj/item/autosurgeon/neuromod/electrostatic = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
-		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_UNCOMMON,
+		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/scramble = NEUROMOD_COMMON,
 	)
 	var/obj/item/autosurgeon/neuromod/new_neuromod = pickweight(neuromod_list)
@@ -48,9 +49,22 @@
 	if(user.getorganslot(ORGAN_SLOT_BRAIN_NEUROMOD))
 		to_chat(user,"<span class='warning'>You already have a neuromod, any more would ruin your brain!</span>")
 		return
-	..()
+	if(!uses)
+		to_chat(user, "<span class='warning'>[src] has already been used. The tools are dull and won't reactivate.</span>")
+		return
+	else if(!storedorgan)
+		to_chat(user, "<span class='notice'>[src] currently has no implant stored.</span>")
+		return
+	for(var/obj/item/organ/each in storedorgan)
+		each.Insert(user)//insert stored organ into the user
+	user.visible_message("<span class='notice'>[user] presses down on a button on [src] and plunges it into their eye.</span>", "<span class='notice'>You feel your brain reshape as you plunge [src] into your eye.</span>")
+	playsound(get_turf(user), 'sound/weapons/circsawhit.ogg', 50, 1)
+	storedorgan = null
+	if(uses != INFINITE)
+		uses--
 	if(!uses)
 		name = "used [name]"
+		desc = "[initial(desc)] Looks like it's been used up."
 
 /obj/item/autosurgeon/neuromod/attackby(obj/item/implant, mob/user, params)
 	if(istype(implant, organ_type))
@@ -65,7 +79,7 @@
 
 /datum/status_effect/neuromod
 	id = "Neuromod"
-	examine_text = "<span class='danger'>SUBJECTPRONOUN has a eye that is red and swollen.</span>"
+	examine_text = "<span class='danger'>SUBJECTPRONOUN has an eye that is red and swollen.</span>"
 	alert_type = null
 
 //Neuromod Implant
@@ -160,13 +174,14 @@
 /obj/item/organ/cyberimp/neuromod/kinetic_blast
 	name = "Kinetic Blast"
 	desc = "This neuromod blasts nearby people and objects away."
-	cooldown = 20 SECONDS
+	cooldown = 30 SECONDS
 	actions_types = list(/datum/action/item_action/organ_action/use)
 
 /obj/item/organ/cyberimp/neuromod/kinetic_blast/ui_action_click()
 	. = ..()
 	if(.)
 		return
+	owner.add_emitter(/obj/emitter/kinetic_blast,"kinetic_blast",burst_mode=TRUE)
 	playsound(get_turf(owner),'sound/magic/repulse.ogg', 100, 1)
 	owner.visible_message("<span class='danger'>[owner] sends out a wave of dark energy, knocking everything around!</span>","<span class='danger'>You activate the neuromod, pushing everything away!</span>")
 	var/turf/owner_turf = get_turf(owner)
@@ -309,7 +324,7 @@
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition
 	name = "Mimic Composition"
-	desc = "This neuromod allows to ventcrawl."
+	desc = "This neuromod allows you to ventcrawl."
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition/Insert(mob/living/carbon/user, special, drop_if_replaced)
 	. = ..()
@@ -352,3 +367,47 @@
 				carbon_target.Stun(5 SECONDS)
 				carbon_target.Knockdown(rand(6 SECONDS, 8 SECONDS))
 		to_chat(possible_target,"<span class='danger'>A ball of energy appears from [owner.name] and zaps you!</span>")
+
+//Mimic Composition
+
+/obj/item/autosurgeon/neuromod/psychoshock
+	name = "psychoshock burst neuromod"
+	starting_organ = list(/obj/item/organ/cyberimp/neuromod/targeted/psychoshock)
+
+/obj/item/organ/cyberimp/neuromod/targeted/psychoshock
+	name = "Psychoshock"
+	desc = "This neuromod allows to confuse targets."
+	cast_message = "<span class='notice'>You ready yourself to shake up somebody's mind. Click on a target.</span>"
+	cancel_message = "<span class='notice'>You ease up.</span>"
+	max_distance = 9
+	cooldown = 1 MINUTES
+	actions_types = list(/datum/action/item_action/organ_action/use)
+
+/obj/item/organ/cyberimp/neuromod/targeted/psychoshock/activate(target)
+	if(!isliving(target))
+		return
+	..()
+	var/mob/living/living_target = target
+	to_chat(living_target,"<span class='userdanger'>Your brain feels scrambled!</span>")
+	to_chat(owner,"<span class='notice'>You twist and turn [living_target.p_their()] mind.</span>")
+	living_target.Stun(5 SECONDS)
+	living_target.jitteriness += 15
+	living_target.confused += 10
+	living_target.drop_all_held_items()
+
+/obj/emitter/kinetic_blast
+	particles = new/particles/kinetic_blast
+
+/particles/kinetic_blast
+	width = 124
+	height = 124
+	count = 128
+	spawning = SPAWN_ALL_PARTICLES_INSTANTLY
+	lifespan = 1 SECONDS
+	fade = 0.5 SECONDS
+	position = generator("box", list(-20,-20), list(20,20), NORMAL_RAND)
+	velocity = generator("circle", -25, 25, NORMAL_RAND)
+	friction = 0.25
+	color = generator("color", "#630a63", "#bd0aa5", NORMAL_RAND)
+
+
