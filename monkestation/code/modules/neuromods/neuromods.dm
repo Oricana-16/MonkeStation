@@ -60,19 +60,19 @@
 	max_distance = 1
 	cast_message = "<span class='notice'>You get ready to fall into the shadows.</span>"
 	cancel_message = "<span class='notice'>You ease up.</span>"
-	var/stalking = FALSE
+	var/stalking
 	actions_types = list(/datum/action/item_action/organ_action/use)
 
 /obj/item/organ/cyberimp/neuromod/targeted/stalk/ui_action_click()
 	if(!COOLDOWN_FINISHED(src, neuromod_cooldown))
 		to_chat(owner, "<span class='warning'>You must wait [COOLDOWN_TIMELEFT(src, neuromod_cooldown)*0.1] seconds to use [src] again!</span>")
 		return TRUE
-	if(stalking)
-		stalking = FALSE
-		owner.visible_message("<span class='danger'>[owner] emerges from a shadow!</span>","<span class='notice'>You leave the shadow.</span>")
+	if(stalking) //Exit Stalk
+		owner.visible_message("<span class='danger'>[owner] emerges from [stalking]'s shadow!</span>","<span class='notice'>You leave the shadow.</span>")
 		REMOVE_TRAIT(owner, TRAIT_NOBREATH, "neuromod")
-		var/turf/target_turf = get_turf(owner)
-		owner.forceMove(target_turf)
+		owner.forceMove(get_turf(owner))
+		UnregisterSignal(stalking, COMSIG_MOB_STATCHANGE)
+		stalking = null
 		return
 	if(!active)
 		active = TRUE
@@ -88,13 +88,26 @@
 		to_chat(owner,"<span class='notice'>You can't enter your own shadow!</span>")
 		return
 	if(!ismob(target))
-		to_chat(owner,"<span class='notice'>You can't enter an object's shadow!</span>")
+		to_chat(owner,"<span class='notice'>You can only enter the shadow of a living being!</span>")
 		return
 	..()
-	stalking = TRUE
-	ADD_TRAIT(owner, TRAIT_NOBREATH, "neuromod")
+	ADD_TRAIT(owner, TRAIT_NOBREATH, "neuromod") //Enter Stalk
 	owner.visible_message("<span class='danger'>[owner] falls into [target]'s shadow!</span>","<span class='notice'>You enter [target]'s shadow.</span>")
 	owner.forceMove(target)
+	RegisterSignal(target, COMSIG_MOB_STATCHANGE, .proc/fall_out)
+	stalking = target
+
+/obj/item/organ/cyberimp/neuromod/targeted/stalk/proc/fall_out(atom/movable/source, var/new_stat)
+	SIGNAL_HANDLER
+
+	if(new_stat == CONSCIOUS || (new_stat == SOFT_CRIT && prob(50)))
+		return
+	owner.visible_message("<span class='danger'>[owner] falls out of [stalking]'s shadow!</span>","<span class='notice'>You clumsily fall out of the shadow.</span>")
+	REMOVE_TRAIT(owner, TRAIT_NOBREATH, "neuromod")
+	owner.forceMove(get_turf(owner))
+	UnregisterSignal(stalking, COMSIG_MOB_STATCHANGE)
+	owner.Knockdown(5 SECONDS)
+	stalking = null
 
 //Smuggle
 
