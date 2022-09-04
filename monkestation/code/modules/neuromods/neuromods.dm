@@ -19,6 +19,7 @@
 	owner.visible_message("[owner] vanishes in a puff of black smoke!","You step into nothing and silently appear in a new area.")
 	do_teleport(owner, target_turf, no_effects = TRUE)
 
+
 //Kinetic Blast
 
 /obj/item/autosurgeon/neuromod/kinetic_blast
@@ -46,6 +47,22 @@
 		var/throwtarget = get_edge_target_turf(owner_turf, get_dir(owner_turf, get_step_away(atom, owner_turf)))
 		atom.safe_throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
 		thrown_items[atom] = atom
+
+/obj/emitter/kinetic_blast
+	particles = new/particles/kinetic_blast
+
+/particles/kinetic_blast
+	width = 124
+	height = 124
+	count = 128
+	spawning = SPAWN_ALL_PARTICLES_INSTANTLY
+	lifespan = 1 SECONDS
+	fade = 0.5 SECONDS
+	position = generator("box", list(-20,-20), list(20,20), NORMAL_RAND)
+	velocity = generator("circle", -25, 25, NORMAL_RAND)
+	friction = 0.25
+	color = generator("color", "#630a63", "#bd0aa5", NORMAL_RAND)
+
 
 //Stalk
 
@@ -118,6 +135,7 @@
 	owner.Knockdown(5 SECONDS)
 	stalking = null
 
+
 //Smuggle
 
 /obj/item/autosurgeon/neuromod/smuggle
@@ -171,6 +189,7 @@
 	owner.visible_message("<span class='notice'>\The [stored_item] falls out of [owner]'s corpse</span>")
 	stored_item = null
 
+
 //Scramble Electronics
 
 /obj/item/autosurgeon/neuromod/scramble
@@ -192,6 +211,7 @@
 	to_chat(owner,"<span class='notice'>You focus on \the [movable_target], messing with [movable_target.p_their()] electronics.</span")
 	movable_target.emp_act(EMP_HEAVY)
 
+
 //Mimic Composition
 
 /obj/item/autosurgeon/neuromod/mimic_composition
@@ -204,12 +224,13 @@
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition/Insert(mob/living/carbon/user, special, drop_if_replaced)
 	. = ..()
-	to_chat(owner, "<span class='notice'>Your skin feels odd and slimy.</span>")
+	to_chat(owner, "<span class='notice'>Your skin feels odd and slimy. You get the urge to scamper around in the vents.</span>")
 	user.ventcrawler = VENTCRAWLER_ALWAYS
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition/Remove(mob/living/carbon/user, special)
 	. = ..()
 	user.ventcrawler = VENTCRAWLER_NONE
+
 
 //Electrostatic Burst
 
@@ -244,6 +265,7 @@
 				carbon_target.Knockdown(rand(6 SECONDS, 8 SECONDS))
 		to_chat(possible_target,"<span class='danger'>A ball of energy appears from [owner.name] and zaps you!</span>")
 
+
 //Psychoshock
 
 /obj/item/autosurgeon/neuromod/psychoshock
@@ -270,20 +292,4 @@
 	living_target.jitteriness += 15
 	living_target.confused += 10
 	living_target.drop_all_held_items()
-
-/obj/emitter/kinetic_blast
-	particles = new/particles/kinetic_blast
-
-/particles/kinetic_blast
-	width = 124
-	height = 124
-	count = 128
-	spawning = SPAWN_ALL_PARTICLES_INSTANTLY
-	lifespan = 1 SECONDS
-	fade = 0.5 SECONDS
-	position = generator("box", list(-20,-20), list(20,20), NORMAL_RAND)
-	velocity = generator("circle", -25, 25, NORMAL_RAND)
-	friction = 0.25
-	color = generator("color", "#630a63", "#bd0aa5", NORMAL_RAND)
-
 

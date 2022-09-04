@@ -30,6 +30,8 @@
 			"[user] successfully extracts the organ from [target]!",
 			"[user] successfully extracts the organ from [target]!")
 
+		mimic.desc += "\nIt's body is cut open, and a chunk of it is missing."
+
 		new /obj/item/mimic_organ(get_turf(target))
 		return TRUE
 	else
