@@ -14,14 +14,15 @@
 	item_state = "stamp-clown"
 	w_class = WEIGHT_CLASS_SMALL
 	var/static/list/neuromod_list = list(
+		/obj/item/autosurgeon/neuromod/clown = NEUROMOD_SPECIAL,
 		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
-		/obj/item/autosurgeon/neuromod/electrostatic = NEUROMOD_SUPER_RARE,
+		/obj/item/autosurgeon/neuromod/electrostatic_burst = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
-		/obj/item/autosurgeon/neuromod/scramble = NEUROMOD_COMMON,
+		/obj/item/autosurgeon/neuromod/scramble_electronics = NEUROMOD_COMMON,
 	)
 
 /obj/item/mimic_organ/proc/roll_neuromod()
@@ -50,21 +51,8 @@
 	if(user.getorganslot(ORGAN_SLOT_BRAIN_NEUROMOD))
 		to_chat(user,"<span class='warning'>You already have a neuromod, any more would ruin your brain!</span>")
 		return
+	..()
 	if(!uses)
-		to_chat(user, "<span class='warning'>[src] has already been used. The tools are dull and won't reactivate.</span>")
-		return
-	else if(!storedorgan)
-		to_chat(user, "<span class='notice'>[src] currently has no implant stored.</span>")
-		return
-	for(var/obj/item/organ/each in storedorgan)
-		each.Insert(user)//insert stored organ into the user
-	user.visible_message("<span class='notice'>[user] presses down on a button on [src] and plunges it into their eye.</span>", "<span class='notice'>You feel your brain reshape as you plunge [src] into your eye.</span>")
-	playsound(get_turf(user), 'sound/weapons/circsawhit.ogg', 50, 1)
-	storedorgan = null
-	if(uses != INFINITE)
-		uses--
-	if(!uses)
-		name = "used [name]"
 		desc = "[initial(desc)] Looks like it's been used up."
 
 /obj/item/autosurgeon/neuromod/attackby(obj/item/implant, mob/user, params)
@@ -113,6 +101,7 @@
 	var/active = FALSE
 	var/cast_message = "<span class='notice'>You start using the neuromod. Click on a target.</span>"
 	var/cancel_message = "<span class='notice'>You stop using the neuromod.</span>"
+	//The max distance you can use a spell from. -1 for infinite range.
 	var/max_distance = 9
 
 /obj/item/organ/cyberimp/neuromod/targeted/ui_action_click()
@@ -133,7 +122,7 @@
 	return
 
 /obj/item/organ/cyberimp/neuromod/targeted/proc/InterceptClickOn(mob/living/carbon/caller, params, atom/target)
-	if(get_dist(caller,target) <= max_distance)
+	if(get_dist(caller,target) <= max_distance || max_distance == -1)
 		activate(target)
 	else
 		to_chat(owner, "<span class='warning'>That place is out of your reach.</span>")
