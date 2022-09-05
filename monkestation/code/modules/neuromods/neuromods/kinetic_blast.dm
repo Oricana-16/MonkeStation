@@ -12,7 +12,7 @@
 	. = ..()
 	if(.)
 		return
-	owner.add_emitter(/obj/emitter/kinetic_blast,"kinetic_blast",burst_mode=TRUE)
+	owner.add_emitter(/obj/emitter/mimic/kinetic_blast,"kinetic_blast",burst_mode=TRUE)
 	playsound(get_turf(owner),'sound/magic/repulse.ogg', 100, 1)
 	owner.visible_message("<span class='danger'>[owner] sends out a wave of dark energy, knocking everything around!</span>","<span class='danger'>You activate the neuromod, pushing everything away!</span>")
 	var/turf/owner_turf = get_turf(owner)
@@ -24,10 +24,10 @@
 		atom.safe_throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
 		thrown_items[atom] = atom
 
-/obj/emitter/kinetic_blast
-	particles = new/particles/kinetic_blast
+/obj/emitter/mimic/kinetic_blast
+	particles = new/particles/mimic/kinetic_blast
 
-/particles/kinetic_blast
+/particles/mimic/kinetic_blast
 	width = 124
 	height = 124
 	count = 128
