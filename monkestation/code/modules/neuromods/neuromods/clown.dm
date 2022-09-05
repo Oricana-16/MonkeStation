@@ -41,6 +41,9 @@
 /obj/item/organ/cyberimp/neuromod/targeted/clown/proc/living_roll(mob/living/user, mob/living/target,value)
 	if(!istype(target))
 		return
+	if(target.stat == DEAD)
+		to_chat(target,"<span class='danger'>You can't clown on dead people!</span>")
+		return
 	switch(rand(1,9))
 		if(1) //Launch
 			target.throw_at(get_edge_target_turf(target,pick(GLOB.alldirs)),rand(1,10),rand(1,10),force=rand(MOVE_FORCE_EXTREMELY_WEAK,MOVE_FORCE_OVERPOWERING))
@@ -79,7 +82,8 @@
 			do_teleport(user,target_turf)
 		if(2) //AoE living roll - High risk since every person has a chance to backfire
 			for(var/mob/living/possible_target in view(rand(4,7)))
-				living_roll(user,possible_target)
+				if(possible_target.stat != DEAD)
+					living_roll(user,possible_target)
 		if(3) //Foam up the place
 			new /obj/effect/particle_effect/foam(target_turf)
 		if(4) //Smoke up the place

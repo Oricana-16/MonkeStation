@@ -19,6 +19,7 @@
 		/obj/item/autosurgeon/neuromod/electrostatic_burst = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/mindjack = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,

@@ -16,7 +16,7 @@
 	owner.add_emitter(/obj/emitter/mimic/mimic_composition,"mimic_composition")
 	owner.ventcrawler = VENTCRAWLER_ALWAYS
 	owner.pass_flags |= PASSGRILLE
-	owner.alpha /= CEILING(2,1) //to prevent 255/2 = 127 * 2 = 254
+	owner.alpha /= 2
 	to_chat(owner, "<span class='notice'>Your skin feels gaseous and slimy. You get the urge to scamper around in the vents.</span>")
 
 	addtimer(CALLBACK(src, .proc/normal_composition), 30 SECONDS)
