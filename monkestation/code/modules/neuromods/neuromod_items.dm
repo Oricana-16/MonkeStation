@@ -14,15 +14,16 @@
 	item_state = "stamp-clown"
 	w_class = WEIGHT_CLASS_SMALL
 	var/static/list/neuromod_list = list(
-		/obj/item/autosurgeon/neuromod/clown = NEUROMOD_SPECIAL,
-		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
+		/obj/item/autosurgeon/neuromod/clown = NEUROMOD_SPECIAL,					//SPECIAL
+		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,					//SUPER RARE
 		/obj/item/autosurgeon/neuromod/electrostatic_burst = NEUROMOD_SUPER_RARE,
-		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,				//RARE
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/mindjack = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/biomatter_transfer = NEUROMOD_UNCOMMON,		//UNCOMMON
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_UNCOMMON,
-		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
+		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,				//COMMON
 		/obj/item/autosurgeon/neuromod/scramble_electronics = NEUROMOD_COMMON,
 	)
 
@@ -123,10 +124,10 @@
 	return
 
 /obj/item/organ/cyberimp/neuromod/targeted/proc/InterceptClickOn(mob/living/carbon/caller, params, atom/target)
+	active = FALSE
+	caller.click_intercept = null
 	if(get_dist(caller,target) <= max_distance || max_distance == -1)
 		activate(target)
 	else
 		to_chat(owner, "<span class='warning'>That place is out of your reach.</span>")
-	active = FALSE
-	caller.click_intercept = null
 
