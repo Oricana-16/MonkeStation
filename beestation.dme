@@ -3857,6 +3857,7 @@
 #include "monkestation\code\modules\neuromods\neuromods\scramble_electronics.dm"
 #include "monkestation\code\modules\neuromods\neuromods\smuggle.dm"
 #include "monkestation\code\modules\neuromods\neuromods\stalk.dm"
+#include "monkestation\code\modules\neuromods\neuromods\track.dm"
 #include "monkestation\code\modules\particles\byond_particles\particle_holder.dm"
 #include "monkestation\code\modules\particles\byond_particles\particle_procs.dm"
 #include "monkestation\code\modules\particles\byond_particles\particool.dm"
