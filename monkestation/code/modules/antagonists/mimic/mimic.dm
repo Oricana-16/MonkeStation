@@ -2,6 +2,7 @@
 #define MIMIC_DISGUISE_COOLDOWN 5 SECONDS
 
 #define REPLICATION_COST(mimic_count) (1 + round((mimic_count / 2)))
+#define EVOLUTION_COST(mimic_count) round(REPLICATION_COST(mimic_count)/2)
 
 /mob/living/simple_animal/hostile/alien_mimic
 	name = "mimic"
@@ -30,6 +31,7 @@
 	maxHealth = 125
 	health = 125
 	melee_damage = 7
+	var/secondary_damage_type = CLONE
 	obj_damage = 30
 	see_in_dark = 8
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
@@ -55,8 +57,17 @@
 	//The name used in the hivemind chat
 	var/hivemind_name
 
-	//If this is currently reproducing
-	var/splitting = FALSE
+	//used for evolutions
+	var/hivemind_modifier
+
+	//If someone is currently reproducing
+	var/static/splitting = FALSE
+	//If someone is attempting to evolve
+	var/static/evolving = FALSE
+
+
+	var/evolve_cooldown = FALSE
+
 	//The target npc mimic's try to disguise as.
 	var/atom/movable/ai_disg_target = null
 	//attempts to reach a disguise target
@@ -64,6 +75,9 @@
 
 	//Mimic Organs for Neuromods
 	var/has_organ = TRUE
+
+	//Whether the mimic can evolve
+	var/can_evolve = TRUE
 
 	var/fleeing = FALSE
 	mobchatspan = "blob"
@@ -134,34 +148,6 @@
 		else
 			to_chat("<span class='warning'>You failed to latch onto the target!</span>")
 	return FALSE
-
-/mob/living/simple_animal/hostile/alien_mimic/proc/attempt_reproduce()
-	if(disguised)
-		to_chat(src,"<span class='warning'>You can't reproduce while disguised!</span>")
-		return
-
-	if(splitting) //prevent stacking a bunch
-		return
-
-	var/split_cost = REPLICATION_COST(mimic_count)
-
-	if(people_absorbed >= split_cost)
-		splitting = TRUE
-		to_chat(src,"<span class='warning'>You start splitting yourself in two!</span>")
-		playsound(get_turf(src), split_sound,100)
-		if(do_mob(src, src, 5 SECONDS))
-			splitting = FALSE
-			if(people_absorbed < split_cost)
-				return
-			to_chat(src,"<span class='warning'>You make another mimic!</span>")
-			var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(loc)
-			split_mimic.ping_ghosts()
-			people_absorbed -= split_cost
-			return
-		splitting = FALSE
-		to_chat(src,"<span class='warning'>You fail to split!</span>")
-		return
-	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
 
 /mob/living/simple_animal/hostile/alien_mimic/attack_ghost(mob/user)
 	if(QDELETED(src))
@@ -278,6 +264,9 @@
 	var/datum/action/innate/mimic_hivemind/hivemind = new
 	replicate.Grant(src)
 	hivemind.Grant(src)
+	if(can_evolve)
+		var/datum/action/innate/mimic_evolution_request/evolve = new
+		evolve.Grant(src)
 	ADD_TRAIT(src, TRAIT_SHOCKIMMUNE, INNATE_TRAIT) //Needs this so breaking down a single door doesnt kill em
 	set_varspeed(undisguised_move_delay)
 	. = ..()
@@ -380,11 +369,11 @@
 	var/mob/living/victim = target
 
 	if(iscyborg(target) || isAI(target)) //stinky sillicons with their no mounting rules
-		victim.apply_damage(melee_damage, BRUTE, victim.get_bodypart(BODY_ZONE_CHEST)) //mimics still get the full damage, though it does feel a little dirty to deal the same damage twice
+		victim.apply_damage(melee_damage, melee_damage_type, victim.get_bodypart(BODY_ZONE_CHEST)) //mimics still get the full damage, though it does feel a little dirty to deal the same damage twice
 		return ..()
 
 	if(buckled && victim == buckled) //If you're buckled to them
-		victim.apply_damage(melee_damage, CLONE, victim.get_bodypart(BODY_ZONE_CHEST))
+		victim.apply_damage(melee_damage, secondary_damage_type, victim.get_bodypart(BODY_ZONE_CHEST))
 		return ..()
 
 	if(!buckled) //Latch onto people
@@ -457,6 +446,7 @@
 /mob/living/simple_animal/hostile/alien_mimic/get_stat_tab_status()
 	var/list/tab_data = ..()
 	tab_data["Replication Cost"] = GENERATE_STAT_TEXT("[REPLICATION_COST(mimic_count)]")
+	tab_data["Evolution Cost"] = GENERATE_STAT_TEXT("[EVOLUTION_COST(mimic_count)]]")
 	tab_data["People Absorbed"] = GENERATE_STAT_TEXT("[people_absorbed]")
 	return tab_data
 
@@ -534,6 +524,84 @@
 	..()
 
 
+/mob/living/simple_animal/hostile/alien_mimic/proc/attempt_reproduce()
+	if(disguised)
+		to_chat(src,"<span class='warning'>You can't reproduce while disguised!</span>")
+		return
+
+	if(splitting) //prevent stacking a bunch
+		to_chat(src,"<span class='warning'>Someone is already splitting!</span>")
+		return
+
+	var/split_cost = REPLICATION_COST(mimic_count)
+
+	if(people_absorbed >= split_cost)
+		splitting = TRUE
+		to_chat(src,"<span class='warning'>You start splitting yourself in two!</span>")
+		playsound(get_turf(src), split_sound,100)
+		if(do_mob(src, src, 5 SECONDS))
+			splitting = FALSE
+			if(people_absorbed < split_cost)
+				return
+			to_chat(src,"<span class='warning'>You make another mimic!</span>")
+			var/mob/living/simple_animal/hostile/alien_mimic/split_mimic = new(loc)
+			split_mimic.ping_ghosts()
+			people_absorbed -= split_cost
+			return
+		splitting = FALSE
+		to_chat(src,"<span class='warning'>You fail to split!</span>")
+		return
+	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
+
+//Evolution Procs
+/mob/living/simple_animal/hostile/alien_mimic/proc/request_evolution()
+	if(evolving)
+		to_chat(src,"<span class='notice'>Someone is already attempting to evolve!</span>")
+		return FALSE
+
+	evolving = TRUE
+
+	var/list/asked_mimics = list()
+
+	for(var/player in GLOB.player_list)
+		if(ismimic(player))
+			asked_mimics += player
+
+	var/list/yes_voters = pollCandidates("[hivemind_name] is requesting to evolve. Do you accept? (Cost: [EVOLUTION_COST(mimic_count)] absorbed people)", poll_time = 30 SECONDS, group = asked_mimics)
+
+	evolving = FALSE
+
+	if(QDELETED(src) || src.stat == DEAD)
+		for(var/mob/living/mimic in asked_mimics)
+			to_chat(mimic,"<span class='userdanger'>[hivemind_name] has died in the process of evolving!</span>")
+		return FALSE
+
+	if(LAZYLEN(yes_voters) <= LAZYLEN(asked_mimics) * 0.5)
+		for(var/mob/living/mimic in asked_mimics)
+			to_chat(mimic,"<span class='userdanger'>[hivemind_name] did not win the vote, and did not evolve!</span>")
+		return FALSE
+
+	for(var/mob/living/mimic in asked_mimics)
+		to_chat(mimic,"<span class='userdanger'>[hivemind_name] has been granted permission to evolve!</span>")
+	return TRUE
+
+
+/mob/living/simple_animal/hostile/alien_mimic/proc/evolve()
+	var/options = subtypesof(/mob/living/simple_animal/hostile/alien_mimic)
+
+	var/choice = input(src,"What type would you like to evolve into?","Mimic Evolution") in sortList(options)
+
+	if(!choice)
+		return
+
+	var/mob/living/simple_animal/hostile/alien_mimic/new_mimic = new choice(src.loc)
+	visible_message("<span class='notice'>[src] changes into a new shape!</span>","<span class='notice'>You twist and contront, and evolve into a new form.</span>")
+
+	new_mimic.setDir(dir)
+	new_mimic.hivemind_name = "[new_mimic.hivemind_modifier] [hivemind_name]"
+	if(mind)
+		mind.transfer_to(new_mimic)
+	qdel(src)
 
 /datum/action/innate/mimic_reproduce
 	name = "Reproduce"
@@ -582,6 +650,39 @@
 			to_chat(recipient, "[link] [my_message]")
 
 	user.log_talk(message, LOG_SAY, tag="mimic hivemind")
+
+/datum/action/innate/mimic_evolution_request
+	name = "Request Evolution"
+	icon_icon = 'icons/mob/actions/actions_clockcult.dmi'
+	button_icon_state = "Abscond"
+	background_icon_state = "bg_alien"
+
+/datum/action/innate/mimic_evolution_request/Activate()
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic = owner
+	if(mimic.people_absorbed < EVOLUTION_COST(mimic.mimic_count))
+		to_chat(mimic,"<span class='notice'>You do not have the resources to evolve!</span>")
+		return
+
+	if(world.time < mimic.evolve_cooldown)
+		to_chat(mimic,"<span class='notice'>You attempted evolving not too long ago!</span>")
+		return
+
+	if(mimic.request_evolution())
+		var/datum/action/innate/mimic_evolution/evolution = new
+		evolution.Grant(mimic)
+		qdel(src)
+		return
+	mimic.evolve_cooldown = world.time + 30 SECONDS
+
+/datum/action/innate/mimic_evolution
+	name = "Request Evolution"
+	icon_icon = 'icons/mob/actions/actions_clockcult.dmi'
+	button_icon_state = "Abscond"
+	background_icon_state = "bg_alien"
+
+/datum/action/innate/mimic_evolution/Activate()
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic = owner
+	mimic.evolve()
 
 #undef MIMIC_HEALTH_FLEE_AMOUNT
 #undef MIMIC_DISGUISE_COOLDOWN
