@@ -141,7 +141,7 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/latch(mob/living/target)
 	if(!istype(target))
-		return
+		return FALSE
 	if(target.has_buckled_mobs())
 		target.unbuckle_all_mobs(force=TRUE)
 	if(target.buckled)

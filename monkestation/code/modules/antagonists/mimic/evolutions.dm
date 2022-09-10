@@ -37,7 +37,7 @@
 		return ..()
 
 	var/mob/living/victim = target
-	if(buckled && buckled == victim)
+	if(buckled && buckled == victim && HAS_TRAIT(victim, TRAIT_SHOCKIMMUNE))
 		victim.Stun(1 SECONDS)
 		victim.electrocute_act(1, src)
 	..()
@@ -70,6 +70,12 @@
 /mob/living/simple_animal/hostile/alien_mimic/thermal/death(gibbed)
 	new /obj/effect/hotspot(get_turf(src))
 	..()
+
+/mob/living/simple_animal/hostile/alien_mimic/thermal/latch(mob/living/target)
+	. = ..()
+	if(!.)
+		return
+	new /obj/effect/hotspot(get_turf(target))
 
 /mob/living/simple_animal/hostile/alien_mimic/thermal/AttackingTarget()
 	if(buckled && buckled == target)
