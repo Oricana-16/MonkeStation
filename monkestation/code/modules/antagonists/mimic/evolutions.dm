@@ -82,32 +82,36 @@
 	name = "shifty mimic"
 	real_name = "shifty mimic"
 	hivemind_modifier = "Shifty"
+	melee_damage = 5
 	can_evolve = FALSE
 
 /mob/living/simple_animal/hostile/alien_mimic/shifty/Initialize(mapload)
 	. = ..()
-	var/obj/effect/proc_holder/spell/targeted/mimic_phantom_shift/shift = new
+	var/obj/effect/proc_holder/spell/pointed/mimic_phantom_shift/shift = new
 	AddSpell(shift)
 
-/mob/living/simple_animal/hostile/alien_mimic/shifty/death(gibbed)
-	new /obj/effect/hotspot(get_turf(src))
-	..()
-
-/mob/living/simple_animal/hostile/alien_mimic/shifty/AttackingTarget()
-	if(buckled && buckled == target)
-		new /obj/effect/hotspot(get_turf(target))
-	..()
-
-/obj/effect/proc_holder/spell/targeted/mimic_phantom_shift
+/obj/effect/proc_holder/spell/pointed/mimic_phantom_shift
 	name = "Phantom Shift"
 	desc = "Quickly reform in another position."
 	clothes_req = FALSE
 	action_background_icon_state = "bg_alien"
 	charge_max = 30 SECONDS
 
-/obj/effect/proc_holder/spell/targeted/mimic_phantom_shift/cast(list/targets,mob/user = usr)
-	for(var/turf/target in targets)
-		if(target.density)
+/obj/effect/proc_holder/spell/pointed/mimic_phantom_shift/cast(list/targets,mob/user = usr)
+	for(var/target in targets)
+		var/turf/target_turf = get_turf(target)
+		if(target_turf.density)
 			to_chat(user,"<span class='notice'>You can't teleport there!</span>")
+			revert_cast(user)
 			return
-		do_teleport(user, target)
+		var/mob/living/teleport_with
+		if(user.buckled)
+			teleport_with = user.buckled
+		do_teleport(user, target_turf)
+		if(teleport_with)
+			do_teleport(teleport_with, target_turf)
+			teleport_with.buckle_mob(user,TRUE)
+		return
+	revert_cast(user)
+
+
