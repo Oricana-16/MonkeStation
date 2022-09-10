@@ -12,7 +12,9 @@
 	actions_types = list(/datum/action/item_action/organ_action/use)
 
 /obj/item/organ/cyberimp/neuromod/targeted/phantom_shift/activate(target)
-	..()
 	var/turf/target_turf = get_turf(target)
-	owner.visible_message("[owner] vanishes in a puff of black smoke!","You step into nothing and silently appear in a new area.")
+	if(target_turf.density)
+		to_chat(owner,"<span class='notice'>You can't teleport there!</span>")
+	..()
+	owner.visible_message("<span class='danger'>[owner] vanishes in a puff of black smoke!</span>","<span class='notice'>You step into nothing and silently appear in a new area.</span>")
 	do_teleport(owner, target_turf, no_effects = TRUE)

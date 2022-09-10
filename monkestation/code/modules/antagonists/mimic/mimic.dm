@@ -79,6 +79,16 @@
 	//Whether the mimic can evolve
 	var/can_evolve = TRUE
 
+	var/static/list/possible_evolutions = list(
+		"greater" = /mob/living/simple_animal/hostile/alien_mimic/greater,
+		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/voltaic,
+		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/thermal,
+		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/shifty
+	)
+
+	//This is so they can't just close and open the menu to reroll evolutions
+	var/list/evolution_options = list()
+
 	var/fleeing = FALSE
 	mobchatspan = "blob"
 	discovery_points = 2000
@@ -114,10 +124,9 @@
 			return
 		if(disguised)
 			restore()
-		var/obj/item/item = target_item
-		if(!item.anchored)
-			disguise(item)
-			return
+		var/atom/movable/disguise = target_item
+		disguise(disguise)
+		return
 	. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/allowed(atom/movable/target_item)
@@ -257,7 +266,7 @@
 /mob/living/simple_animal/hostile/alien_mimic/Initialize(mapload)
 	if(!hivemind_name)
 		//1% chance for some silly names
-		hivemind_name = prob(99) ? "Mimic [rand(1,999)]" : pick("John","Not-A-Mimic","Goop Spider","Syndicate Infiltrator","Mimic Hater","Nar'sie Enthusiast")
+		hivemind_name = prob(99) ? "Mimic [rand(1,999)]" : pick("[pick(GLOB.first_names)]","Not-A-Mimic","Trapdoor Spider","Syndicate Infiltrator","Mimic Hater","Xenomorph [pick("Hunter","Drone","Sentinel","Queen")]")
 
 	mimic_count++
 	var/datum/action/innate/mimic_reproduce/replicate = new
@@ -369,7 +378,7 @@
 	var/mob/living/victim = target
 
 	if(iscyborg(target) || isAI(target)) //stinky sillicons with their no mounting rules
-		victim.apply_damage(melee_damage, melee_damage_type, victim.get_bodypart(BODY_ZONE_CHEST)) //mimics still get the full damage, though it does feel a little dirty to deal the same damage twice
+		victim.apply_damage(melee_damage, melee_damage_type, victim.get_bodypart(BODY_ZONE_CHEST)) //borgs still get the full damage, though it does feel a little dirty to deal the same damage twice
 		return ..()
 
 	if(buckled && victim == buckled) //If you're buckled to them
@@ -446,7 +455,7 @@
 /mob/living/simple_animal/hostile/alien_mimic/get_stat_tab_status()
 	var/list/tab_data = ..()
 	tab_data["Replication Cost"] = GENERATE_STAT_TEXT("[REPLICATION_COST(mimic_count)]")
-	tab_data["Evolution Cost"] = GENERATE_STAT_TEXT("[EVOLUTION_COST(mimic_count)]]")
+	tab_data["Evolution Cost"] = GENERATE_STAT_TEXT("[EVOLUTION_COST(mimic_count)]")
 	tab_data["People Absorbed"] = GENERATE_STAT_TEXT("[people_absorbed]")
 	return tab_data
 
@@ -533,6 +542,10 @@
 		to_chat(src,"<span class='warning'>Someone is already splitting!</span>")
 		return
 
+	if(evolving)
+		to_chat(src,"<span class='notice'>You can't split while someone is evolving!</span>")
+		return
+
 	var/split_cost = REPLICATION_COST(mimic_count)
 
 	if(people_absorbed >= split_cost)
@@ -555,6 +568,10 @@
 
 //Evolution Procs
 /mob/living/simple_animal/hostile/alien_mimic/proc/request_evolution()
+	if(splitting)
+		to_chat(src,"<span class='notice'>You can't split while someone is evolving!</span>")
+		return FALSE
+
 	if(evolving)
 		to_chat(src,"<span class='notice'>Someone is already attempting to evolve!</span>")
 		return FALSE
@@ -564,10 +581,15 @@
 	var/list/asked_mimics = list()
 
 	for(var/player in GLOB.player_list)
+		if(player != src)
+			continue
 		if(ismimic(player))
 			asked_mimics += player
 
-	var/list/yes_voters = pollCandidates("[hivemind_name] is requesting to evolve. Do you accept? (Cost: [EVOLUTION_COST(mimic_count)] absorbed people)", poll_time = 30 SECONDS, group = asked_mimics)
+	var/list/yes_voters = list()
+
+	if(EVOLUTION_COST(mimic_count) > 0)
+		yes_voters = pollCandidates("[hivemind_name] is requesting to evolve. Do you accept? (Cost: [EVOLUTION_COST(mimic_count)] absorbed people)", poll_time = 30 SECONDS, group = asked_mimics)
 
 	evolving = FALSE
 
@@ -576,7 +598,7 @@
 			to_chat(mimic,"<span class='userdanger'>[hivemind_name] has died in the process of evolving!</span>")
 		return FALSE
 
-	if(LAZYLEN(yes_voters) <= LAZYLEN(asked_mimics) * 0.5)
+	if(LAZYLEN(yes_voters) <= LAZYLEN(asked_mimics) * 0.5 && EVOLUTION_COST(mimic_count) > 0)
 		for(var/mob/living/mimic in asked_mimics)
 			to_chat(mimic,"<span class='userdanger'>[hivemind_name] did not win the vote, and did not evolve!</span>")
 		return FALSE
@@ -587,15 +609,21 @@
 
 
 /mob/living/simple_animal/hostile/alien_mimic/proc/evolve()
-	var/options = subtypesof(/mob/living/simple_animal/hostile/alien_mimic)
+	if(!length(evolution_options))
+		var/list/evolutions = possible_evolutions.Copy()
 
-	var/choice = input(src,"What type would you like to evolve into?","Mimic Evolution") in sortList(options)
+		for(var/i in 1 to 3)
+			evolution_options += pick_n_take(evolutions)
+
+
+	var/choice = input(src,"What type would you like to evolve into?","Mimic Evolution") in sortList(evolution_options)
 
 	if(!choice)
 		return
 
-	var/mob/living/simple_animal/hostile/alien_mimic/new_mimic = new choice(src.loc)
-	visible_message("<span class='notice'>[src] changes into a new shape!</span>","<span class='notice'>You twist and contront, and evolve into a new form.</span>")
+	choice = possible_evolutions[choice]
+	var/mob/living/simple_animal/hostile/alien_mimic/new_mimic = new choice(loc)
+	visible_message("<span class='notice'>[src] changes into a new shape!</span>","<span class='notice'>You twist and contort, and evolve into a new form.</span>")
 
 	new_mimic.setDir(dir)
 	new_mimic.hivemind_name = "[new_mimic.hivemind_modifier] [hivemind_name]"
@@ -615,7 +643,7 @@
 
 /datum/action/innate/mimic_hivemind
 	name = "Communicate"
-	icon_icon = 'icons/mob/actions/actions_changeling.dmi' //I will try to make action sprites either before the merge or soon after it
+	icon_icon = 'icons/mob/actions/actions_changeling.dmi'
 	button_icon_state = "hivemind_channel"
 	background_icon_state = "bg_alien"
 
@@ -670,12 +698,13 @@
 	if(mimic.request_evolution())
 		var/datum/action/innate/mimic_evolution/evolution = new
 		evolution.Grant(mimic)
+		mimic.people_absorbed -= EVOLUTION_COST(mimic.mimic_count)
 		qdel(src)
 		return
 	mimic.evolve_cooldown = world.time + 30 SECONDS
 
 /datum/action/innate/mimic_evolution
-	name = "Request Evolution"
+	name = "Evolve"
 	icon_icon = 'icons/mob/actions/actions_clockcult.dmi'
 	button_icon_state = "Abscond"
 	background_icon_state = "bg_alien"

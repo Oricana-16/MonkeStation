@@ -40,7 +40,7 @@
 
 	//Give them a special name in the hivemind for being the first one
 	if(spawned_mimic.mimic_count <= 1)
-		spawned_mimic.hivemind_name = pick("Mimic Leader","Mimic [pick("King","Queen","Monarch")]","The Broodmother","The Original","Mimic Prime")
+		spawned_mimic.hivemind_name = pick("Mimic Leader","Mimic [pick("King","Queen","Monarch")]","Broodmother","Original","Mimic Prime")
 	else
 		spawned_mimic.hivemind_name = pick("Mimic Commander","Mimic Centurion","Mimic General","Mimic Lord","Mimic Legionnaire","Mimic Elder") + " [spawned_mimic.mimic_count - 1]" //Unless multiple spawned, then any others get their own names
 
