@@ -21,7 +21,7 @@
 		if(to_throw.anchored || thrown_items[to_throw])
 			continue
 		var/throwtarget = get_edge_target_turf(owner_turf, get_dir(owner_turf, get_step_away(to_throw, owner_turf)))
-		to_throw.throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
+		to_throw.safe_throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
 		thrown_items[to_throw] = to_throw
 
 /obj/emitter/mimic/kinetic_blast

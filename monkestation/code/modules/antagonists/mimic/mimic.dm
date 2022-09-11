@@ -401,7 +401,7 @@
 					return
 				playsound(get_turf(src), absorb_sound,100)
 				visible_message("<span class='warning'>[src] absorbs [carbon_victim]!</span>", \
-							"<span class='userdanger'>[carbon_victim]'s corpse decays as you absorb the nutrients from their body.</span>")
+							"<span class='userdanger'>[carbon_victim]'s corpse decays as you absorb the nutrients from [carbon_victim.p_their()] body.</span>")
 				carbon_victim.become_husk(MIMIC_ABSORB)
 				people_absorbed++
 				adjustHealth(-40)

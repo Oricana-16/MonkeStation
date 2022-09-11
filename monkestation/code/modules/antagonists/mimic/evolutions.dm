@@ -154,7 +154,7 @@
 	action_background_icon_state = "bg_alien"
 	charge_max = 45 SECONDS
 
-/obj/effect/proc_holder/spell/self/mimic_kinetic_blast/cast(list/targets,mob/user = usr)
+/obj/effect/proc_holder/spell/self/mimic_kinetic_blast/cast(mob/user)
 	user.add_emitter(/obj/emitter/mimic/kinetic_blast,"kinetic_blast",burst_mode=TRUE)
 	playsound(get_turf(user),'sound/magic/repulse.ogg', 100, 1)
 	user.visible_message("<span class='danger'>[user] sends out a wave of dark energy, knocking everything around!</span>","<span class='danger'>You push everything away!</span>")
@@ -164,5 +164,5 @@
 		if(to_throw.anchored || thrown_items[to_throw])
 			continue
 		var/throwtarget = get_edge_target_turf(user_turf, get_dir(user_turf, get_step_away(to_throw, user_turf)))
-		to_throw.throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
+		to_throw.safe_throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
 		thrown_items[to_throw] = to_throw
