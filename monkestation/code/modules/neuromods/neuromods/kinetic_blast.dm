@@ -21,7 +21,7 @@
 		if(atom.anchored || thrown_items[atom])
 			continue
 		var/throwtarget = get_edge_target_turf(owner_turf, get_dir(owner_turf, get_step_away(atom, owner_turf)))
-		atom.safe_throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
+		atom.throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
 		thrown_items[atom] = atom
 
 /obj/emitter/mimic/kinetic_blast

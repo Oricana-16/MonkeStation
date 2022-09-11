@@ -378,7 +378,7 @@
 	var/mob/living/victim = target
 
 	if(iscyborg(target) || isAI(target)) //stinky sillicons with their no mounting rules
-		victim.apply_damage(melee_damage, melee_damage_type, victim.get_bodypart(BODY_ZONE_CHEST)) //borgs still get the full damage, though it does feel a little dirty to deal the same damage twice
+		victim.apply_damage(melee_damage, melee_damage_type == CLONE ? BRUTE : melee_damage_type, victim.get_bodypart(BODY_ZONE_CHEST)) //borgs still get the full damage, though it does feel a little dirty to deal the same damage twice
 		return ..()
 
 	if(buckled && victim == buckled) //If you're buckled to them
