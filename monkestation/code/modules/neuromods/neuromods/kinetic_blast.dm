@@ -17,12 +17,12 @@
 	owner.visible_message("<span class='danger'>[owner] sends out a wave of dark energy, knocking everything around!</span>","<span class='danger'>You activate the neuromod, pushing everything away!</span>")
 	var/turf/owner_turf = get_turf(owner)
 	var/list/thrown_items = list()
-	for(var/atom/movable/atom as mob|obj in orange(7, owner_turf))
-		if(atom.anchored || thrown_items[atom])
+	for(var/atom/movable/to_throw as mob|obj in orange(7, owner_turf))
+		if(to_throw.anchored || thrown_items[to_throw])
 			continue
-		var/throwtarget = get_edge_target_turf(owner_turf, get_dir(owner_turf, get_step_away(atom, owner_turf)))
-		atom.throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
-		thrown_items[atom] = atom
+		var/throwtarget = get_edge_target_turf(owner_turf, get_dir(owner_turf, get_step_away(to_throw, owner_turf)))
+		to_throw.throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
+		thrown_items[to_throw] = to_throw
 
 /obj/emitter/mimic/kinetic_blast
 	particles = new/particles/mimic/kinetic_blast

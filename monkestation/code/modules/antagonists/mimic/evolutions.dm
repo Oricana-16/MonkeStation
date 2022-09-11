@@ -160,9 +160,9 @@
 	user.visible_message("<span class='danger'>[user] sends out a wave of dark energy, knocking everything around!</span>","<span class='danger'>You push everything away!</span>")
 	var/turf/user_turf = get_turf(user)
 	var/list/thrown_items = list()
-	for(var/atom/movable/atom as mob|obj in orange(7, user_turf))
-		if(atom.anchored || thrown_items[atom])
+	for(var/atom/movable/to_throw as mob|obj in orange(7, user_turf))
+		if(to_throw.anchored || thrown_items[to_throw])
 			continue
-		var/throwtarget = get_edge_target_turf(user_turf, get_dir(user_turf, get_step_away(atom, user_turf)))
-		atom.throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
-		thrown_items[atom] = atom
+		var/throwtarget = get_edge_target_turf(user_turf, get_dir(user_turf, get_step_away(to_throw, user_turf)))
+		to_throw.throw_at(throwtarget, 10, 1, force = MOVE_FORCE_EXTREMELY_STRONG)
+		thrown_items[to_throw] = to_throw
