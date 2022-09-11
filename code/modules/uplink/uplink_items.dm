@@ -1,44 +1,5 @@
 GLOBAL_LIST_INIT(uplink_items, subtypesof(/datum/uplink_item))
 
-/obj/item/debug_uplink_items
-	name = "Uplink Item Getter"
-	icon = 'icons/obj/device.dmi'
-	icon_state = "multitool"
-	item_state = "multitool"
-	lefthand_file = 'icons/mob/inhands/equipment/tools_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/tools_righthand.dmi'
-	var/numbernumbernumber = 125
-	var/list/uplink_items
-
-/obj/item/debug_uplink_items/Initialize(mapload)
-	. = ..()
-	uplink_items = get_uplink_items_B(UPLINK_TRAITORS)
-
-/obj/item/debug_uplink_items/attack_self(mob/user)
-	. = ..()
-	var/list/output = list()
-
-	var/crate_value = numbernumbernumber
-	var/datum/uplink_item/bundles_TC/surplus/SSS = new
-	var/datum/component/uplink/U = new /datum/component/uplink(user)
-	var/obj/structure/closet/crate/C = SSS.spawn_item(/obj/structure/closet/crate, user, U)
-	if(U.purchase_log)
-		U.purchase_log.LogPurchase(C, src, SSS.cost)
-	while(crate_value)
-		// var/category = pick(uplink_items)
-		// var/item = pick(uplink_items[category])
-		var/datum/uplink_item/I = pick(uplink_items)
-
-		if(!I.surplus || prob(100 - I.surplus))
-			continue
-		if(crate_value < I.cost)
-			continue
-		crate_value -= I.cost
-		var/obj/goods = new I.item(src)
-		output += goods
-	to_chat(world,output)
-	qdel(C)
-
 /proc/get_uplink_items(uplink_flag, allow_sales = TRUE, allow_restricted = TRUE)
 	var/list/filtered_uplink_items = list()
 	var/list/sale_items = list()
@@ -340,16 +301,14 @@ GLOBAL_LIST_INIT(uplink_items, subtypesof(/datum/uplink_item))
 	purchasable_from = ~(UPLINK_NUKE_OPS | UPLINK_CLOWN_OPS)
 
 /datum/uplink_item/bundles_TC/surplus/purchase(mob/user, datum/component/uplink/U)
-	var/list/uplink_items = get_uplink_items(uplink_contents, FALSE)
+	var/list/uplink_items = surplus_crate_items(uplink_contents)
 
 	var/crate_value = starting_crate_value
 	var/obj/structure/closet/crate/C = spawn_item(/obj/structure/closet/crate, user, U)
 	if(U.purchase_log)
 		U.purchase_log.LogPurchase(C, src, cost)
 	while(crate_value)
-		var/category = pick(uplink_items)
-		var/item = pick(uplink_items[category])
-		var/datum/uplink_item/I = uplink_items[category][item]
+		var/datum/uplink_item/I = pick_n_take(uplink_items)
 
 		if(!I.surplus || prob(100 - I.surplus))
 			continue
