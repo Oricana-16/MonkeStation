@@ -5,8 +5,8 @@
 	icon_living = "megafly"
 	icon_dead = "megafly_dead"
 
-	health = 50
-	maxHealth = 50
+	health = 35
+	maxHealth = 35
 
 	melee_damage = 10
 

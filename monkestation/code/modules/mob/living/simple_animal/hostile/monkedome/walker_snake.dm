@@ -21,10 +21,11 @@
 	retreat_distance = 2
 	minimum_distance = 3
 
-
 	check_friendly_fire = TRUE
 
 	move_to_delay = 3
+
+//Projectile
 
 /obj/item/projectile/walker_snake_rock
 	name = "rock"
