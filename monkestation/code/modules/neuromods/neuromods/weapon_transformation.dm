@@ -19,16 +19,15 @@
 	for(var/obj/item/item in hand_items) //Put the item away
 		if(item.item_flags & ABSTRACT)
 			continue
-		get_item(item)
 
-		new_item = new new_item(item.loc)
+		var/obj/item/new_item = get_item(item)
 		owner.visible_message("<span class='notice'>\The [item] turns into a [new_item].</span>","<span class='notice'>\The [item] turns black, before reshaping into a [new_item].</span>")
 		item.forceMove(new_item)
 		owner.put_in_hands(new_item)
 		addtimer(CALLBACK(src, .proc/untransform, new_item, item), 45 SECONDS)
 		break
 
-/obj/item/organ/cyberimp/neuromod/weapon_transformation/proc/get_item(obj/item)
+/obj/item/organ/cyberimp/neuromod/weapon_transformation/proc/get_item(obj/item/item)
 	var/list/possible_items = list()
 	var/list/priority_items = list()
 	if(item.is_sharp() || is_pointed(item))
@@ -41,11 +40,10 @@
 	if(istype(item,/obj/item/toy/katana))
 		priority_items |= list(/obj/item/katana)
 
-	var/obj/item/new_item = length(priority_items) ? pick(priority_items) : picK(possible_items)
+	var/obj/item/new_item = priority_items.len ? pick(priority_items) : pick(possible_items)
 
 	if(!new_item) //Fallback weapon, just in case
 		new_item = /obj/item/crowbar
-		break
 
 	return new_item
 
