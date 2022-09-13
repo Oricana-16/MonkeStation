@@ -16,7 +16,7 @@
 
 	faction = list("dome","hostile")
 
-	ranged_message = "pelts a rock at"
+	ranged_message = "hurls a rock at"
 	ranged_cooldown_time = 5 SECONDS
 	retreat_distance = 2
 	minimum_distance = 3
