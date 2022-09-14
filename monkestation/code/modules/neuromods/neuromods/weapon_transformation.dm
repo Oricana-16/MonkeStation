@@ -1,3 +1,4 @@
+#define POINTED_WEAPON_TRANSFORMATIONS list(/obj/item/kitchen/knife, /obj/item/kitchen/knife/combat, /obj/item/kitchen/knife/combat/survival)
 #define SHARP_WEAPON_TRANSFORMATIONS list(/obj/item/claymore, /obj/item/katana, /obj/item/melee/sabre)
 #define BLUNT_WEAPON_TRANSFORMATIONS list(/obj/item/staff/bostaff, /obj/item/melee/baseball_bat, /obj/item/club)
 
@@ -30,7 +31,9 @@
 /obj/item/organ/cyberimp/neuromod/weapon_transformation/proc/get_item(obj/item/item)
 	var/list/possible_items = list()
 	var/list/priority_items = list()
-	if(item.is_sharp() || is_pointed(item))
+	if(is_pointed(item))
+		possible_items |= POINTED_WEAPON_TRANSFORMATIONS
+	if(item.is_sharp())
 		possible_items |= SHARP_WEAPON_TRANSFORMATIONS
 	if(!item.is_sharp() && !is_pointed(item))
 		possible_items |= BLUNT_WEAPON_TRANSFORMATIONS
@@ -39,6 +42,11 @@
 		priority_items |= list(/obj/item/melee/transforming/energy/sword/bananium,/obj/item/melee/transforming/energy/sword/saber/blue)
 	if(istype(item,/obj/item/toy/katana))
 		priority_items |= list(/obj/item/katana)
+	//Owner Based Items
+	if(owner.mind?.assigned_role == "Clown")
+		possible_items |= list(/obj/item/melee/transforming/energy/sword/bananium)
+	if(iscultist(owner))
+		possible_items |= list(/obj/item/melee/cultblade/dagger,/obj/item/melee/cultblade)
 
 	var/obj/item/new_item = priority_items.len ? pick(priority_items) : pick(possible_items)
 
@@ -59,5 +67,6 @@
 	qdel(current_item)
 
 
+#undef POINTED_WEAPON_TRANSFORMATIONS
 #undef SHARP_WEAPON_TRANSFORMATIONS
 #undef BLUNT_WEAPON_TRANSFORMATIONS
