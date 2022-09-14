@@ -10,8 +10,8 @@
 	desc = "A morphing mass of black gooey tendrils."
 	speak_emote = list("warbles")
 	emote_hear = list("warbles")
-	faction = list("aliens") //don't wanna have them attack eachother
-	icon = 'monkestation/icons/mob/animal.dmi'
+	faction = list("aliens")
+	icon = 'monkestation/icons/mob/mimics.dmi'
 	icon_state = "mimic"
 	icon_living = "mimic"
 	icon_dead = "mimic_dead"
@@ -42,10 +42,7 @@
 	var/absorb_sound = 'monkestation/sound/creatures/mimic/mimicabsorb.ogg'
 	var/split_sound = 'monkestation/sound/creatures/mimic/mimicsplit.ogg'
 
-	var/playstyle_string = "<span class='big bold'>You are a mimic,</span></b> an alien that made it's way on to the station. \
-							You can take the form of any item you can see by clicking on it. You can latch onto people by clicking on them, \
-							which is instant when you're disguised. When you latch onto someone, they can't hurt you, but other people \
-							can. After someone dies, you can absorb their body and reproduce to make more mimics.</b>"
+	var/playstyle_string
 
 	var/disguised = FALSE
 	var/atom/movable/form = null
@@ -65,7 +62,6 @@
 	//If someone is attempting to evolve
 	var/static/evolving = FALSE
 
-
 	var/evolve_cooldown = FALSE
 
 	//The target npc mimic's try to disguise as.
@@ -79,11 +75,15 @@
 	//Whether the mimic can evolve
 	var/can_evolve = TRUE
 
+	//Evolve action, used for the first mimic being evolvable
+	var/datum/action/innate/mimic_evolution_request/evolve_request_action
+
 	var/static/list/possible_evolutions = list(
 		"greater" = /mob/living/simple_animal/hostile/alien_mimic/greater,
 		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/voltaic,
 		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/thermal,
-		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/shifty
+		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/shifty,
+		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/kinetic,
 	)
 
 	//This is so they can't just close and open the menu to reroll evolutions
@@ -188,7 +188,8 @@
 	ckey = candidate.ckey
 	mind.assigned_role = "Mimic"
 	mind.add_antag_datum(/datum/antagonist/mimic)
-	to_chat(src, playstyle_string)
+	if(playstyle_string)
+		to_chat(src, playstyle_string)
 
 	remove_from_spawner_menu()
 	remove_from_dead_mob_list()
@@ -274,8 +275,8 @@
 	replicate.Grant(src)
 	hivemind.Grant(src)
 	if(can_evolve)
-		var/datum/action/innate/mimic_evolution_request/evolve = new
-		evolve.Grant(src)
+		evolve_request_action = new
+		evolve_request_action.Grant(src)
 	ADD_TRAIT(src, TRAIT_SHOCKIMMUNE, INNATE_TRAIT) //Needs this so breaking down a single door doesnt kill em
 	set_varspeed(undisguised_move_delay)
 	. = ..()
@@ -614,7 +615,6 @@
 
 		for(var/i in 1 to 3)
 			evolution_options += pick_n_take(evolutions)
-
 
 	var/choice = input(src,"What type would you like to evolve into?","Mimic Evolution") in sortList(evolution_options)
 

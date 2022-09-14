@@ -3,6 +3,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/greater
 	name = "greater mimic"
 	real_name = "greater mimic"
+	icon_state = "greater"
+	icon_living = "greater"
 	maxHealth = 175
 	health = 175
 	melee_damage = 9
@@ -20,6 +22,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/voltaic
 	name = "voltaic mimic"
 	real_name = "voltaic mimic"
+	icon_state = "voltaic"
+	icon_living = "voltaic"
 	melee_damage = 5
 	secondary_damage_type = BURN
 	hivemind_modifier = "Voltaic"
@@ -65,6 +69,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/thermal
 	name = "thermal mimic"
 	real_name = "thermal mimic"
+	icon_state = "thermal"
+	icon_living = "thermal"
 	melee_damage = 7
 	melee_damage_type = BURN
 	damage_coeff = list(BRUTE = 1, BURN = 0, TOX = 1, CLONE = 1, STAMINA = 0, OXY = 1)
@@ -97,6 +103,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/shifty
 	name = "shifty mimic"
 	real_name = "shifty mimic"
+	icon_state = "shifty"
+	icon_living = "shifty"
 	hivemind_modifier = "Shifty"
 	melee_damage = 5
 	can_evolve = FALSE
@@ -136,6 +144,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/kinetic
 	name = "kinetic mimic"
 	real_name = "kinetic mimic"
+	icon_state = "kinetic"
+	icon_living = "kinetic"
 	hivemind_modifier = "Kinetic"
 	melee_damage = 6
 	secondary_damage_type = BRUTE

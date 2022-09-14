@@ -41,6 +41,11 @@
 	//Give them a special name in the hivemind for being the first one
 	if(spawned_mimic.mimic_count <= 1)
 		spawned_mimic.hivemind_name = pick("Mimic Leader","Mimic [pick("King","Queen","Monarch")]","Broodmother","Original","Mimic Prime")
+		//The first mimic gets to evolve
+		qdel(spawned_mimic.evolve_request_action)
+		var/datum/action/innate/mimic_evolution/evolution = new
+		evolution.Grant(spawned_mimic)
+		to_chat(spawned_mimic,"<span class='big bold'>As the first mimic, you get to evolve for free!</span>")
 	else
 		spawned_mimic.hivemind_name = pick("Mimic Commander","Mimic Centurion","Mimic General","Mimic Lord","Mimic Legionnaire","Mimic Elder") + " [spawned_mimic.mimic_count - 1]" //Unless multiple spawned, then any others get their own names
 
