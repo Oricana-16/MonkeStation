@@ -706,7 +706,7 @@
 /datum/action/innate/mimic_evolution
 	name = "Evolve"
 	icon_icon = 'icons/mob/actions/actions_clockcult.dmi'
-	button_icon_state = "Abscond"
+	button_icon_state = "Linked Abscond"
 	background_icon_state = "bg_alien"
 
 /datum/action/innate/mimic_evolution/Activate()
