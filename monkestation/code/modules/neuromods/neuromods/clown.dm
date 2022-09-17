@@ -59,10 +59,11 @@
 			do_teleport(user,target_turf)
 			do_teleport(target,user_turf)
 		if(5) //Turf Roll on the target's turf
-			turf_roll(pick(user,target),get_turf(target))
+			turf_roll(user,get_turf(target))
 		if(6) //Backfire
 			living_roll(target,user)
 			to_chat(target,"<span class='danger'>You feel clownish magic bounce off of you.</span>")
+			to_chat(user,"<span class='danger'>Your magic backfires!</span>")
 		if(7) //Out of body experience
 			if(target.mind)
 				to_chat(target,"<span class='userdanger'>A powerful honk temporarily knocks you out of your body.</span>")

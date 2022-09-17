@@ -14,16 +14,21 @@
 	item_state = "stamp-clown"
 	w_class = WEIGHT_CLASS_SMALL
 	var/static/list/neuromod_list = list(
-		/obj/item/autosurgeon/neuromod/clown = NEUROMOD_SPECIAL,					//SPECIAL
-		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,					//SUPER RARE
+		//SPECIAL
+		/obj/item/autosurgeon/neuromod/clown = NEUROMOD_SPECIAL,
+		//SUPER RARE
+		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/electrostatic_burst = NEUROMOD_SUPER_RARE,
-		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,				//RARE
+		//RARE
+		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/mindjack = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/weapon_transformation = NEUROMOD_RARE,
-		/obj/item/autosurgeon/neuromod/biomatter_transfer = NEUROMOD_UNCOMMON,		//UNCOMMON
+		//UNCOMMON
+		/obj/item/autosurgeon/neuromod/biomatter_transfer = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
-		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_COMMON,			//COMMON
+		//COMMON
+		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/scramble_electronics = NEUROMOD_COMMON,
 	)

@@ -117,7 +117,7 @@
 
 /obj/effect/proc_holder/spell/pointed/mimic_phantom_shift
 	name = "Phantom Shift"
-	desc = "Quickly reform in another position."
+	desc = "Quickly reform at another position."
 	clothes_req = FALSE
 	action_background_icon_state = "bg_alien"
 	charge_max = 30 SECONDS

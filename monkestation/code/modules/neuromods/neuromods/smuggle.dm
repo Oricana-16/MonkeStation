@@ -11,11 +11,11 @@
 	var/obj/item/stored_item
 	actions_types = list(/datum/action/item_action/organ_action/use)
 
-/obj/item/organ/cyberimp/neuromod/smuggle/Insert(mob/living/carbon/M, special, drop_if_replaced)
+/obj/item/organ/cyberimp/neuromod/smuggle/Insert(mob/living/carbon/user, special, drop_if_replaced)
 	. = ..()
 	RegisterSignal(owner, COMSIG_MOB_DEATH, .proc/owner_death)
 
-/obj/item/organ/cyberimp/neuromod/smuggle/Remove(mob/living/carbon/M, special)
+/obj/item/organ/cyberimp/neuromod/smuggle/Remove(mob/living/carbon/user, special)
 	. = ..()
 	UnregisterSignal(owner, COMSIG_MOB_DEATH)
 

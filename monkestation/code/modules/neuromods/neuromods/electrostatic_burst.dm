@@ -19,8 +19,10 @@
 
 /obj/item/organ/cyberimp/neuromod/targeted/electrostatic_burst/proc/zap(atom/target_turf)
 	for(var/mob/living/possible_target in view(4,target_turf))
-		if(!istype(possible_target) || possible_target == owner)
-			return
+		if(HAS_TRAIT(possible_target, TRAIT_SHOCKIMMUNE))
+			continue
+		if(possible_target == owner)
+			continue
 		target_turf.Beam(possible_target, icon_state="lightning[rand(1,12)]", time=5, maxdistance = 32)
 		if(possible_target.electrocute_act(15, owner, 1, SHOCK_NOSTUN))
 			if(iscarbon(possible_target))

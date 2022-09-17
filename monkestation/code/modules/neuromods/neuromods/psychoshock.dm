@@ -19,6 +19,7 @@
 	to_chat(living_target,"<span class='userdanger'>Your brain feels scrambled!</span>")
 	to_chat(owner,"<span class='notice'>You twist and turn [living_target.p_their()] mind.</span>")
 	living_target.Stun(5 SECONDS)
+	living_target.Knockdown(1 SECONDS)
 	living_target.jitteriness += 15
 	living_target.confused += 10
 	living_target.drop_all_held_items()

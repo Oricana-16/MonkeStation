@@ -35,7 +35,6 @@
 			return
 		mind_control(command,target)
 
-
 /obj/item/organ/cyberimp/neuromod/targeted/mindjack/proc/mind_control(command, mob/living/target)
 	to_chat(target, "<span class='userdanger'>Your mind goes blank, and you can only think of a single command...</span>")
 	to_chat(target, "<span class='mind_control'>[command]</span>")
@@ -47,7 +46,6 @@
 /obj/item/organ/cyberimp/neuromod/targeted/mindjack/proc/clear_mind_control(mob/living/target)
 	to_chat(target, "<span class='userdanger'>You feel the compulsion fade, and you <i>completely forget</i> about your previous orders.</span>")
 	target.clear_alert("mind_control")
-
 
 /obj/emitter/mimic/mindjack
 	particles = new/particles/mimic/mindjack

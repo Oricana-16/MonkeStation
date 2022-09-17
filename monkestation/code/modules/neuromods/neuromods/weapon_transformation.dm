@@ -17,11 +17,12 @@
 	if(.)
 		return
 	var/list/hand_items = list(owner.get_active_held_item(),owner.get_inactive_held_item())
-	for(var/obj/item/item in hand_items) //Put the item away
+	for(var/obj/item/item in hand_items)
 		if(item.item_flags & ABSTRACT)
 			continue
 
 		var/obj/item/new_item = get_item(item)
+		new_item = new new_item
 		owner.visible_message("<span class='notice'>\The [item] turns into a [new_item].</span>","<span class='notice'>\The [item] turns black, before reshaping into a [new_item].</span>")
 		item.forceMove(new_item)
 		owner.put_in_hands(new_item)
@@ -35,7 +36,7 @@
 		possible_items |= POINTED_WEAPON_TRANSFORMATIONS
 	if(item.is_sharp())
 		possible_items |= SHARP_WEAPON_TRANSFORMATIONS
-	if(!item.is_sharp() && !is_pointed(item))
+	if(!item.is_sharp() && !is_pointed(item) && item.force > 0)
 		possible_items |= BLUNT_WEAPON_TRANSFORMATIONS
 	// Priority Items
 	if(istype(item,/obj/item/toy/sword))
@@ -48,10 +49,10 @@
 	if(iscultist(owner))
 		possible_items |= list(/obj/item/melee/cultblade/dagger,/obj/item/melee/cultblade)
 
-	var/obj/item/new_item = priority_items.len ? pick(priority_items) : pick(possible_items)
+	if(!possible_items.len) //Fallback item, just in case
+		possible_items |= /obj/item/slapper
 
-	if(!new_item) //Fallback weapon, just in case
-		new_item = /obj/item/crowbar
+	var/obj/item/new_item = priority_items.len ? pick(priority_items) : pick(possible_items)
 
 	return new_item
 

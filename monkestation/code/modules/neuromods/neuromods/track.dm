@@ -31,7 +31,6 @@
 
 	tracking = living_target
 
-
 /obj/item/organ/cyberimp/neuromod/targeted/track/proc/track(choice)
 	switch(choice)
 		if("View")
@@ -42,7 +41,7 @@
 			if(!message)
 				return
 			to_chat(tracking, "<span class='notice'>You hear a voice behind you say \"[message]\"</span>")
-			to_chat(owner, "<span class='notice'>You whisper \"<b>[message]</b>\" into the air before you.</span>")
+			to_chat(owner, "<span class='notice'>You whisper \"<b>[message]</b>\" into the air.</span>")
 		if("Direction")
 			var/direction_text = "[dir2text(get_dir(owner, tracking))]"
 			if(direction_text)
