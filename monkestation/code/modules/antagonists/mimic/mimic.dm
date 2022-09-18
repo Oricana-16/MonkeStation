@@ -692,7 +692,7 @@
 		return
 
 	if(world.time < mimic.evolve_cooldown)
-		to_chat(mimic,"<span class='notice'>You attempted evolving not too long ago!</span>")
+		to_chat(mimic,"<span class='notice'>You need to wait 30 seconds between requesting evolution!</span>")
 		return
 
 	if(mimic.request_evolution())
