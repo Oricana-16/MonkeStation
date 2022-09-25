@@ -5,6 +5,7 @@
 /obj/item/organ/cyberimp/neuromod/targeted/phantom_shift
 	name = "Phantom Shift"
 	desc = "This neuromod allows you teleport to a nearby area."
+	icon_state = "phantom_shift"
 	cast_message = "<span class='notice'>You feel nothingness open infront of you. Click on a target area.</span>"
 	cancel_message = "<span class='notice'>You feel the gap in space close before you.</span>"
 	max_distance = 4

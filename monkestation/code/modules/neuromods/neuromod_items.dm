@@ -84,6 +84,8 @@
 /obj/item/organ/cyberimp/neuromod
 	desc = "This is a neuromod."
 	name = "Neuromod"
+	icon = 'monkestation/icons/mob/actions/actions_neuromods.dmi'
+	icon_state = "phantom_shift"
 	implant_color = "#c41ae6"
 	var/cooldown = 0 SECONDS
 	slot = ORGAN_SLOT_BRAIN_NEUROMOD

@@ -5,6 +5,7 @@
 /obj/item/organ/cyberimp/neuromod/targeted/mindjack
 	name = "Mindjack"
 	desc = "This neuromod allows you to temporarily command other beings."
+	icon_state = "mindjack"
 	cast_message = "<span class='notice'>You feel your presence grow. Click on a target area.</span>"
 	cancel_message = "<span class='notice'>You ease up.</span>"
 	max_distance = 9

@@ -5,6 +5,7 @@
 /obj/item/organ/cyberimp/neuromod/targeted/stalk
 	name = "Stalk"
 	desc = "This neuromod lets you hide in a person's shadows."
+	icon_state = "stalk"
 	cooldown = 10 SECONDS
 	max_distance = 1
 	cast_message = "<span class='notice'>You get ready to fall into the shadows.</span>"

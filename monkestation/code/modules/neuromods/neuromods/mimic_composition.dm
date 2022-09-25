@@ -5,6 +5,7 @@
 /obj/item/organ/cyberimp/neuromod/mimic_composition
 	name = "Mimic Composition"
 	desc = "This neuromod allows you to ventcrawl and walk through grilles."
+	icon_state = "mimic_composition"
 	cooldown = 90 SECONDS
 	actions_types = list(/datum/action/item_action/organ_action/use)
 

@@ -5,8 +5,7 @@
 /obj/item/organ/cyberimp/neuromod/smuggle
 	name = "Smuggle"
 	desc = "This neuromod lets you store an item inside your body."
-	icon = 'icons/obj/abductor.dmi'
-	icon_state = "implant"
+	icon_state = "smuggle"
 	cooldown = 3 SECONDS
 	var/obj/item/stored_item
 	actions_types = list(/datum/action/item_action/organ_action/use)
