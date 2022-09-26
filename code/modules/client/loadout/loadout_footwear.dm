@@ -36,7 +36,7 @@
 	display_name = "yellow performer's boots"
 	path = /obj/item/clothing/shoes/singery
 
-/datum/gear/footwear/yellow_perfomer
+/datum/gear/footwear/clown_shoes
 	display_name = "clown shoes"
 	description = "Dress up just like your hero! The... clown...?"
 	path = /obj/item/clothing/shoes/clown_shoes
