@@ -206,7 +206,7 @@
 
 /datum/gear/accessory/mask/mime
 	display_name = "mime mask"
-	desc = "..."
+	description = "..."
 	path = /obj/item/clothing/mask/gas/mime
 
 /datum/gear/accessory/mask/russian_balaclava
