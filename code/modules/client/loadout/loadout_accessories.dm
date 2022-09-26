@@ -211,7 +211,7 @@
 
 /datum/gear/accessory/mask/russian_balaclava
 	display_name = "russian balaclava"
-	desc = "cyka blyat!"
+	description = "cyka blyat!"
 	path = /obj/item/clothing/mask/russian_balaclava
 
 // GLOVES
