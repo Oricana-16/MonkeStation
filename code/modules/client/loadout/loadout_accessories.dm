@@ -204,7 +204,7 @@
 	desc = "Dress up just like your hero! The... clown...?"
 	path = /obj/item/clothing/mask/gas/clown_hat
 
-/datum/gear/accessory/mask/clown
+/datum/gear/accessory/mask/mime
 	display_name = "mime mask"
 	desc = "..."
 	path = /obj/item/clothing/mask/gas/mime

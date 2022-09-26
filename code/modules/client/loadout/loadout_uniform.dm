@@ -200,7 +200,7 @@
 	display_name = "maid costume"
 	path = /obj/item/clothing/under/costume/maid
 
-/datum/gear/uniform/misc/maid_costume
+/datum/gear/uniform/misc/school_girl_uniform
 	display_name = "school girl uniform"
 	description = "The perfect outfit for all of your twisted cosplaying needs."
 	path = /obj/item/clothing/under/costume/schoolgirl
@@ -210,7 +210,7 @@
 	description = "Dress up just like your hero! The... clown...?"
 	path = /obj/item/clothing/under/rank/civilian/clown
 
-/obj/item/uniform/misc/clown_costume/mime
+/obj/item/uniform/misc/mime_costume
 	display_name = "mime costume"
 	description = "..."
 	path = /obj/item/clothing/under/rank/civilian/mime
@@ -351,7 +351,7 @@
 //ROBOTICIST ALT UNIS
 
 /datum/gear/uniform/rank/roboticist
-	subtype_path = /datum/gear/uniform/rank/assistant
+	subtype_path = /datum/gear/uniform/rank/roboticist
 	allowed_roles = list("Roboticist")
 	cost = 2500
 
@@ -370,12 +370,12 @@
 
 //CLOWN ALT UNIS
 
-/datum/gear/uniform/rank/roboticist
-	subtype_path = /datum/gear/uniform/rank/assistant
-	allowed_roles = list("Roboticist")
+/datum/gear/uniform/rank/clown
+	subtype_path = /datum/gear/uniform/rank/clown
+	allowed_roles = list("Clown")
 	cost = 2500
 
-/datum/gear/uniform/rank/roboticist/rainbow_clown_suit
+/datum/gear/uniform/rank/clown/rainbow_clown_suit
 	display_name = "rainbow clown suit"
 	description = "<b>HONK!!</b>"
 	path = /obj/item/clothing/under/rank/civilian/clown/rainbow

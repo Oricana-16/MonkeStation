@@ -234,13 +234,13 @@
 	cost = 4000
 	allowed_roles = list("Security Officer","Warden","Head of Security")
 
-/datum/gear/hat/sec_beret
+/datum/gear/hat/warden_beret
 	display_name = "warden beret"
 	path = /obj/item/clothing/head/beret/sec/navywarden
 	cost = 4000
 	allowed_roles = list("Warden","Head of Security")
 
-/datum/gear/hat/sec_beret
+/datum/gear/hat/hos_beret
 	display_name = "head of security beret"
 	path = /obj/item/clothing/head/beret/sec/navyhos
 	cost = 4000
