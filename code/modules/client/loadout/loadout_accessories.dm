@@ -201,7 +201,7 @@
 
 /datum/gear/accessory/mask/clown
 	display_name = "clown mask"
-	desc = "Dress up just like your hero! The... clown...?"
+	description = "Dress up just like your hero! The... clown...?"
 	path = /obj/item/clothing/mask/gas/clown_hat
 
 /datum/gear/accessory/mask/mime
