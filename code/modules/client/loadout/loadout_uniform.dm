@@ -192,6 +192,39 @@
 	path = /obj/item/clothing/under/costume/swagoutfit
 	cost = 69000
 
+/datum/gear/uniform/misc/perfomer_blue
+	display_name = "blue performer's outfit"
+	description = "oo-ee-oo"
+	path = /obj/item/clothing/under/costume/singer/blue
+
+/datum/gear/uniform/misc/perfomer_yellow
+	display_name = "yellow performer's outfit"
+	path = /obj/item/clothing/under/costume/singer/yellow
+
+/datum/gear/uniform/misc/maid_costume
+	display_name = "maid costume"
+	path = /obj/item/clothing/under/costume/maid
+
+/datum/gear/uniform/misc/maid_costume
+	display_name = "school girl uniform"
+	description = "The perfect outfit for all of your twisted cosplaying needs."
+	path = /obj/item/clothing/under/costume/schoolgirl
+
+/datum/gear/uniform/misc/clown_costume
+	display_name = "clown costume"
+	description = "Dress up just like your hero! The... clown...?"
+	path = /obj/item/clothing/under/rank/civilian/clown
+
+/obj/item/uniform/misc/clown_costume/mime
+	display_name = "mime costume"
+	description = "..."
+	path = /obj/item/clothing/under/rank/civilian/mime
+
+/obj/item/clothing/under/rank/civilian/suspenders
+	display_name = "suspenders"
+	description = "..."
+	path = /obj/item/clothing/suit/suspenders
+
 //RANK SUBTYPE
 
 /datum/gear/uniform/rank
@@ -275,6 +308,10 @@
 	display_name = "engineering jumpsuit, hazard"
 	path = /obj/item/clothing/under/rank/engineering/engineer/hazard
 
+/datum/gear/uniform/rank/engineering/overalls
+	display_name = "engineering overalls"
+	path = /obj/item/clothing/under/misc/overalls
+
 //SECURITY ALT UNIS
 
 /datum/gear/uniform/rank/security
@@ -298,3 +335,52 @@
 	display_name = "security jumpsuit, Nanotrasen mall cop uniform"
 	path = /obj/item/clothing/under/rank/security/officer/mallcop
 	cost = 7500
+
+/datum/gear/uniform/rank/security/formal
+	display_name = "formal security jumpsuit"
+	path = /obj/item/clothing/under/rank/security/officer/formal
+	cost = 7500
+
+/datum/gear/uniform/rank/security/warden_formal
+	display_name = "formal warden jumpsuit"
+	path = /obj/item/clothing/under/rank/security/warden/formal
+	allowed_roles = list("Warden")
+	cost = 7500
+
+/datum/gear/uniform/rank/security/hos_formal
+	display_name = "formal head of security jumpsuit"
+	path = /obj/item/clothing/under/rank/security/head_of_security/formal
+	allowed_roles = list("Head of Security")
+	cost = 7500
+
+//ROBOTICIST ALT UNIS
+
+/datum/gear/uniform/rank/roboticist
+	subtype_path = /datum/gear/uniform/rank/assistant
+	allowed_roles = list("Roboticist")
+	cost = 2500
+
+/datum/gear/uniform/rank/roboticist/red_pilot_suit
+	display_name = "red mech pilot suit"
+	path = /obj/item/clothing/under/costume/mech_suit
+
+/datum/gear/uniform/rank/roboticist/blue_pilot_suit
+	display_name = "blue mech pilot suit"
+	path = /obj/item/clothing/under/costume/mech_suit/blue
+	description = "Get in the fucking gygax, Captain."
+
+/datum/gear/uniform/rank/roboticist/white_pilot_suit
+	display_name = "white mech pilot suit"
+	path = /obj/item/clothing/under/costume/mech_suit/white
+
+//CLOWN ALT UNIS
+
+/datum/gear/uniform/rank/roboticist
+	subtype_path = /datum/gear/uniform/rank/assistant
+	allowed_roles = list("Roboticist")
+	cost = 2500
+
+/datum/gear/uniform/rank/roboticist/rainbow_clown_suit
+	display_name = "rainbow clown suit"
+	description = "<b>HONK!!</b>"
+	path = /obj/item/clothing/under/rank/civilian/clown/rainbow
