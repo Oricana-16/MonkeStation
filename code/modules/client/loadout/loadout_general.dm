@@ -5,6 +5,10 @@
 	sort_category = "General"
 	cost = 1000
 
+/datum/gear/misc/clown_toy
+	display_name = "clown toy"
+	path = /obj/item/toy/figure/clown
+
 /datum/gear/misc/d20
 	display_name = "d20"
 	path = /obj/item/dice/d20
@@ -16,31 +20,27 @@
 	path = /obj/item/coin/antagtoken
 	cost = 10000
 
-/datum/gear/misc/antagtoken
-	display_name = "contraband poster"
-	description = "The cause of only the best revolutions."
-	path = /obj/item/poster/random_contraband
-	cost = 2500
-
 /datum/gear/misc/katana
 	display_name = "toy katana"
 	description = "This plastic was folded over 10 times."
 	path = /obj/item/toy/katana
 	cost = 750
 
-/datum/gear/misc/bikehron
+/datum/gear/misc/bikehorn
 	display_name = "bikehorn"
 	path = /obj/item/bikehorn
 	cost = 750
-
-/datum/gear/misc/clown_ty
-	display_name = "clown toy"
-	path = /obj/item/toy/figure/clown
 
 /datum/gear/misc/golden_bikehorn
 	display_name = "golden bikehorn"
 	description = "Nanotrasen gives it's wealthiest clowns it's most expensive bikehorns."
 	path = /obj/item/bikehorn/golden
+	cost = 2500
+
+/datum/gear/misc/contraband_poster
+	display_name = "contraband poster"
+	description = "The cause of only the best revolutions."
+	path = /obj/item/poster/random_contraband
 	cost = 2500
 
 //LIGHTERS & CIGARETTES

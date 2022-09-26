@@ -187,11 +187,6 @@
 	display_name = "sailor outfit"
 	path = /obj/item/clothing/under/costume/sailor
 
-/datum/gear/uniform/misc/swagoutfit
-	display_name = "swag outfit"
-	path = /obj/item/clothing/under/costume/swagoutfit
-	cost = 69000
-
 /datum/gear/uniform/misc/perfomer_blue
 	display_name = "blue performer's outfit"
 	description = "oo-ee-oo"
@@ -220,10 +215,10 @@
 	description = "..."
 	path = /obj/item/clothing/under/rank/civilian/mime
 
-/obj/item/clothing/under/rank/civilian/suspenders
-	display_name = "suspenders"
-	description = "..."
-	path = /obj/item/clothing/suit/suspenders
+/datum/gear/uniform/misc/swagoutfit
+	display_name = "swag outfit"
+	path = /obj/item/clothing/under/costume/swagoutfit
+	cost = 69000
 
 //RANK SUBTYPE
 

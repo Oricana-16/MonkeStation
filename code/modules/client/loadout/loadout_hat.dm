@@ -210,7 +210,7 @@
 	path = /obj/item/clothing/head/beret/eng
 	allowed_roles = list("Chief Engineer", "Station Engineer", "Atmospheric Technician")
 
-/datum/gear/hat/job_beret/eng
+/datum/gear/hat/job_beret/atmos
 	display_name = "atmospherics beret"
 	path = /obj/item/clothing/head/beret/atmos
 	allowed_roles = list("Chief Engineer", "Station Engineer", "Atmospheric Technician")
@@ -231,18 +231,18 @@
 /datum/gear/hat/sec_beret
 	display_name = "security beret"
 	path = /obj/item/clothing/head/beret/sec
-	cost = 5000
+	cost = 4000
 	allowed_roles = list("Security Officer","Warden","Head of Security")
 
 /datum/gear/hat/sec_beret
-	display_name = "security beret"
+	display_name = "warden beret"
 	path = /obj/item/clothing/head/beret/sec/navywarden
-	cost = 5000
+	cost = 4000
 	allowed_roles = list("Warden","Head of Security")
 
 /datum/gear/hat/sec_beret
-	display_name = "security beret"
+	display_name = "head of security beret"
 	path = /obj/item/clothing/head/beret/sec/navyhos
-	cost = 5000
+	cost = 4000
 	allowed_roles = list("Head of Security")
 

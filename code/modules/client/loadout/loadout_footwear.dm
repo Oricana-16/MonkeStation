@@ -38,7 +38,7 @@
 
 /datum/gear/footwear/clown_shoes
 	display_name = "clown shoes"
-	description = "Dress up just like your hero! The... clown...?"
+	description = "Honk...."
 	path = /obj/item/clothing/shoes/clown_shoes
 	cost = 20000 //They are Sacred.
 
