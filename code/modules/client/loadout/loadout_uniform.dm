@@ -210,7 +210,7 @@
 	description = "Dress up just like your hero! The... clown...?"
 	path = /obj/item/clothing/under/rank/civilian/clown
 
-/obj/item/uniform/misc/mime_costume
+/datum/gear/uniform/misc/mime_costume
 	display_name = "mime costume"
 	description = "..."
 	path = /obj/item/clothing/under/rank/civilian/mime
