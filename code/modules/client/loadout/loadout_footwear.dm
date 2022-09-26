@@ -19,7 +19,7 @@
 	path = /obj/item/clothing/shoes/workboots
 
 /datum/gear/footwear/laceup
-	display_name = "laceup boots"
+	display_name = "laceup shoes"
 	path = /obj/item/clothing/shoes/laceup
 
 /datum/gear/footwear/jackboots
