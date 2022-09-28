@@ -242,7 +242,7 @@
 
 /datum/gear/hat/hos_beret
 	display_name = "head of security beret"
-	path = /obj/item/clothing/head/beret/sec/navyhos
+	path = /obj/item/clothing/head/hos/beret/navyhos
 	cost = 4000
 	allowed_roles = list("Head of Security")
 
