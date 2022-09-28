@@ -7,6 +7,7 @@
 
 /datum/gear/misc/clown_toy
 	display_name = "clown toy"
+	description = "Our top scientists at NanoTrasen managed to turn the clown into a marketable action figure."
 	path = /obj/item/toy/figure/clown
 
 /datum/gear/misc/d20
@@ -35,7 +36,7 @@
 	display_name = "golden bikehorn"
 	description = "Nanotrasen gives it's wealthiest clowns it's most expensive bikehorns."
 	path = /obj/item/bikehorn/golden
-	cost = 2500
+	cost = 25000
 
 /datum/gear/misc/contraband_poster
 	display_name = "contraband poster"

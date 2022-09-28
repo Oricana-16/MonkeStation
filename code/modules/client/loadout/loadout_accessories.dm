@@ -225,7 +225,7 @@
 	path = /obj/item/clothing/gloves/color/black
 
 /datum/gear/accessory/gloves/white
-	display_name = "wihte gloves"
+	display_name = "white gloves"
 	path = /obj/item/clothing/gloves/color/white
 
 
