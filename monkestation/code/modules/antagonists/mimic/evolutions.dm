@@ -73,6 +73,7 @@
 	icon_living = "thermal"
 	melee_damage = 7
 	melee_damage_type = BURN
+	maxbodytemp = INFINITY
 	damage_coeff = list(BRUTE = 1, BURN = 0, TOX = 1, CLONE = 1, STAMINA = 0, OXY = 1)
 	hivemind_modifier = "Thermal"
 	can_evolve = FALSE
