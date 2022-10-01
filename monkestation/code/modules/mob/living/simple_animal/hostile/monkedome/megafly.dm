@@ -20,4 +20,4 @@
 	. = ..()
 	if(iscarbon(target))
 		var/mob/living/carbon/carbon_target = target
-		carbon_target.blood_volume -= 12
+		carbon_target.blood_volume -= rand(7,16)

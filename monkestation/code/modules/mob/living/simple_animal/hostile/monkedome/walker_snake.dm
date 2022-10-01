@@ -30,6 +30,6 @@
 /obj/item/projectile/walker_snake_rock
 	name = "rock"
 	icon_state = "bullet"
-	pass_flags = PASSTABLE | PASSGLASS | PASSGRILLE
+	pass_flags = PASSTABLE
 	damage = 5
 	flag = "bullet"

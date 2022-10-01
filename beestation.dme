@@ -3858,6 +3858,7 @@
 #include "monkestation\code\modules\mob\living\simple_animal\hostile\bees.dm"
 #include "monkestation\code\modules\mob\living\simple_animal\hostile\mining_mobs\elites\pandora_exploration.dm"
 #include "monkestation\code\modules\mob\living\simple_animal\hostile\monkedome\megafly.dm"
+#include "monkestation\code\modules\mob\living\simple_animal\hostile\monkedome\spore.dm"
 #include "monkestation\code\modules\mob\living\simple_animal\hostile\monkedome\monkedome_fauna.dm"
 #include "monkestation\code\modules\mob\living\simple_animal\hostile\monkedome\walker_snake.dm"
 #include "monkestation\code\modules\particles\byond_particles\particle_holder.dm"
