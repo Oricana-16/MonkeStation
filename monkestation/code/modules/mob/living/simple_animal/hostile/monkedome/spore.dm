@@ -16,6 +16,8 @@
 	melee_damage = 0
 	obj_damage = 0
 
+	del_on_death = TRUE
+
 	faction = list("dome","hostile")
 
 	ranged_message = "shoots ooze at"
@@ -48,7 +50,7 @@
 	if(ishuman(target))
 		var/mob/living/carbon/human/human_target = target
 
-		reagent_amount = rand(15,45)
+		var/reagent_amount = rand(15,45)
 		var/datum/reagents/spore_reagents = new()
 		spore_reagents.my_atom = src
 		spore_reagents.add_reagent(pick(possible_reagents), reagent_amount)
