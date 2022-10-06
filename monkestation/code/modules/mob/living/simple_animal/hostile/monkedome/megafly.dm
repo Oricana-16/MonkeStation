@@ -14,7 +14,7 @@
 
 	movement_type = FLYING
 
-	move_to_delay = 1.5
+	move_to_delay = 0.15 SECONDS
 
 /mob/living/simple_animal/hostile/monkedome_fauna/megafly/AttackingTarget()
 	. = ..()

@@ -23,7 +23,7 @@
 
 	check_friendly_fire = TRUE
 
-	move_to_delay = 3
+	move_to_delay = 0.3 SECONDS
 
 //Projectile
 
