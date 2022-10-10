@@ -24,7 +24,7 @@
 
 /datum/gear/footwear/jackboots
 	display_name = "jackboots"
-	description = "The premier choice of oppressors for 50 years!"
+	description = "The premier choice of oppressors for over 50 years!"
 	path = /obj/item/clothing/shoes/jackboots
 
 /datum/gear/footwear/blue_perfomer
