@@ -362,7 +362,7 @@
 /datum/gear/uniform/rank/roboticist/blue_pilot_suit
 	display_name = "blue mech pilot suit"
 	path = /obj/item/clothing/under/costume/mech_suit/blue
-	description = "Get in the fucking gygax, Captain."
+	description = "Get in the gygax, Captain."
 
 /datum/gear/uniform/rank/roboticist/white_pilot_suit
 	display_name = "white mech pilot suit"
