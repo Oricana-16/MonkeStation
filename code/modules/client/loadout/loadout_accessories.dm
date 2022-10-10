@@ -210,3 +210,6 @@
 	path = /obj/item/clothing/mask/gas/mime
 
 
+/datum/gear/accessory/mask/russian_balaclava
+	display_name = "russian balaclava"
+	path = /obj/item/clothing/mask/russian_balaclava
