@@ -209,23 +209,4 @@
 	description = "..."
 	path = /obj/item/clothing/mask/gas/mime
 
-/datum/gear/accessory/mask/russian_balaclava
-	display_name = "russian balaclava"
-	description = "cyka blyat!"
-	path = /obj/item/clothing/mask/russian_balaclava
-
-// GLOVES
-
-/datum/gear/accessory/gloves
-	subtype_path = /datum/gear/accessory/gloves
-	cost = 1000
-
-/datum/gear/accessory/gloves/black
-	display_name = "black gloves"
-	path = /obj/item/clothing/gloves/color/black
-
-/datum/gear/accessory/gloves/white
-	display_name = "white gloves"
-	path = /obj/item/clothing/gloves/color/white
-
 
