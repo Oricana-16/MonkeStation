@@ -23,6 +23,11 @@
 
 	move_to_delay = 0.5 SECONDS
 
+/mob/living/simple_animal/hostile/monkedome_fauna/faction_check_mob(mob/target, exact_match)
+	if(istype(target,/mob/living/simple_animal/hostile/monkedome_fauna/megafly)) //Allow them to target megaflies
+		return FALSE
+	return ..()
+
 //Projectile
 
 /obj/item/projectile/bullfrog_tongue
@@ -43,10 +48,17 @@
 	if(isliving(target))
 		var/mob/living/living_target = target
 		living_target.visible_message("<span class='danger'>[living_target] is grabbed by [firer]'s tongue!</span>","<span class='userdanger'>A tongue grabs you and pulls you towards [firer]!</span>")
+		if(istype(target,/mob/living/simple_animal/hostile/monkedome_fauna/megafly)) //Tongue instantly kills flies
+			living_target.throw_at(get_step_towards(firer,living_target), 8, 2, firer, TRUE, TRUE, callback=CALLBACK(src, .proc/hit_fly, firer, living_target))
+			return BULLET_ACT_HIT
 		living_target.throw_at(get_step_towards(firer,living_target), 8, 2, firer, TRUE, TRUE)
 		living_target.Stun(2 SECONDS)
 		living_target.Knockdown(3 SECONDS)
 		return BULLET_ACT_HIT
+
+/obj/item/projectile/bullfrog_tongue/proc/hit_fly(mob/firer,mob/target_fly)
+	target_fly.visible_message("<span class='danger'>[firer] eats [target_fly] in one swift motion!</span>")
+	qdel(target_fly)
 
 /obj/item/projectile/bullfrog_tongue/Destroy()
 	qdel(tongue)
