@@ -548,7 +548,7 @@
 		to_chat(src,"<span class='notice'>You can't split while someone is evolving!</span>")
 		return
 
-	var/split_cost = REPLICATION_COST(mimic_team.mimic_count)
+	var/split_cost = REPLICATION_COST(mimic_team.mimics.len)
 
 	if(mimic_team.people_absorbed >= split_cost)
 		splitting = TRUE
@@ -593,23 +593,23 @@
 
 	var/list/yes_voters = list()
 
-	if(EVOLUTION_COST(mimic_count) > 0)
-		yes_voters = pollCandidates("[hivemind_name] is requesting to evolve. Do you accept? (Cost: [EVOLUTION_COST(mimic_count)] absorbed people)", poll_time = 30 SECONDS, group = asked_mimics)
+	if(EVOLUTION_COST(mimic_team.mimics.len) > 0)
+		yes_voters = pollCandidates("[real_name] is requesting to evolve. Do you agree? (Cost: [EVOLUTION_COST(mimic_team.mimics.len)] absorbed people)", poll_time = 30 SECONDS, group = asked_mimics)
 
 	evolving = FALSE
 
 	if(QDELETED(src) || src.stat == DEAD)
 		for(var/mob/living/mimic in asked_mimics)
-			to_chat(mimic,"<span class='userdanger'>[hivemind_name] has died in the process of evolving!</span>")
+			to_chat(mimic,"<span class='userdanger'>[real_name] has died in the process of evolving!</span>")
 		return FALSE
 
-	if(LAZYLEN(yes_voters) <= LAZYLEN(asked_mimics) * 0.5 && EVOLUTION_COST(mimic_count) > 0)
+	if(LAZYLEN(yes_voters) <= LAZYLEN(asked_mimics) * 0.5 && EVOLUTION_COST(mimic_team.mimics.len) > 0)
 		for(var/mob/living/mimic in asked_mimics)
-			to_chat(mimic,"<span class='userdanger'>[hivemind_name] did not win the vote, and did not evolve!</span>")
+			to_chat(mimic,"<span class='userdanger'>[real_name] did not win the vote, and did not evolve!</span>")
 		return FALSE
 
 	for(var/mob/living/mimic in asked_mimics)
-		to_chat(mimic,"<span class='userdanger'>[hivemind_name] has been granted permission to evolve!</span>")
+		to_chat(mimic,"<span class='userdanger'>[real_name] has been granted permission to evolve!</span>")
 	return TRUE
 
 
@@ -630,7 +630,7 @@
 	visible_message("<span class='notice'>[src] changes into a new shape!</span>","<span class='notice'>You twist and contort, and evolve into a new form.</span>")
 
 	new_mimic.setDir(dir)
-	new_mimic.hivemind_name = "[new_mimic.hivemind_modifier] [hivemind_name]"
+	new_mimic.real_name = "[new_mimic.hivemind_modifier] [real_name]"
 	if(mind)
 		mind.transfer_to(new_mimic)
 	qdel(src)
@@ -691,7 +691,7 @@
 
 /datum/action/innate/mimic_evolution_request/Activate()
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic = owner
-	if(mimic.people_absorbed < EVOLUTION_COST(mimic.mimic_count))
+	if(mimic.mimic_team.people_absorbed < EVOLUTION_COST(mimic.mimic_team.mimics.len))
 		to_chat(mimic,"<span class='notice'>You do not have the resources to evolve!</span>")
 		return
 
@@ -702,7 +702,7 @@
 	if(mimic.request_evolution())
 		var/datum/action/innate/mimic_evolution/evolution = new
 		evolution.Grant(mimic)
-		mimic.people_absorbed -= EVOLUTION_COST(mimic.mimic_count)
+		mimic.mimic_team.people_absorbed -= EVOLUTION_COST(mimic.mimic_team.mimics.len)
 		qdel(src)
 		return
 	mimic.evolve_cooldown = world.time + 30 SECONDS
