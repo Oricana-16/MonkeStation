@@ -457,7 +457,7 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/get_stat_tab_status()
 	var/list/tab_data = ..()
-  tab_data["Replication Cost"] = GENERATE_STAT_TEXT("[REPLICATION_COST(mimic_team.mimics.len)]")
+	tab_data["Replication Cost"] = GENERATE_STAT_TEXT("[REPLICATION_COST(mimic_team.mimics.len)]")
 	tab_data["People Absorbed"] = GENERATE_STAT_TEXT("[mimic_team.people_absorbed]")
 	return tab_data
 
