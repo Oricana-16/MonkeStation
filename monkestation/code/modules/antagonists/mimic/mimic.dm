@@ -63,7 +63,7 @@
 	var/atom/movable/ai_disg_target = null
 	//attempts to reach a disguise target
 	var/ai_disg_reach_attempts = 0
-  
+
 	//Mimic Organs for Neuromods
 	var/has_organ = TRUE
 
@@ -192,7 +192,7 @@
 
 	mimic_team.mimics |= src
 	if(playstyle_string)
-	  to_chat(src, playstyle_string)
+		to_chat(src, playstyle_string)
 
 	remove_from_spawner_menu()
 	remove_from_dead_mob_list()
@@ -268,8 +268,8 @@
 	med_hud_set_status() //we are not an object
 
 /mob/living/simple_animal/hostile/alien_mimic/Initialize(mapload)
-  //1% chance for some silly names
-  real_name = prob(99) ? "Mimic [rand(1,999)]" : pick("John Mimic","[pick(GLOB.first_names)]","Not-A-Mimic","Trapdoor Spider","Syndicate Infiltrator","Mimic Hater","Xenomorph [pick("Hunter","Drone","Sentinel","Queen")]")
+	//1% chance for some silly names
+	real_name = prob(99) ? "Mimic [rand(1,999)]" : pick("John Mimic","[pick(GLOB.first_names)]","Not-A-Mimic","Trapdoor Spider","Syndicate Infiltrator","Mimic Hater","Xenomorph [pick("Hunter","Drone","Sentinel","Queen")]")
 
 	var/datum/action/innate/mimic_reproduce/replicate = new
 	var/datum/action/innate/mimic_hivemind/hivemind = new
@@ -570,7 +570,7 @@
 		to_chat(src,"<span class='warning'>You fail to split!</span>")
 		return
 	to_chat(src,"<span class='warning'>You haven't absorbed enough people!</span>")
-  
+
 //Evolution Procs
 /mob/living/simple_animal/hostile/alien_mimic/proc/request_evolution()
 	if(splitting)
