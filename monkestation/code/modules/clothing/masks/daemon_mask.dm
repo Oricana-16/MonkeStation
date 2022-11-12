@@ -22,7 +22,7 @@
 
 /obj/item/clothing/mask/daemon_mask/Initialize(mapload)
 	. = ..()
-	var/list/possible_armaments = list(/obj/daemon_blade)
+	var/list/possible_armaments = subtypesof(/obj/item/armament)
 	armament = pick(possible_armaments)
 
 /obj/item/clothing/mask/daemon_mask/attack_self(mob/user)
