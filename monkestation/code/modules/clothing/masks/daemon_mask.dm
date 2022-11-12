@@ -12,13 +12,14 @@
 	var/mob/living/simple_animal/shade/spirit = null
 
 	//spells only while you possess someone
-	var/list/possession_spells = list(/obj/effect/proc_holder/spell/targeted/mask_lunge, /obj/effect/proc_holder/spell/self/mask_fear)
+	var/list/possession_spells = list(/obj/effect/proc_holder/spell/targeted/mask_lunge, /obj/effect/proc_holder/spell/self/mask_fear, /obj/effect/proc_holder/spell/self/summon_armament)
 	//spells only while youre a mask
-	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune,/obj/effect/proc_holder/spell/self/truesight)
+	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune, /obj/effect/proc_holder/spell/self/truesight)
 	//spells that you always have
 	var/list/constant_spells = list(/obj/effect/proc_holder/spell/self/mask_possession)
 
-	var/obj/armament
+	var/obj/item/armament
+	var/obj/item/summoned_armament
 
 /obj/item/clothing/mask/daemon_mask/Initialize(mapload)
 	. = ..()
@@ -148,6 +149,10 @@
 	addtimer(CALLBACK(src, .proc/undo_possession, user, wearer, mask), 60 SECONDS)
 
 /obj/effect/proc_holder/spell/self/mask_possession/proc/undo_possession(mob/living/swapper, mob/living/carbon/victim, obj/item/clothing/mask/daemon_mask/mask)
+	if(mask.summoned_armament)
+		qdel(mask.summoned_armament)
+		mask.summoned_armament = null
+
 	var/mob/dead/observer/ghost = swapper.ghostize(0)
 	victim.mind.transfer_to(swapper)
 
@@ -273,14 +278,13 @@
 	playsound(get_turf(mask), pick(noises), 200, 1)
 	for(var/mob/living/carbon/target in oviewers(7,mask))
 		if(HAS_TRAIT(target, TRAIT_FEARLESS))
-			to_chat(target,"<span class='warning'>You don't feel scared in the slightest as you stare into [mask].</span>")
 			return
 
 		if(HAS_TRAIT(target, TRAIT_STUNIMMUNE))
 			to_chat(target,"<span class='warning'>A chill runs through your body as you stare into [mask].</span>")
 			return
 
-		if(target?.mind?.assigned_role == "Chaplain")
+		if(target.mind?.assigned_role == "Chaplain")
 			to_chat(target,"<span class='warning'>Your faith protects you as you stare into [mask].</span>")
 			return
 
@@ -289,3 +293,23 @@
 
 		if(prob(50))
 			target.emote("scream")
+
+/obj/effect/proc_holder/spell/self/summon_armament
+	name = "Summon Armament"
+	desc = "Summon your weapon."
+	action_icon = 'monkestation/icons/mob/inhands/weapons/swords_lefthand.dmi'
+	action_icon_state = "daemon_blade"
+	clothes_req = FALSE
+	charge_max = 60 SECONDS
+	invocation = "none"
+	invocation_type = "none"
+	school = "transmutation"
+
+/obj/effect/proc_holder/spell/self/summon_armament/cast(mob/living/user)
+	var/obj/item/clothing/mask/daemon_mask/mask = user.get_item_by_slot(ITEM_SLOT_MASK)
+	if(!istype(mask))
+		return
+
+	var/obj/item/armament/new_armament = new mask.armament(loc)
+	mask.summoned_armament = new_armament
+	user.put_in_hands(new_armament)
