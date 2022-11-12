@@ -5,6 +5,7 @@
 	throwforce = 10
 	w_class = WEIGHT_CLASS_BULKY
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	icon = 'monkestation/icons/obj/items_and_weapons.dmi'
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "tore", "ripped", "diced", "cut")
 	slot_flags = ITEM_SLOT_BACK|ITEM_SLOT_BELT
 	sharpness = IS_SHARP
@@ -43,10 +44,10 @@
 	desc = "A scythe created from magic infused blood."
 	icon_state = "blood_scythe"
 	item_state = "blood_scythe"
-	lefthand_file = 'monkestation/icons/mob/inhands/weapons/polearms_lefthand.dmi'
-	righthand_file = 'monkestation/icons/mob/inhands/weapons/polearms_righthand.dmi'
-	force = 35
-	throwforce = 5
+	lefthand_file = 'monkestation/icons/mob/inhands/polearms_lefthand.dmi'
+	righthand_file = 'monkestation/icons/mob/inhands/polearms_righthand.dmi'
+	force = 25
+	throwforce = 10
 	ability_cooldown = 15 SECONDS
 
 /obj/item/armament/blood_scythe/Initialize(mapload)

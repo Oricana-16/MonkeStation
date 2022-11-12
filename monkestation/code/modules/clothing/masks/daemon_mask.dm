@@ -297,7 +297,7 @@
 /obj/effect/proc_holder/spell/self/summon_armament
 	name = "Summon Armament"
 	desc = "Summon your weapon."
-	action_icon = 'monkestation/icons/mob/inhands/weapons/swords_lefthand.dmi'
+	action_icon = 'monkestation/icons/obj/items_and_weapons.dmi'
 	action_icon_state = "daemon_blade"
 	clothes_req = FALSE
 	charge_max = 60 SECONDS
