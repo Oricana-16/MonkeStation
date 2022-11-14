@@ -44,7 +44,7 @@
 
 	//Give them a special name in the hivemind for being the first one
 	if(mimic_datum.mimic_team.mimics.len <= 1)
-		spawned_mimic.real_name = pick("Mimic Leader","Mimic [pick("King","Queen","Monarch")]","The Broodmother","The Original","Mimic Prime")
+		spawned_mimic.real_name = pick("Mimic Leader","Mimic [pick("King","Queen","Monarch")]","Broodmother","Apex","Mimic Prime")
 		//The first mimic gets to evolve
 		qdel(spawned_mimic.evolve_request_action)
 		var/datum/action/innate/mimic_evolution/evolution = new

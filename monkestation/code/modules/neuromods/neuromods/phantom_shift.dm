@@ -14,6 +14,8 @@
 
 /obj/item/organ/cyberimp/neuromod/targeted/phantom_shift/activate(target)
 	var/turf/target_turf = get_turf(target)
+	if(!(target_turf in view(7, get_turf(owner))))
+		return
 	if(target_turf.density)
 		to_chat(owner,"<span class='notice'>You can't teleport there!</span>")
 	..()

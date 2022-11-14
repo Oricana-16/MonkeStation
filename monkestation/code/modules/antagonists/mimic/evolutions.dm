@@ -120,12 +120,17 @@
 	name = "Phantom Shift"
 	desc = "Quickly reform at another position, and bring anyone you're latched on to."
 	clothes_req = FALSE
+	action_icon = 'monkestation/icons/mob/actions/actions_neuromods.dmi'
+	action_icon_state = "phantom_shift"
 	action_background_icon_state = "bg_alien"
 	charge_max = 30 SECONDS
 
 /obj/effect/proc_holder/spell/pointed/mimic_phantom_shift/cast(list/targets,mob/user = usr)
 	for(var/target in targets)
 		var/turf/target_turf = get_turf(target)
+		if(!(target_turf in view(7, get_turf(user))))
+			revert_cast(user)
+			return
 		if(target_turf.density)
 			to_chat(user,"<span class='notice'>You can't teleport there!</span>")
 			revert_cast(user)
@@ -151,7 +156,7 @@
 	melee_damage = 6
 	secondary_damage_type = BRUTE
 	can_evolve = FALSE
-	playstyle_string = "<span class='big bold'>You are a kinetic mimic,</span></b> you deal only brute damage, and can push things away with your kinetic blast.<b>"
+	playstyle_string = "<span class='big bold'>You are a kinetic mimic,</span></b> you only deal brute damage, and can push things away with your kinetic blast.<b>"
 
 /mob/living/simple_animal/hostile/alien_mimic/kinetic/Initialize(mapload)
 	. = ..()
