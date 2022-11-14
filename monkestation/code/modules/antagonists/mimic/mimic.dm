@@ -631,7 +631,9 @@
 
 	new_mimic.setDir(dir)
 	new_mimic.real_name = "[new_mimic.hivemind_modifier] [real_name]"
+	new_mimic.mimic_team = mimic_team
 	if(mind)
+		mimic_team.evolved_members |= mind
 		mind.transfer_to(new_mimic)
 	qdel(src)
 
