@@ -191,8 +191,7 @@
 	icon_state = "oracle"
 	icon_living = "oracle"
 	hivemind_modifier = "oracle"
-	melee_damage = 6
-	secondary_damage_type = BRUTE
+	melee_damage = 5
 	can_evolve = FALSE
 	playstyle_string = "<span class='big bold'>You are an oracle mimic,</span></b> you can temporarily shed your body to see the truth of the world.<b>"
 
