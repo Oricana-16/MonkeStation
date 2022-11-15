@@ -43,6 +43,8 @@
 		priority_items |= list(/obj/item/melee/transforming/energy/sword/bananium,/obj/item/melee/transforming/energy/sword/saber/blue)
 	if(istype(item,/obj/item/toy/katana))
 		priority_items |= list(/obj/item/katana)
+	if(istype(item,/obj/item/skub)) //skub :)
+		priority_items |= list(/obj/item/sord)
 	//Owner Based Items
 	if(owner.mind?.assigned_role == "Clown")
 		possible_items |= list(/obj/item/melee/transforming/energy/sword/bananium)

@@ -44,7 +44,7 @@
 	if(target.stat == DEAD)
 		to_chat(target,"<span class='danger'>You can't clown on dead people!</span>")
 		return
-	switch(rand(1,9))
+	switch(rand(1,10))
 		if(1) //Launch
 			target.throw_at(get_edge_target_turf(target,pick(GLOB.alldirs)),rand(1,10),rand(1,10),force=rand(MOVE_FORCE_EXTREMELY_WEAK,MOVE_FORCE_OVERPOWERING))
 		if(2) //Stun
@@ -73,6 +73,8 @@
 			target.apply_damage(rand(10,100),STAMINA)
 		if(9) //Species Change
 			target.set_species(pick(subtypesof(/datum/species) - list(/datum/species/zombie/infectious,/datum/species/zombie/infectious/fast,/datum/species/human/supersoldier,/datum/species/debug)))
+		if(10) //:)
+			target.emote("fart")
 
 /obj/item/organ/cyberimp/neuromod/targeted/clown/proc/turf_roll(mob/living/user,turf/target_turf)
 	if(!istype(target_turf))

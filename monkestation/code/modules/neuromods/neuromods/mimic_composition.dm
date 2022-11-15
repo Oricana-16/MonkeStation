@@ -4,7 +4,7 @@
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition
 	name = "Mimic Composition"
-	desc = "This neuromod allows you to ventcrawl and walk through grilles."
+	desc = "This neuromod allows you to ventcrawl and walk through airlocks & grilles."
 	icon_state = "mimic_composition"
 	cooldown = 90 SECONDS
 	actions_types = list(/datum/action/item_action/organ_action/use)
@@ -18,14 +18,14 @@
 	owner.ventcrawler = VENTCRAWLER_ALWAYS
 	owner.pass_flags |= PASSGRILLE | PASSDOORS
 	owner.alpha /= 2
-	to_chat(owner, "<span class='notice'>Your skin feels gaseous and slimy. You get the urge to scamper around through the vents.</span>")
+	to_chat(owner, "<span class='notice'>Your skin feels gaseous and slimy. You get the urge to scamper around in the vents.</span>")
 
 	addtimer(CALLBACK(src, .proc/normal_composition), 30 SECONDS)
 
 /obj/item/organ/cyberimp/neuromod/mimic_composition/proc/normal_composition()
 	owner.remove_emitter("mimic_composition")
 	owner.ventcrawler = VENTCRAWLER_NONE
-	owner.pass_flags &= ~ (PASSGRILLE|PASSDOORS)
+	owner.pass_flags &= ~(PASSGRILLE|PASSDOORS)
 	owner.alpha *= 2
 	owner.remove_emitter(/obj/emitter/mimic/mimic_composition,"mimic_composition")
 	to_chat(owner, "<span class='notice'>Your body reshapes itself.</span>")
