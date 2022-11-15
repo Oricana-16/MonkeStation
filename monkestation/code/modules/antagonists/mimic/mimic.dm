@@ -79,6 +79,7 @@
 		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/thermal,
 		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/shifty,
 		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/kinetic,
+		"oracle" = /mob/living/simple_animal/hostile/alien_mimic/oracle,
 	)
 
 	//This is so they can't just close and open the menu to reroll evolutions
@@ -675,13 +676,12 @@
 	name_to_use = mimic_user.real_name
 
 	my_message = "<span class='mimichivemindtitle'><b>Mimic Hivemind</b></span> <span class='mimichivemind'><b>[name_to_use]:</b> [message]</span>"
-	for(var/player in GLOB.player_list)
-		var/mob/recipient = player
-		if(ismimic(recipient))
-			to_chat(recipient, my_message)
-		else if(recipient in GLOB.dead_mob_list)
-			var/link = FOLLOW_LINK(recipient, user)
-			to_chat(recipient, "[link] [my_message]")
+	for(var/datum/mind/mimic_mind in mimic_user.mimic_team.members)
+		var/mob/recipient = mimic_mind.current
+		to_chat(recipient, my_message)
+	for(var/recipient in GLOB.dead_mob_list)
+		var/link = FOLLOW_LINK(recipient, user)
+		to_chat(recipient, "[link] [my_message]")
 
 	user.log_talk(message, LOG_SAY, tag="mimic hivemind")
 
