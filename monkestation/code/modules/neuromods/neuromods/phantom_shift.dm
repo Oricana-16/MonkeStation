@@ -33,7 +33,9 @@
 	spawning = SPAWN_ALL_PARTICLES_INSTANTLY
 	lifespan = 1 SECONDS
 	fade = 0.2 SECONDS
+	#ifndef SPACEMAN_DMM
 	fadein = 0.8 SECONDS
+	#endif
 	position = generator("box", list(-10,-10), list(10,10), NORMAL_RAND)
 	velocity = generator("circle", -10, 10, NORMAL_RAND)
 	friction = 0.35
