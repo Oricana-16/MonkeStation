@@ -138,6 +138,7 @@
 		var/mob/living/teleport_with
 		if(user.buckled)
 			teleport_with = user.buckled
+		user.add_emitter(/obj/emitter/mimic/phantom_shift,"phantom_shift",burst_mode=TRUE)
 		do_teleport(user, target_turf)
 		if(teleport_with)
 			do_teleport(teleport_with, target_turf)

@@ -14,7 +14,7 @@
 
 /obj/item/organ/cyberimp/neuromod/targeted/track/ui_action_click()
 	if(tracking)
-		var/choice = input(owner,"What do you want to do with your target?","Track Neuromod") in list("Watch","Communicate","Direction","Cancel Tracking")
+		var/choice = input(owner,"What do you want to do with your target?","Track Neuromod") in list("Watch","Communicate","Direction","Remove Tracker")
 		track(choice)
 	else
 		..()

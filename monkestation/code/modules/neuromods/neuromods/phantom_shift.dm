@@ -19,5 +19,22 @@
 	if(target_turf.density)
 		to_chat(owner,"<span class='notice'>You can't teleport there!</span>")
 	..()
+	owner.add_emitter(/obj/emitter/mimic/phantom_shift,"phantom_shift",burst_mode=TRUE)
 	owner.visible_message("<span class='danger'>[owner] vanishes in a puff of black smoke!</span>","<span class='notice'>You step into nothing and silently appear in a new area.</span>")
 	do_teleport(owner, target_turf, no_effects = TRUE)
+
+/obj/emitter/mimic/phantom_shift
+	particles = new/particles/mimic/phantom_shift
+
+/particles/mimic/phantom_shift
+	width = 124
+	height = 124
+	count = 128
+	spawning = SPAWN_ALL_PARTICLES_INSTANTLY
+	lifespan = 1 SECONDS
+	fade = 0.2 SECONDS
+	fadein = 0.8 SECONDS
+	position = generator("box", list(-10,-10), list(10,10), NORMAL_RAND)
+	velocity = generator("circle", -10, 10, NORMAL_RAND)
+	friction = 0.35
+	color = generator("color", "#630a63", "#bd0aa5", NORMAL_RAND)

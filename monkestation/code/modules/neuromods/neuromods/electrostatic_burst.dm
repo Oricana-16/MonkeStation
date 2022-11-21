@@ -29,4 +29,4 @@
 				var/mob/living/carbon/carbon_target = possible_target
 				carbon_target.Stun(5 SECONDS)
 				carbon_target.Knockdown(rand(6 SECONDS, 8 SECONDS))
-		to_chat(possible_target,"<span class='danger'>A ball of energy appears from [owner.name] and zaps you!</span>")
+		to_chat(possible_target,"<span class='danger'>A ball of electricity appears from [owner.name] and zaps you!</span>")
