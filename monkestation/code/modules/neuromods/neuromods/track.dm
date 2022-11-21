@@ -14,7 +14,7 @@
 
 /obj/item/organ/cyberimp/neuromod/targeted/track/ui_action_click()
 	if(tracking)
-		var/choice = input(owner,"What do you want to do with your target?","Track Neuromod") in list("View","Communicate","Direction","Cancel Tracking")
+		var/choice = input(owner,"What do you want to do with your target?","Track Neuromod") in list("Watch","Communicate","Direction","Cancel Tracking")
 		track(choice)
 	else
 		..()
@@ -26,8 +26,8 @@
 	var/mob/living/living_target = target
 
 	..()
-	owner.visible_message("<span class='notice'>A small black orb flies from [owner] into [target]</span>",	\
-						"<span class='notice'>You start tracking [living_target ].</span>",vision_distance = 3)
+	owner.visible_message("<span class='notice'>A small black orb flies from [owner] into [target]'s shadow</span>",	\
+						"<span class='notice'>You start tracking [living_target].</span>",vision_distance = 3)
 
 	tracking = living_target
 

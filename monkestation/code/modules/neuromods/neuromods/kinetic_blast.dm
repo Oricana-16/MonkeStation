@@ -5,6 +5,7 @@
 /obj/item/organ/cyberimp/neuromod/kinetic_blast
 	name = "Kinetic Blast"
 	desc = "This neuromod blasts nearby people and objects away."
+	icon_state = "kinetic_blast"
 	cooldown = 30 SECONDS
 	actions_types = list(/datum/action/item_action/organ_action/use)
 

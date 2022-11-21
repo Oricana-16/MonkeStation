@@ -5,6 +5,8 @@
 /obj/item/organ/cyberimp/neuromod/targeted/scramble_electronics
 	name = "Scramble Electronics"
 	desc = "This neuromod allows you to mess with nearby electronics."
+	icon_state = "emp"
+	icon = 'icons/mob/actions/actions_spells.dmi'
 	cast_message = "<span class='notice'>You feel electricity spark behind your eyes. Click on a target area.</span>"
 	cancel_message = "<span class='notice'>The electricity calms.</span>"
 	max_distance = 3
