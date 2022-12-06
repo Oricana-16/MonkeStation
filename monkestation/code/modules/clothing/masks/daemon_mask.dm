@@ -23,8 +23,7 @@
 
 /obj/item/clothing/mask/daemon_mask/Initialize(mapload)
 	. = ..()
-	var/list/possible_armaments = subtypesof(/obj/item/armament)
-	armament = pick(possible_armaments)
+	armament = pick(subtypesof(/obj/item/armament))
 
 /obj/item/clothing/mask/daemon_mask/attack_self(mob/user)
 	if(possessed)
