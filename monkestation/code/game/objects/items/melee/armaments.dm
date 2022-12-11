@@ -64,6 +64,8 @@
 		if(previous_turf == get_turf(src))
 			previous_turf = current_turf
 			continue
+		if(isclosedturf(previous_turf)) //Can't fire fire through walls
+			break
 		new /obj/effect/hotspot(previous_turf)
 		for(var/mob/living/hit_creature in previous_turf)
 			hit_creature.adjustFireLoss(6)
@@ -71,7 +73,12 @@
 			hit_creature.Stun(0.5 SECONDS)
 		previous_turf = current_turf
 		sleep(1)
-
+		//Once last hit for the final turf
+		if(!isclosedturf(previous_turf))
+			new /obj/effect/hotspot(previous_turf)
+			for(var/mob/living/hit_creature in previous_turf)
+				hit_creature.adjustFireLoss(12)
+				hit_creature.Stun(1 SECONDS)
 /obj/item/armament/blood_scythe
 	name = "blood scythe"
 	desc = "A scythe created from the blood of demons. Click on a distant target to bring them closer."

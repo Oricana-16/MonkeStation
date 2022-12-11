@@ -1,7 +1,7 @@
 //Daemon Mask
 /obj/item/clothing/mask/daemon_mask
 	name = "daemon mask"
-	desc = "A cursed mask scavenged from the ruins of an ancient cult, said to summon and house spirits."
+	desc = "A cursed mask recovered from the ruins of an ancient cult, found to summon and house spirits."
 	icon = 'monkestation/icons/obj/clothing/masks.dmi'
 	worn_icon = 'monkestation/icons/mob/mask.dmi'
 	icon_state = "daemon_mask"

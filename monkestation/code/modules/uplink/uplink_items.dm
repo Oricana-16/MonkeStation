@@ -30,6 +30,15 @@
 	item = /obj/item/storage/box/syndie_kit/imp_hard_spear
 	cost = 10
 
+//Job Specific Items
+
+/datum/uplink_item/role_restricted/daemon_mask
+	name = "Daemon Mask"
+	desc = "This seemingly normal, albeit edgy, mask has the ability to summon a powerful demonic spirit that can control your body and fight for you."
+	item = /obj/item/clothing/mask/daemon_mask
+	cost = 14
+	restricted_roles = list("Curator")
+
 //Species Specific Items
 
 /datum/uplink_item/race_restricted/monkey_barrel
