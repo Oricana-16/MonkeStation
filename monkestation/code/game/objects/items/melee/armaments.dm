@@ -26,7 +26,7 @@
 	item_state = "daemon_blade"
 	lefthand_file = 'monkestation/icons/mob/inhands/weapons/swords_lefthand.dmi'
 	righthand_file = 'monkestation/icons/mob/inhands/weapons/swords_righthand.dmi'
-	force = 20
+	force = 12
 	ability_cooldown = 20 SECONDS
 	var/flame_toggle = FALSE
 
@@ -97,10 +97,10 @@
 	. = ..()
 
 /obj/item/armament/blood_scythe/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
-	. = ..()
-	if(.)
-		return
-	if(!proximity_flag)
+	if(!proximity_flag && get_dist(user,target) < 7)
+		. = ..()
+		if(.)
+			return
 		if(!isliving(target))
 			return
 		var/target_turf = get_step(user, user.dir)
@@ -139,7 +139,8 @@
 		shockwave_target.throw_at(throwtarget, 5, 2)
 		if(isliving(shockwave_target))
 			var/mob/living/living_target = shockwave_target
-			living_target.Knockdown(5 SECONDS)
+			living_target.Knockdown(3 SECONDS)
+			living_target.Stun(3 SECONDS)
 
 /obj/item/armament/hell_hammer/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	return
