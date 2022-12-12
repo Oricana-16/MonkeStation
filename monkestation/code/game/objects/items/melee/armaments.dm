@@ -79,6 +79,7 @@
 			for(var/mob/living/hit_creature in previous_turf)
 				hit_creature.adjustFireLoss(12)
 				hit_creature.Stun(1 SECONDS)
+
 /obj/item/armament/blood_scythe
 	name = "blood scythe"
 	desc = "A scythe created from the blood of demons. Click on a distant target to bring them closer."
