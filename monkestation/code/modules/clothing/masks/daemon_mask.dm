@@ -104,7 +104,6 @@
 
 /obj/effect/proc_holder/spell/self/mask_possession/cast(mob/living/user)
 	var/obj/item/clothing/mask/daemon_mask/mask = user.loc
-
 	if(!ishuman(mask.loc))
 		to_chat(user,"<span class='warning'>No one is wearing you!</span>")
 		revert_cast()
@@ -121,6 +120,8 @@
 		to_chat(user,"<span class='warning'>There's no mind to possess!</span>")
 		revert_cast()
 		return
+
+	playsound(user, 'sound/spookoween/insane_low_laugh.ogg', 75)
 
 	to_chat(wearer,"<span class='userdanger'>[mask] takes control!</span>")
 
