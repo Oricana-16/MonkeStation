@@ -143,6 +143,7 @@
 	wearer.set_resting(FALSE)
 	wearer.update_mobility()
 
+	ADD_TRAIT(wearer, TRAIT_NODEATH, "daemon_mask")
 	ADD_TRAIT(wearer, TRAIT_NOSOFTCRIT, "daemon_mask")
 	ADD_TRAIT(wearer, TRAIT_NOHARDCRIT, "daemon_mask")
 
@@ -165,6 +166,7 @@
 	to_chat(swapper,"<span class='notice'>Your control wears off.</span>")
 	to_chat(victim,"<span class='notice'>You regain control of your body.</span>")
 
+	REMOVE_TRAIT(victim, TRAIT_NODEATH, "daemon_mask")
 	REMOVE_TRAIT(victim, TRAIT_NOSOFTCRIT, "daemon_mask")
 	REMOVE_TRAIT(victim, TRAIT_NOHARDCRIT, "daemon_mask")
 
