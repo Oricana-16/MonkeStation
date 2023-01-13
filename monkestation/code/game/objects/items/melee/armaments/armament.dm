@@ -18,3 +18,10 @@
 	if(!COOLDOWN_FINISHED(src,armament_cooldown))
 		return TRUE
 	COOLDOWN_START(src,armament_cooldown,ability_cooldown)
+
+
+/obj/item/armament/attack_self(mob/user)
+	. = ..()
+	if(!COOLDOWN_FINISHED(src,armament_cooldown))
+		return TRUE
+	COOLDOWN_START(src,armament_cooldown,ability_cooldown)

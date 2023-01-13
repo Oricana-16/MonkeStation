@@ -146,7 +146,6 @@
 	wearer.SetAllImmobility(0)
 	wearer.adjustStaminaLoss(-100)
 	wearer.set_resting(FALSE)
-	wearer.update_mobility()
 
 	ADD_TRAIT(wearer, TRAIT_NODEATH, "daemon_mask")
 	ADD_TRAIT(wearer, TRAIT_NOSOFTCRIT, "daemon_mask")

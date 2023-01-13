@@ -14,7 +14,7 @@
 
 /obj/item/armament/daemon_blade/attack_self(mob/user)
 	. = ..()
-	if(!COOLDOWN_FINISHED(src,armament_ability)) //Can't turn it on if its on cooldown
+	if(!COOLDOWN_FINISHED(src,armament_cooldown)) //Can't turn it on if its on cooldown
 		flame_toggle = FALSE
 		return
 	flame_toggle = !flame_toggle
