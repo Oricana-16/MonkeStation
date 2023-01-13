@@ -12,9 +12,14 @@
 	var/mob/living/simple_animal/shade/spirit = null
 
 	//spells only while you possess someone
-	var/list/possession_spells = list(/obj/effect/proc_holder/spell/targeted/mask_lunge, /obj/effect/proc_holder/spell/self/mask_fear, /obj/effect/proc_holder/spell/self/summon_armament)
+	var/list/possession_spells = 	list(/obj/effect/proc_holder/spell/targeted/mask_lunge,
+										/obj/effect/proc_holder/spell/self/mask_fear,
+										/obj/effect/proc_holder/spell/self/summon_armament)
+
 	//spells only while youre a mask
-	var/list/mask_spells = list(/obj/effect/proc_holder/spell/self/mask_commune, /obj/effect/proc_holder/spell/self/truesight)
+	var/list/mask_spells = 	list(/obj/effect/proc_holder/spell/self/mask_commune,
+								/obj/effect/proc_holder/spell/self/truesight)
+
 	//spells that you always have
 	var/list/constant_spells = list(/obj/effect/proc_holder/spell/self/mask_possession)
 
