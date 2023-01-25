@@ -1,6 +1,12 @@
+/mob/living/simple_animal/hostile/alien_mimic/evolved
+	maxHealth = 125
+	health = 125
+	disguised_move_delay = 0.4 SECONDS
+	undisguised_move_delay = 0.05 SECONDS
+
 //Greater mimics
 
-/mob/living/simple_animal/hostile/alien_mimic/greater
+/mob/living/simple_animal/hostile/alien_mimic/evolved/greater
 	name = "greater mimic"
 	real_name = "greater mimic"
 	icon_state = "greater"
@@ -14,12 +20,12 @@
 	playstyle_string = "<span class='big bold'>You are a greater mimic,</span></b> you deal more damage to both people and objects, though only brute damage, \
 						have more health, and can disguise as bigger objects.</b>"
 
-/mob/living/simple_animal/hostile/alien_mimic/greater/allowed(atom/movable/target_item)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/greater/allowed(atom/movable/target_item)
 	return isitem(target_item) || (get_dist(src,target_item) > 1 && ismachinery(target_item) && !istype(target_item,/obj/machinery/atmospherics)) //dist check so you can still break things
 
 //Voltaic Mimics
 
-/mob/living/simple_animal/hostile/alien_mimic/voltaic
+/mob/living/simple_animal/hostile/alien_mimic/evolved/voltaic
 	name = "voltaic mimic"
 	real_name = "voltaic mimic"
 	icon_state = "voltaic"
@@ -31,16 +37,16 @@
 	playstyle_string = "<span class='big bold'>You are a voltaic mimic,</span></b> you deal brute and burn damage, stun and electrocute people on hit, and \
 						can activate an emp.</b>"
 
-/mob/living/simple_animal/hostile/alien_mimic/voltaic/Initialize(mapload)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/voltaic/Initialize(mapload)
 	. = ..()
 	var/obj/effect/proc_holder/spell/self/mimic_emp/emp = new
 	AddSpell(emp)
 
-/mob/living/simple_animal/hostile/alien_mimic/voltaic/death(gibbed)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/voltaic/death(gibbed)
 	tesla_zap(src, 5, 4000)
 	..()
 
-/mob/living/simple_animal/hostile/alien_mimic/voltaic/AttackingTarget()
+/mob/living/simple_animal/hostile/alien_mimic/evolved/voltaic/AttackingTarget()
 	if(!isliving(target))
 		return ..()
 
@@ -66,7 +72,7 @@
 
 //Thermal Mimics
 
-/mob/living/simple_animal/hostile/alien_mimic/thermal
+/mob/living/simple_animal/hostile/alien_mimic/evolved/thermal
 	name = "thermal mimic"
 	real_name = "thermal mimic"
 	icon_state = "thermal"
@@ -80,17 +86,17 @@
 	playstyle_string = "<span class='big bold'>You are a thermal mimic,</span></b> you deal burn and DNA damage, are immunte to fire, and \
 						set fire to things you attack.</b>"
 
-/mob/living/simple_animal/hostile/alien_mimic/thermal/death(gibbed)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/thermal/death(gibbed)
 	new /obj/effect/hotspot(get_turf(src))
 	..()
 
-/mob/living/simple_animal/hostile/alien_mimic/thermal/latch(mob/living/target)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/thermal/latch(mob/living/target)
 	. = ..()
 	if(!.)
 		return
 	new /obj/effect/hotspot(get_turf(target))
 
-/mob/living/simple_animal/hostile/alien_mimic/thermal/AttackingTarget()
+/mob/living/simple_animal/hostile/alien_mimic/evolved/thermal/AttackingTarget()
 	if(!isliving(target) && !isturf(target))
 		new /obj/effect/hotspot(get_turf(target))
 		return ..()
@@ -101,7 +107,7 @@
 
 //Shifty Mimics
 
-/mob/living/simple_animal/hostile/alien_mimic/shifty
+/mob/living/simple_animal/hostile/alien_mimic/evolved/shifty
 	name = "shifty mimic"
 	real_name = "shifty mimic"
 	icon_state = "shifty"
@@ -111,7 +117,7 @@
 	can_evolve = FALSE
 	playstyle_string = "<span class='big bold'>You are a shifty mimic,</span></b> you can teleport around, bringing whoever you're latched onto with you<b>"
 
-/mob/living/simple_animal/hostile/alien_mimic/shifty/Initialize(mapload)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/shifty/Initialize(mapload)
 	. = ..()
 	var/obj/effect/proc_holder/spell/pointed/mimic_phantom_shift/shift = new
 	AddSpell(shift)
@@ -148,7 +154,7 @@
 
 //Kinetic Mimics
 
-/mob/living/simple_animal/hostile/alien_mimic/kinetic
+/mob/living/simple_animal/hostile/alien_mimic/evolved/kinetic
 	name = "kinetic mimic"
 	real_name = "kinetic mimic"
 	icon_state = "kinetic"
@@ -159,7 +165,7 @@
 	can_evolve = FALSE
 	playstyle_string = "<span class='big bold'>You are a kinetic mimic,</span></b> you only deal brute damage, and can push things away with your kinetic blast.<b>"
 
-/mob/living/simple_animal/hostile/alien_mimic/kinetic/Initialize(mapload)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/kinetic/Initialize(mapload)
 	. = ..()
 	var/obj/effect/proc_holder/spell/self/mimic_kinetic_blast/kinetic_blast = new
 	AddSpell(kinetic_blast)
@@ -186,7 +192,7 @@
 
 //Oracle Mimic
 
-/mob/living/simple_animal/hostile/alien_mimic/oracle
+/mob/living/simple_animal/hostile/alien_mimic/evolved/oracle
 	name = "oracle mimic"
 	real_name = "oracle mimic"
 	icon_state = "oracle"
@@ -196,7 +202,7 @@
 	can_evolve = FALSE
 	playstyle_string = "<span class='big bold'>You are an oracle mimic,</span></b> you can temporarily shed your body to see the truth of the world.<b>"
 
-/mob/living/simple_animal/hostile/alien_mimic/oracle/Initialize(mapload)
+/mob/living/simple_animal/hostile/alien_mimic/evolved/oracle/Initialize(mapload)
 	. = ..()
 	var/obj/effect/proc_holder/spell/self/mimic_divine/divine = new
 	AddSpell(divine)
@@ -246,7 +252,7 @@
 		return
 
 	var/name_to_use
-	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = body
+	var/mob/living/simple_animal/hostile/alien_mimic/evolved/mimic_user = body
 	name_to_use = mimic_user.real_name
 
 	my_message = "<span class='mimichivemindtitle'><b>Mimic Hivemind</b></span> <span class='mimichivemindbig'><b>[name_to_use] (Spirit Form):</b> [message]</span>"

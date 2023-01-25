@@ -16,8 +16,8 @@
 	icon_living = "mimic"
 	icon_dead = "mimic_dead"
 	move_to_delay = 0.5 SECONDS
-	var/disguised_move_delay = 0.4 SECONDS
-	var/undisguised_move_delay = 0.05 SECONDS
+	var/disguised_move_delay = 0.2 SECONDS
+	var/undisguised_move_delay = 0.025 SECONDS
 	a_intent = INTENT_HARM
 	stop_automated_movement = 1
 	status_flags = CANPUSH
@@ -29,8 +29,8 @@
 	unsuitable_atmos_damage = 0 //They won't die in Space!
 	minbodytemp = TCMB
 	maxbodytemp = T0C + 40
-	maxHealth = 125
-	health = 125
+	maxHealth = 60
+	health = 60
 	melee_damage = 7
 	var/secondary_damage_type = CLONE
 	obj_damage = 30
@@ -74,12 +74,12 @@
 	var/datum/action/innate/mimic_evolution_request/evolve_request_action
 
 	var/static/list/possible_evolutions = list(
-		"greater" = /mob/living/simple_animal/hostile/alien_mimic/greater,
-		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/voltaic,
-		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/thermal,
-		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/shifty,
-		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/kinetic,
-		"oracle" = /mob/living/simple_animal/hostile/alien_mimic/oracle,
+		"greater" = /mob/living/simple_animal/hostile/alien_mimic/evolved/greater,
+		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/evolved/voltaic,
+		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/evolved/thermal,
+		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/evolved/shifty,
+		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/evolved/kinetic,
+		"oracle" = /mob/living/simple_animal/hostile/alien_mimic/evolved/oracle,
 	)
 
 	//This is so they can't just close and open the menu to reroll evolutions
