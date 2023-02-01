@@ -73,13 +73,13 @@
 	//Evolve action, used for the first mimic being evolvable
 	var/datum/action/innate/mimic_evolution_request/evolve_request_action
 
-	var/static/list/possible_evolutions = list(
-		"greater" = /mob/living/simple_animal/hostile/alien_mimic/evolved/greater,
-		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/evolved/voltaic,
-		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/evolved/thermal,
-		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/evolved/shifty,
-		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/evolved/kinetic,
-		"oracle" = /mob/living/simple_animal/hostile/alien_mimic/evolved/oracle,
+	var/list/possible_evolutions = list(
+		"greater" = /mob/living/simple_animal/hostile/alien_mimic/tier2/greater,
+		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic,
+		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/tier2/thermal,
+		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/tier2/shifty,
+		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/kinetic,
+		"oracle" = /mob/living/simple_animal/hostile/alien_mimic/tier2/oracle,
 	)
 
 	//This is so they can't just close and open the menu to reroll evolutions
