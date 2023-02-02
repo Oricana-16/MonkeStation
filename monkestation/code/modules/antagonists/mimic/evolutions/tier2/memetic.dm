@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic
 	name = "memetic mimic"
 	real_name = "memetic mimic"
-	icon_state = "memetic"
-	icon_living = "memetic"
+	// icon_state = "memetic"
+	// icon_living = "memetic"
 	melee_damage = 5
 	secondary_damage_type = BURN
 	hivemind_modifier = "memetic"
