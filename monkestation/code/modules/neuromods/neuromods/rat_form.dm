@@ -39,17 +39,6 @@
 	ADD_TRAIT(owner, TRAIT_NOBREATH, "neuromod_mouseform")
 	ADD_TRAIT(owner, TRAIT_RESISTLOWPRESSURE, "neuromod_mouseform")
 
-	// else
-	// 	activated = FALSE
-	// 	UnregisterSignal(created_rat, COMSIG_MOB_DEATH)
-	// 	owner.visible_message("<span class='notice'>[created_rat]'s body grows into a person!</span>", "<span class='userdanger'>Your body reforms back into your normal shape.</span>")
-	// 	var/mob/living/carbon/human/human_mob = locate() in created_rat
-	// 	created_rat.mind.transfer_to(human_mob)
-	// 	human_mob.grab_ghost()
-	// 	human_mob.forceMove(get_turf(created_rat))
-	// 	REMOVE_TRAIT(human_mob, TRAIT_NOBREATH, "neuromod_mouseform")
-	// 	created_rat = null
-	// 	qdel(created_rat)
 
 
 /obj/item/organ/cyberimp/neuromod/rat_form/proc/rat_death()
