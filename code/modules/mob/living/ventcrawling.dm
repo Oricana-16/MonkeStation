@@ -92,7 +92,7 @@ GLOBAL_LIST_INIT(ventcrawl_machinery, typecacheof(list(
 	if(!totalMembers.len)
 		return
 
-	if(client)
+	if(client) //MONKESTATION EDIT: Refactors Ventcawling to be less laggy
 		for(var/obj/machinery/atmospherics/member in range(8,get_turf(src)))
 			if(!istype(member))
 				continue
