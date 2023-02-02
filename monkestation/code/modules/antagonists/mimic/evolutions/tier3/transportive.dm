@@ -31,7 +31,7 @@
 		var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
 		var/list/possible_targets = mimic_user.mimic_team.members
 		possible_targets -= list(user) //Don't wanna teleport to yourself
-		target = input(user, "Choose a target to teleport to.", "Dimensional Walk") as null|anything in possible_targets
+		var/mob/target = input(user, "Choose a target to teleport to.", "Dimensional Walk") as null|anything in possible_targets
 		if(!target)
 			revert_cast(user)
 			return
@@ -52,7 +52,7 @@
 		var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
 		var/list/possible_targets = mimic_user.mimic_team.members
 		possible_targets -= list(user) //Don't wanna summon yourself
-		target = input(user, "Choose a target to summon.", "Dimensional Walk") as null|anything in possible_targets
+		var/mob/target = input(user, "Choose a target to summon.", "Dimensional Walk") as null|anything in possible_targets
 		if(!target)
 			revert_cast(user)
 			return
