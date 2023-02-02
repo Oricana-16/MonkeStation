@@ -103,12 +103,12 @@ GLOBAL_LIST_INIT(ventcrawl_machinery, typecacheof(list(
 	// 			pipes_shown += A.pipe_vision_img
 
 	if(client)
-		for(var/obj/machinery/atmospherics/member in range(4,get_turf(src)))
+		for(var/obj/machinery/atmospherics/member in range(8,get_turf(src)))
 			if(!istype(member))
 				continue
 			// if(in_view_range(client.mob, member))
 			if(member in totalMembers)
-				to_chat(world,"[member]")
+				// to_chat(world,"[member]")
 				if(!member.pipe_vision_img)
 					member.pipe_vision_img = image(member, member.loc, dir = member.dir)
 					member.pipe_vision_img.plane = ABOVE_HUD_PLANE
