@@ -94,8 +94,6 @@ GLOBAL_LIST_INIT(ventcrawl_machinery, typecacheof(list(
 
 	if(client) //MONKESTATION EDIT: Refactors Ventcawling to be less laggy
 		for(var/obj/machinery/atmospherics/member in range(8,get_turf(src)))
-			if(!istype(member))
-				continue
 			if(member in totalMembers)
 				if(!member.pipe_vision_img)
 					member.pipe_vision_img = image(member, member.loc, dir = member.dir)
