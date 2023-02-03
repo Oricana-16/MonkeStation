@@ -44,14 +44,21 @@
 
 		control_target.mind.transfer_to(user.mind_holder)
 		user.mind.transfer_to(control_target)
+		user.forceMove(control_target)
+		user.toggle_ai(AI_OFF) //Prevent the mimic from attacking the target from inside it's body
 
 		addtimer(CALLBACK(src, .proc/undo_control, user, control_target, user.mind_holder), 60 SECONDS)
+	else
+		revert_cast(user)
 
 /obj/effect/proc_holder/spell/self/mimic_control/proc/undo_control(mob/living/mimic_body, mob/living/controlled_body, mob/living/mind_holder)
 	controlled_body.visible_message("<span class='warning'>[mimic_body] melts out of [controlled_body]'s body.</span>","<span class'notice'>You come out of [controlled_body]'s body.</span>")
 
 	controlled_body.mind.transfer_to(mimic_body)
 	mind_holder.mind.transfer_to(controlled_body)
+
+	mimic_body.forceMove(get_turf(controlled_body))
+	controlled_body.Stun(5 SECONDS)
 
 //Back Seat for the mezmerize ability
 /mob/living/mimic_mezmerized
