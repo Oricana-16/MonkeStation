@@ -3806,6 +3806,7 @@
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier2\thermal.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier2\voltaic.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\_tier3.dm"
+#include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\launching.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\transportive.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\spellbook.dm"
 #include "monkestation\code\modules\bitmask_smoothing\code\decals.dm"
