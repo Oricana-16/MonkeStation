@@ -8,6 +8,9 @@
 	hivemind_modifier = "Voltaic"
 	playstyle_string = "<span class='big bold'>You are a voltaic mimic,</span></b> you deal brute and burn damage, stun and electrocute people on hit, and \
 						can activate an emp.</b>"
+	possible_evolutions = list(
+		"surging" = /mob/living/simple_animal/hostile/alien_mimic/tier3/surging
+	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic/Initialize(mapload)
 	. = ..()

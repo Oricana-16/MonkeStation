@@ -24,10 +24,15 @@
 	var/turf/start_turf
 	var/damage_multiplier = 3 //Damage dealt per turf traveled
 
-/obj/effect/proc_holder/spell/pointed/mimic_launch/cast(list/targets,mob/living/simple_animal/hostile/alien_mimic/tier3/launching/user = usr)
-	if(istype(user) && user.disguised) //Dashing while disguised would be a bit too much
-		to_chat(user, "<span class='danger'>You cannot charge while disguised!</span>")
-		revert_cast(user)
+/obj/effect/proc_holder/spell/pointed/mimic_launch/cast(list/targets,mob/user = usr)
+	if(!ismimic(user))
+		return
+
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
+
+	if(mimic_user.disguised)
+		to_chat(user, "<span class='danger'>You can't use this while disguised!</span>")
+		revert_cast(mimic_user)
 		return
 
 	for(var/target in targets)

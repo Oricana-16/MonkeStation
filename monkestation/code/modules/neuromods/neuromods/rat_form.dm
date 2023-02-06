@@ -1,9 +1,9 @@
 /obj/item/autosurgeon/neuromod/rat_form
-	name = "mouse form neuromod"
+	name = "rat form neuromod"
 	starting_organ = list(/obj/item/organ/cyberimp/neuromod/rat_form)
 
 /obj/item/organ/cyberimp/neuromod/rat_form
-	name = "Mouse Form"
+	name = "Rat Form"
 	desc = "This neuromod allows you to turn into a mouse. If you die as a mouse, the ability goes on cooldown for 60 seconds and you lose a limb."
 	icon = 'icons/mob/animal.dmi'
 	icon_state = "mouse_gray"

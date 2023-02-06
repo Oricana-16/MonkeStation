@@ -4,7 +4,7 @@
 	// icon_state = "memetic"
 	// icon_living = "memetic"
 	melee_damage = 5
-	secondary_damage_type = BURN
+	secondary_damage_type = BRUTE
 	hivemind_modifier = "memetic"
 	playstyle_string = "<span class='big bold'>You are a memetic mimic,</span></b> you deal brute damage, and can control people you latch onto.</b>"
 	var/mob/living/mimic_mezmerized/mind_holder

@@ -27,6 +27,7 @@
 		//UNCOMMON
 		/obj/item/autosurgeon/neuromod/biomatter_transfer = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
+		/obj/item/autosurgeon/neuromod/rat_form = NEUROMOD_UNCOMMON,
 		//COMMON
 		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
