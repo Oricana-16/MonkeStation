@@ -47,6 +47,9 @@
 		user.forceMove(control_target)
 		user.toggle_ai(AI_OFF) //Prevent the mimic from attacking the target from inside it's body
 
+		control_target.SetAllImmobility(0) //Don't waste time being stunned
+		control_target.set_resting(FALSE)
+
 		addtimer(CALLBACK(src, .proc/undo_control, user, control_target, user.mind_holder), 60 SECONDS)
 	else
 		revert_cast(user)
