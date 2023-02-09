@@ -3,3 +3,5 @@
 	health = 125
 	disguised_move_delay = 0.4 SECONDS
 	undisguised_move_delay = 0.05 SECONDS
+	//A full repro cost required to evolve
+	evolution_cost_mult = 2

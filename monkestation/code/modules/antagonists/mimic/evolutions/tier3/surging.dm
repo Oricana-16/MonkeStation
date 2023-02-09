@@ -5,6 +5,7 @@
 	icon_living = "voltaic"
 	hivemind_modifier = "surging"
 	melee_damage = 7
+	secondary_damage_type = BURN
 	playstyle_string = "<span class='big bold'>You are a surging mimic,</span></b> you can teleport, shocking everyone in your path.<b>"
 
 /mob/living/simple_animal/hostile/alien_mimic/tier3/surging/Initialize(mapload)

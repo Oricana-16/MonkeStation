@@ -16,16 +16,6 @@
 
 	mind_holder = new(src)
 
-/mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/AttackingTarget()
-	if(!isliving(target))
-		return ..()
-
-	var/mob/living/victim = target
-	if(buckled && buckled == victim && HAS_TRAIT(victim, TRAIT_SHOCKIMMUNE))
-		victim.Stun(1 SECONDS)
-		victim.electrocute_act(1, src)
-	..()
-
 /obj/effect/proc_holder/spell/self/mimic_control
 	name = "Mezmerize"
 	desc = "Take control of a person you're latched onto temporarily."
@@ -33,11 +23,14 @@
 	action_icon_state = "warp"
 	clothes_req = FALSE
 	action_background_icon_state = "bg_alien"
-	charge_max = 2 MINUTES
+	charge_max = 3 MINUTES
 
 /obj/effect/proc_holder/spell/self/mimic_control/cast(mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/user)
 	if(isliving(user.buckled))
 		var/mob/living/control_target = user.buckled
+
+		if(!control_target.key)
+			to_chat(user,"<span class='notice'>There's no mind to control!</span>")
 
 		to_chat(control_target,"<span class='userdanger'>[user] takes control!</span>")
 		control_target.visible_message("<span class='warning'>[user] melts into [control_target]'s body.</span>","<span class'notice'>You melt into [control_target] and gain control of their body.</span>")
@@ -50,7 +43,7 @@
 		control_target.SetAllImmobility(0) //Don't waste time being stunned
 		control_target.set_resting(FALSE)
 
-		addtimer(CALLBACK(src, .proc/undo_control, user, control_target, user.mind_holder), 60 SECONDS)
+		addtimer(CALLBACK(src, .proc/undo_control, user, control_target, user.mind_holder), 30 SECONDS)
 	else
 		revert_cast(user)
 

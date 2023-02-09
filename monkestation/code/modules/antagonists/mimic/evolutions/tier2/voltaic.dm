@@ -9,7 +9,8 @@
 	playstyle_string = "<span class='big bold'>You are a voltaic mimic,</span></b> you deal brute and burn damage, stun and electrocute people on hit, and \
 						can activate an emp.</b>"
 	possible_evolutions = list(
-		"surging" = /mob/living/simple_animal/hostile/alien_mimic/tier3/surging
+		"surging" = /mob/living/simple_animal/hostile/alien_mimic/tier3/surging,
+		"tesla" = /mob/living/simple_animal/hostile/alien_mimic/tier3/tesla
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic/Initialize(mapload)
@@ -37,10 +38,10 @@
 	action_icon_state = "emp"
 	clothes_req = FALSE
 	action_background_icon_state = "bg_alien"
-	charge_max = 1 MINUTES
+	charge_max = 2 MINUTES
 	sound = 'sound/weapons/zapbang.ogg'
 
 /obj/effect/proc_holder/spell/self/mimic_emp/cast(mob/living/carbon/human/user)
 	playsound(get_turf(user), sound, 50,1)
-	empulse(get_turf(user), 4, 7)
+	empulse(get_turf(user), 2, 4)
 	return

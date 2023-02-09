@@ -1,13 +1,13 @@
-/mob/living/simple_animal/hostile/alien_mimic/tier2/oracle
+/mob/living/simple_animal/hostile/alien_mimic/tier3/oracle
 	name = "oracle mimic"
 	real_name = "oracle mimic"
 	icon_state = "oracle"
 	icon_living = "oracle"
 	hivemind_modifier = "oracle"
-	melee_damage = 5
+	melee_damage = 8
 	playstyle_string = "<span class='big bold'>You are an oracle mimic,</span></b> you can temporarily shed your body to see the truth of the world.<b>"
 
-/mob/living/simple_animal/hostile/alien_mimic/tier2/oracle/Initialize(mapload)
+/mob/living/simple_animal/hostile/alien_mimic/tier3/oracle/Initialize(mapload)
 	. = ..()
 	var/obj/effect/proc_holder/spell/self/mimic_divine/divine = new
 	AddSpell(divine)
@@ -18,9 +18,18 @@
 	clothes_req = FALSE
 	action_background_icon_state = "bg_alien"
 	charge_max = 45 SECONDS
+
 	var/mob/living/body = null
 
 /obj/effect/proc_holder/spell/self/mimic_divine/cast(mob/user)
+	if(ismimic(user))
+		var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
+
+	if(mimic_user.disguised)
+		to_chat(mimic_user, "<span class='notice'>You can't divine while disguised!</span>")
+		revert_cast(user)
+		return
+
 	body = user
 	var/mob/dead/observer/ghost = body.ghostize(1)
 	var/datum/action/innate/mimic_hivemind/oracle/ghost_hivemind = new
@@ -29,6 +38,8 @@
 	ghost_hivemind.Grant(ghost)
 	while(!QDELETED(body))
 		if(body.key)
+			break
+		if(body.stat -= DEAD)
 			break
 		sleep(5)
 	ghost_hivemind.Remove(ghost)
@@ -57,7 +68,7 @@
 		return
 
 	var/name_to_use
-	var/mob/living/simple_animal/hostile/alien_mimic/tier2/mimic_user = body
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = body
 	name_to_use = mimic_user.real_name
 
 	my_message = "<span class='mimichivemindtitle'><b>Mimic Hivemind</b></span> <span class='mimichivemindbig'><b>[name_to_use] (Spirit Form):</b> [message]</span>"

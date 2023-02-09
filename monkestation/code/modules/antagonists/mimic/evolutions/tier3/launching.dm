@@ -5,12 +5,17 @@
 	icon_living = "greater"
 	hivemind_modifier = "launching"
 	melee_damage = 8
+	secondary_damage_type = BRUTE
 	playstyle_string = "<span class='big bold'>You are a launching mimic,</span></b> you can launch yourself in a direction, dealing damage based on the distance.<b>"
 
 /mob/living/simple_animal/hostile/alien_mimic/tier3/launching/Initialize(mapload)
 	. = ..()
 	var/obj/effect/proc_holder/spell/pointed/mimic_launch/launch = new
 	AddSpell(launch)
+
+
+/mob/living/simple_animal/hostile/alien_mimic/tier3/launching/allowed(atom/movable/target_item)
+	return isitem(target_item) || (get_dist(src,target_item) > 1 && ismachinery(target_item) && !istype(target_item,/obj/machinery/atmospherics)) //dist check so you can still break things
 
 //Abilities
 /obj/effect/proc_holder/spell/pointed/mimic_launch

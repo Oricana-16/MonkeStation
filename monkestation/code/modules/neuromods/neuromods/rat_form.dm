@@ -9,7 +9,6 @@
 	icon_state = "mouse_gray"
 	cooldown = 5 SECONDS
 	actions_types = list(/datum/action/item_action/organ_action/use)
-	// var/activated = FALSE
 	var/mob/living/simple_animal/mouse/created_rat
 
 	var/ratform_cooldown = 60 SECONDS
@@ -24,9 +23,6 @@
 	if(.)
 		return
 
-	// if(!activated)
-		// activated = TRUE
-
 	created_rat = new(get_turf(owner))
 	var/obj/effect/proc_holder/spell/self/rat_form_detransform/detransform = new
 	detransform.neuromod = src
@@ -39,11 +35,7 @@
 	ADD_TRAIT(owner, TRAIT_NOBREATH, "neuromod_mouseform")
 	ADD_TRAIT(owner, TRAIT_RESISTLOWPRESSURE, "neuromod_mouseform")
 
-
-
 /obj/item/organ/cyberimp/neuromod/rat_form/proc/rat_death()
-		// activated = FALSE
-
 		COOLDOWN_START(src, neuromod_ratform, ratform_cooldown)
 
 		UnregisterSignal(created_rat, COMSIG_MOB_DEATH)

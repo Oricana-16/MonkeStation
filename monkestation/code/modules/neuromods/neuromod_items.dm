@@ -24,12 +24,15 @@
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/mindjack = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/weapon_transformation = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/divination = NEUROMOD_RARE,
 		//UNCOMMON
 		/obj/item/autosurgeon/neuromod/biomatter_transfer = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/rat_form = NEUROMOD_UNCOMMON,
+		/obj/item/autosurgeon/neuromod/grasp = NEUROMOD_UNCOMMON,
 		//COMMON
 		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_COMMON,
+		/obj/item/autosurgeon/neuromod/superthermal = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/scramble_electronics = NEUROMOD_COMMON,
 	)

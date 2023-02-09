@@ -7,6 +7,7 @@
 	icon_living = "kinetic"
 	hivemind_modifier = "present"
 	melee_damage = 8
+	secondary_damage_type = BRUTE
 	playstyle_string = "<span class='big bold'>You are a present mimic,</span></b> you can force nearby people down and pull them towards you.<b>"
 
 /mob/living/simple_animal/hostile/alien_mimic/tier3/present/Initialize(mapload)
