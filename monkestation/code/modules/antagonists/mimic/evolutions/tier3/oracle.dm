@@ -22,8 +22,9 @@
 	var/mob/living/body = null
 
 /obj/effect/proc_holder/spell/self/mimic_divine/cast(mob/user)
-	if(ismimic(user))
-		var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
+	if(!ismimic(user))
+		return
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
 
 	if(mimic_user.disguised)
 		to_chat(mimic_user, "<span class='notice'>You can't divine while disguised!</span>")

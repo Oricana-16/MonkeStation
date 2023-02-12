@@ -92,3 +92,7 @@
 	else
 		to_chat(user, "<span class='notice'>You were unable to summon a clone, try again later!</span>")
 
+
+	var/obj/effect/proc_holder/spell/self/mimic_clone/clone = new
+	user.AddSpell(clone)
+	qdel(src)

@@ -27,16 +27,24 @@
 	charge_max = 90 SECONDS
 
 /obj/effect/proc_holder/spell/self/mimic_dimensional_walk/cast(mob/user = usr)
-	if(ismimic(user))
-		var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
-		var/list/possible_targets = mimic_user.mimic_team.members
-		possible_targets -= list(user) //Don't wanna teleport to yourself
-		var/mob/target = input(user, "Choose a target to teleport to.", "Dimensional Walk") as null|anything in possible_targets
-		if(!target)
-			revert_cast(user)
-			return
-		user.add_emitter(/obj/emitter/mimic/phantom_shift,"phantom_shift",burst_mode=TRUE)
-		do_teleport(user,target)
+	if(!ismimic(user))
+		return
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
+	var/list/possible_targets = mimic_user.mimic_team.members
+	possible_targets -= mimic_user.mind //Don't wanna teleport to yourself
+	if(!LAZYLEN(possible_targets))
+		to_chat("<span class='notice'>There are no other mimics to teleport to.</span>")
+		revert_cast(mimic_user)
+		return
+
+
+	var/datum/mind/target = input(mimic_user, "Choose a target to teleport to.", "Dimensional Walk") as null|anything in possible_targets
+	if(!target)
+		revert_cast(mimic_user)
+		return
+	var/turf/user_turf = get_turf(user)
+	user_turf.add_emitter(/obj/emitter/mimic/phantom_shift,"phantom_shift",burst_mode=TRUE)
+	do_teleport(mimic_user,get_turf(target.current))
 
 /obj/effect/proc_holder/spell/self/mimic_summon
 	name = "Summon Mimic"
@@ -51,10 +59,16 @@
 	if(ismimic(user))
 		var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
 		var/list/possible_targets = mimic_user.mimic_team.members
-		possible_targets -= list(user) //Don't wanna summon yourself
-		var/mob/target = input(user, "Choose a target to summon.", "Dimensional Walk") as null|anything in possible_targets
+		possible_targets -= user.mind //Don't wanna summon yourself
+		for(var/candidate in possible_targets)
+			if(istype(candidate, /mob/living/simple_animal/hostile/alien_mimic/etheric_clone))
+				possible_targets -= candidate
+
+		var/datum/mind/target = input(user, "Choose a target to summon.", "Summon Mimic") as null|anything in possible_targets
 		if(!target)
+			to_chat("<span class='notice'>There are no other mimics to summon.</span>")
 			revert_cast(user)
 			return
-		target.add_emitter(/obj/emitter/mimic/phantom_shift,"phantom_shift",burst_mode=TRUE)
-		do_teleport(target,user)
+		var/turf/target_turf = get_turf(target.current)
+		target_turf.add_emitter(/obj/emitter/mimic/phantom_shift,"phantom_shift",burst_mode=TRUE)
+		do_teleport(target.current,get_turf(user))

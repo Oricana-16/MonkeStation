@@ -2,7 +2,7 @@
 #define MIMIC_DISGUISE_COOLDOWN 5 SECONDS
 
 #define REPLICATION_COST(mimic_count) (1 + round((mimic_count / 2)))
-#define EVOLUTION_COST(mimic_count) round(REPLICATION_COST(mimic_count)/2)
+#define EVOLUTION_COST(mimic_count, multiplier) round(multiplier*REPLICATION_COST(mimic_count))
 
 /mob/living/simple_animal/hostile/alien_mimic
 	name = "mimic"
@@ -73,13 +73,18 @@
 	//Evolve action, used for the first mimic being evolvable
 	var/datum/action/innate/mimic_evolution_request/evolve_request_action
 
+	//For T2s to have a higher cost (or a lower one if any future mimics are like that)
+	var/evolution_cost_mult = 1
+
 	var/list/possible_evolutions = list(
 		"greater" = /mob/living/simple_animal/hostile/alien_mimic/tier2/greater,
 		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic,
 		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/tier2/thermal,
 		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/tier2/shifty,
 		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/kinetic,
-		"oracle" = /mob/living/simple_animal/hostile/alien_mimic/tier2/oracle,
+		"insightful" = /mob/living/simple_animal/hostile/alien_mimic/tier2/insightful,
+		"memetic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic,
+		"etheric" = /mob/living/simple_animal/hostile/alien_mimic/tier2/etheric,
 	)
 
 	//This is so they can't just close and open the menu to reroll evolutions
@@ -464,6 +469,7 @@
 
 /mob/living/simple_animal/hostile/alien_mimic/handle_automated_action()
 	if(AIStatus == AI_OFF)
+		SSmove_manager.stop_looping(src)
 		return FALSE
 	var/list/possible_targets = ListTargets() //we look around for potential targets and make it a list for later use.
 
@@ -594,8 +600,8 @@
 
 	var/list/yes_voters = list()
 
-	if(EVOLUTION_COST(mimic_team.mimics.len) > 0)
-		yes_voters = pollCandidates("[real_name] is requesting to evolve. Do you agree? (Cost: [EVOLUTION_COST(mimic_team.mimics.len)] absorbed people)", poll_time = 30 SECONDS, group = asked_mimics)
+	if(EVOLUTION_COST(mimic_team.mimics.len, evolution_cost_mult) > 0)
+		yes_voters = pollCandidates("[real_name] is requesting to evolve. Do you agree? (Cost: [EVOLUTION_COST(mimic_team.mimics.len, evolution_cost_mult)] absorbed people)", poll_time = 30 SECONDS, group = asked_mimics)
 
 	evolving = FALSE
 
@@ -604,7 +610,7 @@
 			to_chat(mimic,"<span class='userdanger'>[real_name] has died in the process of evolving!</span>")
 		return FALSE
 
-	if(LAZYLEN(yes_voters) <= LAZYLEN(asked_mimics) * 0.5 && EVOLUTION_COST(mimic_team.mimics.len) > 0)
+	if(LAZYLEN(yes_voters) <= LAZYLEN(asked_mimics) * 0.5 && EVOLUTION_COST(mimic_team.mimics.len, evolution_cost_mult) > 0)
 		for(var/mob/living/mimic in asked_mimics)
 			to_chat(mimic,"<span class='userdanger'>[real_name] did not win the vote, and did not evolve!</span>")
 		return FALSE
@@ -693,7 +699,7 @@
 
 /datum/action/innate/mimic_evolution_request/Activate()
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic = owner
-	if(mimic.mimic_team.people_absorbed < EVOLUTION_COST(mimic.mimic_team.mimics.len))
+	if(mimic.mimic_team.people_absorbed < EVOLUTION_COST(mimic.mimic_team.mimics.len, mimic.evolution_cost_mult))
 		to_chat(mimic,"<span class='notice'>You do not have the resources to evolve!</span>")
 		return
 
@@ -704,7 +710,7 @@
 	if(mimic.request_evolution())
 		var/datum/action/innate/mimic_evolution/evolution = new
 		evolution.Grant(mimic)
-		mimic.mimic_team.people_absorbed -= EVOLUTION_COST(mimic.mimic_team.mimics.len)
+		mimic.mimic_team.people_absorbed -= EVOLUTION_COST(mimic.mimic_team.mimics.len, mimic.evolution_cost_mult)
 		qdel(src)
 		return
 	mimic.evolve_cooldown = world.time + 30 SECONDS
