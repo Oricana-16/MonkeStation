@@ -10,6 +10,12 @@
 
 	if(!IsInStasis())
 
+		// DEAD check is in the proc itself; we want it to spread even if the mob is dead, but to handle its disease-y properties only if you're not.
+		handle_diseases()
+
+		if(QDELETED(src))
+			return
+
 		//Reagent processing needs to come before breathing, to prevent edge cases.
 		if(stat != DEAD)
 			for(var/V in internal_organs)
@@ -21,10 +27,13 @@
 					var/obj/item/organ/O = V
 					O.on_death() //Needed so organs decay while inside the body.
 
+		if(stat != DEAD)
+			//Breathing
+			handle_breathing(times_fired)
+
 		. = ..()
 
-		if(QDELETED(src))
-			return
+
 
 		if(.) //not dead
 			handle_blood()
@@ -34,6 +43,12 @@
 			if(bprv & BODYPART_LIFE_UPDATE_HEALTH)
 				update_stamina() //needs to go before updatehealth to remove stamcrit
 				updatehealth()
+
+		if(stat != DEAD)
+			//Mutations and radiation
+			handle_mutations_and_radiation()
+			// eye, ear, brain damages
+			handle_traits()
 
 		if(stat != DEAD) //Handle brain damage
 			for(var/T in get_traumas())
@@ -51,16 +66,6 @@
 			var/datum/addiction/addiction = SSaddiction.all_addictions[key]
 			addiction.process_addiction(src, delta_time, times_fired)
 
-	//Updates the number of stored chemicals for changeling powers
-	if(hud_used?.lingchemdisplay && !isalien(src) && mind)
-		var/datum/antagonist/changeling/changeling = mind.has_antag_datum(/datum/antagonist/changeling)
-		if(changeling)
-			changeling.regenerate()
-			hud_used.lingchemdisplay.invisibility = 0
-			hud_used.lingchemdisplay.maptext = MAPTEXT("<div align='center' valign='middle' style='position:relative; top:0px; left:6px'><font color='#dd66dd'>[round(changeling.chem_charges)]</font></div>")
-		else
-			hud_used.lingchemdisplay.invisibility = INVISIBILITY_ABSTRACT
-
 	if(stat != DEAD)
 		return 1
 
@@ -69,7 +74,7 @@
 ///////////////
 
 //Start of a breath chain, calls breathe()
-/mob/living/carbon/handle_breathing(times_fired)
+/mob/living/carbon/proc/handle_breathing(times_fired)
 	var/next_breath = 4
 	var/obj/item/organ/lungs/L = getorganslot(ORGAN_SLOT_LUNGS)
 	var/obj/item/organ/heart/H = getorganslot(ORGAN_SLOT_HEART)
@@ -134,7 +139,7 @@
 							//MONKESTATION EDIT ADDITION
 				//Underwater breathing
 				var/turf/T = loc
-				if(T.liquids && !HAS_TRAIT(src, TRAIT_NOBREATH) && ((!MOBILITY_STAND && T.liquids.liquid_state >= LIQUID_STATE_WAIST) || (MOBILITY_STAND && T.liquids.liquid_state >= LIQUID_STATE_FULLTILE)))
+				if(istype(T, /turf/open/floor/plating/ocean) || (T.liquids && !HAS_TRAIT(src, TRAIT_NOBREATH) && ((!MOBILITY_STAND && T.liquids.liquid_group.group_overlay_state >= LIQUID_STATE_WAIST) || (MOBILITY_STAND && T.liquids.liquid_group.group_overlay_state >= LIQUID_STATE_FULLTILE))))
 					//Officially trying to breathe underwater
 					if(HAS_TRAIT(src, TRAIT_WATER_BREATHING))
 						failed_last_breath = FALSE
@@ -145,10 +150,7 @@
 					if(oxyloss <= OXYGEN_DAMAGE_CHOKING_THRESHOLD && stat == CONSCIOUS)
 						to_chat(src, "<span class='userdanger'>You hold in your breath!</span>")
 					else
-						//Try and drink water#]
-						var/datum/reagents/tempr = T.liquids.take_reagents_flat(CHOKE_REAGENTS_INGEST_ON_BREATH_AMOUNT)
-						tempr.trans_to(src, tempr.total_volume, method = INGEST)
-						qdel(tempr)
+						T.liquids.liquid_group.transfer_to_atom(T.liquids, CHOKE_REAGENTS_INGEST_ON_BREATH_AMOUNT, src)
 						visible_message("<span class='warning'>[src] chokes on water!</span>", \
 									"<span class='userdanger'>You're choking on water!</span>")
 					return FALSE
@@ -322,7 +324,7 @@
 	var/stam_regen = FALSE
 	if(stam_regen_start_time <= world.time)
 		stam_regen = TRUE
-		if(stam_paralyzed)
+		if(HAS_TRAIT_FROM(src, TRAIT_INCAPACITATED, STAMINA))
 			. |= BODYPART_LIFE_UPDATE_HEALTH //make sure we remove the stamcrit
 	var/bodyparts_with_stam = 0
 	var/stam_heal_multiplier = 1
@@ -344,7 +346,7 @@
 		if(BP.needs_processing)
 			. |= BP.on_life(force_heal + ((stam_regen * stam_heal * stam_heal_multiplier) / max(bodyparts_with_stam, 1)))
 
-/mob/living/carbon/handle_diseases()
+/mob/living/carbon/proc/handle_diseases()
 	for(var/thing in diseases)
 		var/datum/disease/D = thing
 		if(prob(D.infectivity))
@@ -353,7 +355,17 @@
 		if(stat != DEAD || D.process_dead)
 			D.stage_act()
 
-/mob/living/carbon/handle_mutations_and_radiation()
+/mob/living/carbon/proc/handle_traits()
+	//Eyes
+	if(eye_blind)	//blindness, heals slowly over time
+		if(HAS_TRAIT_FROM(src, TRAIT_BLIND, EYES_COVERED)) //covering your eyes heals blurry eyes faster
+			adjust_blindness(-3)
+		else if(!stat && !(HAS_TRAIT(src, TRAIT_BLIND)))
+			adjust_blindness(-1)
+	else if(eye_blurry)			//blurry eyes heal slowly
+		adjust_blurriness(-1)
+
+/mob/living/carbon/proc/handle_mutations_and_radiation()
 	if(dna && dna.temporary_mutations.len)
 		for(var/mut in dna.temporary_mutations)
 			if(dna.temporary_mutations[mut] < world.time)

@@ -63,6 +63,12 @@
 	var/center = FALSE	//Should we center the sprite?
 	var/limbs_id // The limbs id supplied for full-body replacing features.
 
+	var/head_icon = "" //the icon for the decapped head needed because yippee
+	var/uses_emissives = FALSE
+
+	/// Should this sprite block emissives?
+	var/em_block = FALSE
+
 //////////////////////
 // Hair Definitions //
 //////////////////////
@@ -899,7 +905,8 @@
 
 /datum/sprite_accessory/facial_hair
 	icon = 'icons/mob/human_face.dmi'
-	gender = MALE // barf (unless you're a dorf, dorfs dig chix w/ beards :P)
+	em_block = TRUE
+
 
 // please make sure they're sorted alphabetically and categorized
 
@@ -1076,6 +1083,8 @@
 /datum/sprite_accessory/underwear
 	icon = 'icons/mob/clothing/underwear.dmi'
 	use_static = FALSE
+	em_block = TRUE
+
 
 
 //MALE UNDERWEAR
@@ -1252,6 +1261,8 @@
 
 /datum/sprite_accessory/undershirt
 	icon = 'icons/mob/clothing/underwear.dmi'
+	em_block = TRUE
+
 
 /datum/sprite_accessory/undershirt/nude
 	name = "Nude"
@@ -1536,6 +1547,8 @@
 
 /datum/sprite_accessory/socks
 	icon = 'icons/mob/clothing/underwear.dmi'
+	em_block = TRUE
+
 
 /datum/sprite_accessory/socks/nude
 	name = "Nude"
@@ -1652,7 +1665,7 @@
 /////////////////////////////
 
 /datum/sprite_accessory/body_markings
-	icon = 'icons/mob/mutant_bodyparts.dmi'
+	icon = 'icons/mob/species/lizard/bodymarks.dmi'
 
 /datum/sprite_accessory/body_markings/none
 	name = "None"
@@ -1673,12 +1686,25 @@
 	icon_state = "lbelly"
 	gender_specific = 1
 
+/datum/sprite_accessory/body_markings/glow_belly
+	name = "Glow Belly"
+	icon_state = "lbelly"
+	gender_specific = 1
+	uses_emissives = TRUE
 /datum/sprite_accessory/tails
 	icon = 'icons/mob/mutant_bodyparts.dmi'
+	em_block = TRUE
+
 
 /datum/sprite_accessory/tails_animated
 	icon = 'icons/mob/mutant_bodyparts.dmi'
+	em_block = TRUE
 
+/datum/sprite_accessory/tails/lizard
+	icon = 'icons/mob/species/lizard/tails.dmi'
+
+/datum/sprite_accessory/tails_animated/lizard
+	icon = 'icons/mob/species/lizard/tails.dmi'
 /datum/sprite_accessory/tails/lizard/smooth
 	name = "Smooth"
 	icon_state = "smooth"
@@ -1687,6 +1713,9 @@
 	name = "Smooth"
 	icon_state = "smooth"
 
+/datum/sprite_accessory/tails/lizard/curved
+	name = "Curved"
+	icon_state = "curved"
 /datum/sprite_accessory/tails/lizard/dtiger
 	name = "Dark Tiger"
 	icon_state = "dtiger"
@@ -1742,26 +1771,32 @@
 	color_src = null
 
 /datum/sprite_accessory/snouts
-	icon = 'icons/mob/mutant_bodyparts.dmi'
+	icon = 'icons/mob/species/lizard/snouts.dmi'
+	em_block = TRUE
 
 /datum/sprite_accessory/snouts/sharp
 	name = "Sharp"
 	icon_state = "sharp"
+	head_icon = "m_snout_sharp_ADJ"
 
 /datum/sprite_accessory/snouts/round
 	name = "Round"
 	icon_state = "round"
+	head_icon = "m_snout_round_ADJ"
 
 /datum/sprite_accessory/snouts/sharplight
 	name = "Sharp + Light"
 	icon_state = "sharplight"
+	head_icon = "m_snout_sharplight_ADJ"
 
 /datum/sprite_accessory/snouts/roundlight
 	name = "Round + Light"
 	icon_state = "roundlight"
+	head_icon = "m_snout_roundlight_ADJ"
 
 /datum/sprite_accessory/horns
-	icon = 'icons/mob/mutant_bodyparts.dmi'
+	icon = 'icons/mob/species/lizard/horns.dmi'
+	em_block = TRUE
 
 /datum/sprite_accessory/horns/none
 	name = "None"
@@ -1770,25 +1805,32 @@
 /datum/sprite_accessory/horns/simple
 	name = "Simple"
 	icon_state = "simple"
+	head_icon = "m_horns_simple_ADJ"
 
 /datum/sprite_accessory/horns/short
 	name = "Short"
 	icon_state = "short"
+	head_icon = "m_horns_short_ADJ"
 
 /datum/sprite_accessory/horns/curled
 	name = "Curled"
 	icon_state = "curled"
+	head_icon = "m_horns_curled_ADJ"
 
 /datum/sprite_accessory/horns/ram
 	name = "Ram"
 	icon_state = "ram"
+	head_icon = "m_horns_ram_ADJ"
 
 /datum/sprite_accessory/horns/angler
 	name = "Angeler"
 	icon_state = "angler"
+	head_icon = "m_horns_angler_ADJ"
+	uses_emissives = TRUE
 
 /datum/sprite_accessory/ears
 	icon = 'icons/mob/mutant_bodyparts.dmi'
+	em_block = TRUE
 
 /datum/sprite_accessory/ears/none
 	name = "None"
@@ -1806,9 +1848,11 @@
 
 /datum/sprite_accessory/wings_open
 	icon = 'icons/mob/wings.dmi'
+	em_block = TRUE
 
 /datum/sprite_accessory/wings
 	icon = 'icons/mob/wings.dmi'
+	em_block = TRUE
 
 /datum/sprite_accessory/wings/angel
 	name = "Angel"
@@ -1875,7 +1919,7 @@
 	dimension_y = 34
 
 /datum/sprite_accessory/frills
-	icon = 'icons/mob/mutant_bodyparts.dmi'
+	icon = 'icons/mob/species/lizard/frills.dmi'
 
 /datum/sprite_accessory/frills/none
 	name = "None"
@@ -1884,20 +1928,25 @@
 /datum/sprite_accessory/frills/simple
 	name = "Simple"
 	icon_state = "simple"
+	head_icon = "m_frills_simple_ADJ"
 
 /datum/sprite_accessory/frills/short
 	name = "Short"
 	icon_state = "short"
+	head_icon = "m_frills_short_ADJ"
 
 /datum/sprite_accessory/frills/aquatic
 	name = "Aquatic"
 	icon_state = "aqua"
+	head_icon = "m_frills_aqua_ADJ"
 
 /datum/sprite_accessory/spines
-	icon = 'icons/mob/mutant_bodyparts.dmi'
+	icon = 'icons/mob/species/lizard/spines.dmi'
+	em_block = TRUE
 
 /datum/sprite_accessory/spines_animated
-	icon = 'icons/mob/mutant_bodyparts.dmi'
+	icon = 'icons/mob/species/lizard/spines.dmi'
+	em_block = TRUE
 
 /datum/sprite_accessory/spines/none
 	name = "None"
@@ -1949,6 +1998,7 @@
 
 /datum/sprite_accessory/legs 	//legs are a special case, they aren't actually sprite_accessories but are updated with them.
 	icon = null					//These datums exist for selecting legs on preference, and little else
+	em_block = TRUE
 
 /datum/sprite_accessory/legs/none
 	name = "Normal Legs"
@@ -1959,6 +2009,7 @@
 /datum/sprite_accessory/caps
 	icon = 'icons/mob/mutant_bodyparts.dmi'
 	color_src = HAIR
+	em_block = TRUE
 
 /datum/sprite_accessory/caps/round
 	name = "Round"
@@ -1967,6 +2018,7 @@
 /datum/sprite_accessory/moth_wings
 	icon = 'icons/mob/moth_wings.dmi'
 	color_src = null
+	em_block = TRUE
 
 /datum/sprite_accessory/moth_wingsopen
 	icon = 'icons/mob/moth_wingsopen.dmi'

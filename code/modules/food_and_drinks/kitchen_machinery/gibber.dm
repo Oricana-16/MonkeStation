@@ -58,7 +58,7 @@
 /obj/machinery/gibber/container_resist(mob/living/user)
 	go_out()
 
-/obj/machinery/gibber/relaymove(mob/living/user)
+/obj/machinery/gibber/relaymove(mob/living/user, direction)
 	go_out()
 
 /obj/machinery/gibber/attack_hand(mob/user)
@@ -163,7 +163,10 @@
 
 	var/obj/item/food/meat/slab/allmeat[meat_produced]
 	var/obj/item/stack/sheet/animalhide/skin
-	var/list/datum/disease/diseases = mob_occupant.get_static_viruses()
+	var/list/datum/disease/diseases
+	if(iscarbon(mob_occupant))
+		var/mob/living/carbon/infective = mob_occupant
+		diseases = infective.get_static_viruses()
 
 	if(ishuman(occupant))
 		var/mob/living/carbon/human/gibee = occupant

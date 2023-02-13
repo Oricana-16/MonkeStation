@@ -16,14 +16,15 @@
 	if(data && data["viruses"])
 		for(var/thing in data["viruses"])
 			var/datum/disease/D = thing
+			if(iscarbon(L))
+				var/mob/living/carbon/affected = L
+				if((D.spread_flags & DISEASE_SPREAD_SPECIAL) || (D.spread_flags & DISEASE_SPREAD_NON_CONTAGIOUS))
+					continue
 
-			if((D.spread_flags & DISEASE_SPREAD_SPECIAL) || (D.spread_flags & DISEASE_SPREAD_NON_CONTAGIOUS))
-				continue
-
-			if((method == TOUCH || method == VAPOR) && (D.spread_flags & DISEASE_SPREAD_CONTACT_FLUIDS))
-				L.ContactContractDisease(D)
-			else //ingest, patch or inject
-				L.ForceContractDisease(D)
+				if((method == TOUCH || method == VAPOR) && (D.spread_flags & DISEASE_SPREAD_CONTACT_FLUIDS))
+					affected.ContactContractDisease(D)
+				else //ingest, patch or inject
+					affected.ForceContractDisease(D)
 
 	if(iscarbon(L))
 		var/mob/living/carbon/C = L
@@ -103,12 +104,15 @@
 	taste_description = "slime"
 
 /datum/reagent/vaccine/reaction_mob(mob/living/L, method=TOUCH, reac_volume)
-	if(islist(data) && (method == INGEST || method == INJECT))
-		for(var/thing in L.diseases)
-			var/datum/disease/D = thing
-			if(D.GetDiseaseID() in data)
-				D.cure()
-		L.disease_resistances |= data
+
+	if(iscarbon(L))
+		var/mob/living/carbon/cured
+		if(islist(data) && (method == INGEST || method == INJECT))
+			for(var/thing in cured.diseases)
+				var/datum/disease/D = thing
+				if(D.GetDiseaseID() in data)
+					D.cure()
+			cured.disease_resistances |= data
 
 /datum/reagent/vaccine/on_merge(list/data)
 	if(istype(data))
@@ -169,7 +173,7 @@
 /datum/reagent/water
 	name = "Water"
 	description = "An ubiquitous chemical substance that is composed of hydrogen and oxygen."
-	color = "#AAAAAA77" // rgb: 170, 170, 170, 77 (alpha)
+	color = "#6fc6eed7" // rgb: 170, 170, 170, 77 (alpha)
 	taste_description = "water"
 	var/cooling_temperature = 2
 	glass_icon_state = "glass_clear"
@@ -179,6 +183,7 @@
 	process_flags = ORGANIC | SYNTHETIC
 	random_unrestricted = FALSE
 	evaporation_rate = 3
+	gas = GAS_H2O
 
 /*
  *	Water reaction to turf
@@ -335,7 +340,7 @@
 /datum/reagent/fuel/unholywater/on_mob_life(mob/living/carbon/M)
 	if(iscultist(M))
 		M.drowsyness = max(M.drowsyness-5, 0)
-		M.AdjustAllImmobility(-40, FALSE)
+		M.AdjustAllImmobility(-40)
 		M.adjustStaminaLoss(-10, 0)
 		M.adjustToxLoss(-2, 0)
 		M.adjustOxyLoss(-2, 0)
@@ -378,6 +383,8 @@
 	taste_description = "cherry" // by popular demand
 	var/lube_kind = TURF_WET_LUBE ///What kind of slipperiness gets added to turfs.
 	evaporation_rate = 2.5 //slightly slower than water
+	condensating_point = T20C + 10
+	condenses_liquid = FALSE
 
 /datum/reagent/lube/reaction_liquid(obj/O, reac_volume)
 	var/turf/open/T = get_turf(O)
@@ -483,9 +490,10 @@
 			N.dna.species.species_traits += HAIR
 		if(SKINTONES in N.dna.species.species_traits)
 			N.skin_tone = "orange"
+			N.regenerate_icons()
 		else if(MUTCOLORS in N.dna.species.species_traits) //Aliens with custom colors simply get turned orange
 			N.dna.features["mcolor"] = "f80"
-		N.regenerate_icons()
+			N.regenerate_icons(TRUE)
 
 /datum/reagent/spraytan/overdose_process(mob/living/M)
 	metabolization_rate = 1 * REAGENTS_METABOLISM
@@ -724,7 +732,7 @@
 	taste_description = "slime"
 	can_synth = FALSE //idedplznerf
 
-/datum/reagent/aslimetoxin/reaction_mob(mob/living/L, method=TOUCH, reac_volume)
+/datum/reagent/aslimetoxin/reaction_mob(mob/living/carbon/L, method=TOUCH, reac_volume)
 	if(method != TOUCH)
 		L.ForceContractDisease(new /datum/disease/transformation/slime(), FALSE, TRUE)
 
@@ -735,7 +743,7 @@
 	can_synth = FALSE
 	taste_description = "decay"
 
-/datum/reagent/gluttonytoxin/reaction_mob(mob/living/L, method=TOUCH, reac_volume)
+/datum/reagent/gluttonytoxin/reaction_mob(mob/living/carbon/L, method=TOUCH, reac_volume)
 	L.ForceContractDisease(new /datum/disease/transformation/morph(), FALSE, TRUE)
 
 /datum/reagent/serotrotium
@@ -758,6 +766,9 @@
 	color = "#808080" // rgb: 128, 128, 128
 	taste_mult = 0 // oderless and tasteless
 	random_unrestricted = FALSE
+	gas = GAS_O2
+	condensating_point = 90.188
+	molarity = 2
 
 /datum/reagent/oxygen/reaction_evaporation(turf/open/exposed_turf, reac_volume)
 	. = ..()
@@ -788,6 +799,9 @@
 	color = "#808080" // rgb: 128, 128, 128
 	taste_mult = 0
 	random_unrestricted = FALSE
+	gas = GAS_N2
+	condensating_point = 77.355
+	molarity = 2
 
 /datum/reagent/hydrogen
 	name = "Hydrogen"
@@ -796,6 +810,7 @@
 	color = "#808080" // rgb: 128, 128, 128
 	taste_mult = 0
 	random_unrestricted = FALSE
+	gas = GAS_H2
 
 /datum/reagent/potassium
 	name = "Potassium"
@@ -813,7 +828,7 @@
 	random_unrestricted = FALSE
 
 /datum/reagent/mercury/on_mob_life(mob/living/carbon/M)
-	if((M.mobility_flags & MOBILITY_MOVE) && !isspaceturf(M.loc))
+	if(!HAS_TRAIT(M, TRAIT_IMMOBILIZED) && !isspaceturf(M.loc))
 		step(M, pick(GLOB.cardinals))
 	if(prob(5))
 		M.emote(pick("twitch","drool","moan"))
@@ -846,9 +861,10 @@
 	name = "Chlorine"
 	description = "A pale yellow gas that's well known as an oxidizer. While it forms many harmless molecules in its elemental form it is far from harmless."
 	reagent_state = GAS
-	color = "#FFFB89" //pale yellow
+	color = "#c0c0a0" // rgb: 192, 192, 160
 	taste_description = "chlorine"
 	random_unrestricted = FALSE
+	condensating_point = 239.11
 
 /datum/reagent/chlorine/on_mob_life(mob/living/carbon/M)
 	M.take_bodypart_damage(1*REM, 0, 0, 0)
@@ -894,7 +910,7 @@
 	random_unrestricted = FALSE
 
 /datum/reagent/lithium/on_mob_life(mob/living/carbon/M)
-	if((M.mobility_flags & MOBILITY_MOVE) && !isspaceturf(M.loc) && isturf(M.loc))
+	if(!HAS_TRAIT(M, TRAIT_IMMOBILIZED) && !isspaceturf(M.loc) && isturf(M.loc))
 		step(M, pick(GLOB.cardinals))
 	if(prob(5))
 		M.emote(pick("twitch","drool","moan"))
@@ -1047,6 +1063,15 @@
 	addiction_types = list(/datum/addiction/alcohol = 4)
 	liquid_fire_power = 10 //MONKESTATION EDIT ADDITION
 	liquid_fire_burnrate = 1 //MONKESTATION EDIT ADDITION
+	condensating_point = T20C - 4
+
+/datum/reagent/fuel/define_gas()
+	var/datum/gas/new_gas = ..()
+	new_gas.enthalpy = 227400
+	new_gas.fire_burn_rate = 0.4
+	new_gas.fire_products = list(GAS_CO2 = 2, GAS_H2O = 1)
+	new_gas.fire_temperature = T0C+300
+	return new_gas
 
 /datum/reagent/fuel/reaction_mob(mob/living/M, method=TOUCH, reac_volume)//Splashing people with welding fuel to make them easy to ignite!
 	if(method == TOUCH || method == VAPOR)
@@ -1066,6 +1091,8 @@
 	taste_description = "sourness"
 	reagent_weight = 0.6 //so it sprays further
 	var/toxic = FALSE //turn to true if someone drinks this, so it won't poison people who are simply getting sprayed down
+	condensating_point = T0C+50
+	molarity = 10 //five times better as a gas than anything else
 
 /datum/reagent/space_cleaner/on_mob_life(mob/living/carbon/M)
 	if(toxic)//don't drink space cleaner, dumbass
@@ -1093,6 +1120,7 @@
 			M.adjustToxLoss(rand(5,10))
 
 /datum/reagent/space_cleaner/reaction_turf(turf/T, reac_volume)
+	..()
 	if(reac_volume >= 1)
 		T.remove_atom_colour(WASHABLE_COLOUR_PRIORITY)
 		SEND_SIGNAL(T, COMSIG_COMPONENT_CLEAN_ACT, CLEAN_STRENGTH_BLOOD)
@@ -1193,7 +1221,7 @@
 	can_synth = FALSE
 	taste_description = "sludge"
 
-/datum/reagent/nanomachines/reaction_mob(mob/living/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
+/datum/reagent/nanomachines/reaction_mob(mob/living/carbon/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
 	if(method==PATCH || method==INGEST || method==INJECT || (method == VAPOR && prob(min(reac_volume,100)*(1 - touch_protection))))
 		L.ForceContractDisease(new /datum/disease/transformation/robot(), FALSE, TRUE)
 
@@ -1204,7 +1232,7 @@
 	can_synth = FALSE
 	taste_description = "sludge"
 
-/datum/reagent/xenomicrobes/reaction_mob(mob/living/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
+/datum/reagent/xenomicrobes/reaction_mob(mob/living/carbon/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
 	if(method==PATCH || method==INGEST || method==INJECT || (method == VAPOR && prob(min(reac_volume,100)*(1 - touch_protection))))
 		L.ForceContractDisease(new /datum/disease/transformation/xeno(), FALSE, TRUE)
 
@@ -1216,7 +1244,7 @@
 	taste_description = "slime"
 	random_unrestricted = FALSE
 
-/datum/reagent/fungalspores/reaction_mob(mob/living/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
+/datum/reagent/fungalspores/reaction_mob(mob/living/carbon/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
 	if(method==PATCH || method==INGEST || method==INJECT || (method == VAPOR && prob(min(reac_volume,100)*(1 - touch_protection))))
 		L.ForceContractDisease(new /datum/disease/tuberculosis(), FALSE, TRUE)
 
@@ -1227,7 +1255,7 @@
 	taste_description = "goo"
 	can_synth = FALSE //special orange man request
 
-/datum/reagent/snail/reaction_mob(mob/living/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
+/datum/reagent/snail/reaction_mob(mob/living/carbon/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
 	if(method==PATCH || method==INGEST || method==INJECT || (method == VAPOR && prob(min(reac_volume,100)*(1 - touch_protection))))
 		L.ForceContractDisease(new /datum/disease/gastrolosis(), FALSE, TRUE)
 
@@ -1262,12 +1290,28 @@
 	taste_description = "mordant"
 	random_unrestricted = FALSE
 
+/datum/reagent/ammonia/reaction_mob(mob/living/M, method=TOUCH, reac_volume, touch_protection)
+	if(method == VAPOR)
+		M.adjustOrganLoss(ORGAN_SLOT_LUNGS, ((100-touch_protection)/100)*reac_volume*REAGENTS_EFFECT_MULTIPLIER * 0.25)
+		if(prob(reac_volume))
+			to_chat(M, "<span class='danger'>Your lungs hurt!</span>")
+	return ..()
+
 /datum/reagent/diethylamine
 	name = "Diethylamine"
 	description = "A secondary amine, mildly corrosive."
 	color = "#604030" // rgb: 96, 64, 48
 	taste_description = "iron"
 	random_unrestricted = FALSE
+	condensating_point = T20C -15
+
+/datum/reagent/diethylamine/define_gas()
+	var/datum/gas/new_gas = ..()
+	new_gas.fire_burn_rate = 0.17
+	new_gas.fire_products = list(GAS_H2O = 4, GAS_AMMONIA = 1, GAS_CO2 = 4)
+	new_gas.enthalpy = -131000
+	new_gas.fire_temperature = FIRE_MINIMUM_TEMPERATURE_TO_EXIST
+	return new_gas
 
 /datum/reagent/carbondioxide
 	name = "Carbon Dioxide"
@@ -1276,9 +1320,9 @@
 	color = "#B0B0B0" // rgb : 192, 192, 192
 	taste_description = "something unknowable"
 	random_unrestricted = FALSE
-
-
-
+	condensating_point = 195.68 // technically sublimation, not boiling, but same deal
+	molarity = 5
+	gas = GAS_CO2
 
 /datum/reagent/nitrous_oxide
 	name = "Nitrous Oxide"
@@ -1287,9 +1331,9 @@
 	metabolization_rate = 1.5 * REAGENTS_METABOLISM
 	color = "#808080"
 	taste_description = "sweetness"
-
-
-
+	condensating_point = 184.67
+	molarity = 5
+	gas = GAS_NITROUS
 
 /datum/reagent/nitrous_oxide/reaction_mob(mob/living/M, method=TOUCH, reac_volume)
 	if(method == VAPOR)
@@ -1313,6 +1357,8 @@
 	color = "E1A116"
 	taste_description = "sourness"
 	addiction_types = list(/datum/addiction/stimulants = 14)
+	gas = GAS_STIMULUM
+	condensating_point = 150
 
 /datum/reagent/stimulum/on_mob_metabolize(mob/living/L)
 	..()
@@ -1341,8 +1387,10 @@
 	description = "A highly reactive gas that makes you feel faster."
 	reagent_state = GAS
 	metabolization_rate = REAGENTS_METABOLISM * 0.5 // Because stimulum/nitryl are handled through gas breathing, metabolism must be lower for breathcode to keep up
-	color = "90560B"
+	color = "#90560B"
 	taste_description = "burning"
+	gas = GAS_NITRYL
+	condensating_point = T20C - 1
 
 /datum/reagent/nitryl/on_mob_metabolize(mob/living/L)
 	..()
@@ -1372,6 +1420,8 @@
 	metabolization_rate = REAGENTS_METABOLISM * 0.5 // Because stimulum/nitryl/freon/hyper-nob are handled through gas breathing, metabolism must be lower for breathcode to keep up
 	color = "90560B"
 	taste_description = "searingly cold"
+	gas = GAS_HYPERNOB
+
 /datum/reagent/hypernoblium/on_mob_metabolize(mob/living/L)
 	. = ..()
 	if(isplasmaman(L))
@@ -1653,6 +1703,11 @@
 	color = "#D35415"
 	taste_description = "chemicals"
 	random_unrestricted = FALSE
+	condensating_point = T20C - 10
+
+/datum/reagent/bromine/on_mob_life(mob/living/carbon/C)
+	C.adjustOrganLoss(ORGAN_SLOT_BRAIN, 0.2, 99)
+	..()
 
 /datum/reagent/phenol
 	name = "Phenol"
@@ -1783,10 +1838,13 @@
 	color = "#A70FFF"
 	taste_description = "dryness"
 	random_unrestricted = FALSE
+	condensating_point = 1000
 
 /datum/reagent/drying_agent/reaction_turf(turf/open/T, reac_volume)
 	if(istype(T))
 		T.MakeDry(ALL, TRUE, reac_volume * 5 SECONDS)		//50 deciseconds per unit
+	if(T.liquids)
+		T.liquids.liquid_group.remove_any(T.liquids, reac_volume)
 
 /datum/reagent/drying_agent/reaction_obj(obj/O, reac_volume)
 	if(O.type == /obj/item/clothing/shoes/galoshes)
@@ -2067,7 +2125,7 @@
 	taste_description = "inner peace"
 	can_synth = FALSE
 
-/datum/reagent/tranquility/reaction_mob(mob/living/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
+/datum/reagent/tranquility/reaction_mob(mob/living/carbon/L, method=TOUCH, reac_volume, show_message = 1, touch_protection = 0)
 	if(method==PATCH || method==INGEST || method==INJECT || (method == VAPOR && prob(min(reac_volume,100)*(1 - touch_protection))))
 		L.ForceContractDisease(new /datum/disease/transformation/gondola(), FALSE, TRUE)
 
@@ -2096,7 +2154,7 @@
 /datum/reagent/eldritch/on_mob_life(mob/living/carbon/M)
 	if(IS_HERETIC(M))
 		M.drowsyness = max(M.drowsyness-5, 0)
-		M.AdjustAllImmobility(-40, FALSE)
+		M.AdjustAllImmobility(-40)
 		M.adjustStaminaLoss(-10, FALSE)
 		M.adjustToxLoss(-2, FALSE)
 		M.adjustOxyLoss(-2, FALSE)
@@ -2191,7 +2249,6 @@
 	reaction_turf(my_turf, reac_volume)
 
 /datum/reagent/ants/reaction_evaporation(turf/exposed_turf, reac_volume)
-	. = ..()
 	if(!istype(exposed_turf) || isspaceturf(exposed_turf)) // Is the turf valid
 		return
 	var/turf/pest_turf

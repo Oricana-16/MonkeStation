@@ -25,7 +25,7 @@
 /datum/symptom/heal/Activate(datum/disease/advance/A)
 	if(!..())
 		return
-	var/mob/living/M = A.affected_mob
+	var/mob/living/carbon/M = A.affected_mob
 	switch(A.stage)
 		if(4, 5)
 			var/effectiveness = CanHeal(A)
@@ -119,29 +119,27 @@
 	REMOVE_TRAIT(A.affected_mob, TRAIT_NOCRITDAMAGE, DISEASE_TRAIT)
 
 /datum/symptom/heal/coma/CanHeal(datum/disease/advance/A)
-	var/mob/living/M = A.affected_mob
+	var/mob/living/carbon/M = A.affected_mob
 	if(stabilize)
 		ADD_TRAIT(M, TRAIT_NOCRITDAMAGE, DISEASE_TRAIT)
 	if(HAS_TRAIT(M, TRAIT_DEATHCOMA))
 		return power
-	else if(M.IsUnconscious() || M.stat == UNCONSCIOUS)
+	if(M.IsSleeping())
+		return power * 0.25 //Voluntary unconsciousness yields lower healing.
+	if(M.stat == UNCONSCIOUS)
 		return power * 0.9
-	else if(M.stat == SOFT_CRIT)
+	if(M.stat == SOFT_CRIT)
 		return power * 0.5
-	else if(M.IsSleeping())
-		return power * 0.25
-	else if(M.getBruteLoss() + M.getFireLoss() >= 70 && !active_coma)
+	if(M.getBruteLoss() + M.getFireLoss() >= 70 && !active_coma)
 		to_chat(M, "<span class='warning'>You feel yourself slip into a deep, regenerative slumber.</span>")
 		active_coma = TRUE
 		addtimer(CALLBACK(src, .proc/coma, M), 60)
 
-/datum/symptom/heal/coma/proc/coma(mob/living/M)
+/datum/symptom/heal/coma/proc/coma(mob/living/carbon/M)
 	if(deathgasp)
 		M.fakedeath(TRAIT_REGEN_COMA)
 	else
 		M.Unconscious(300, TRUE, TRUE)
-	M.update_stat()
-	M.update_mobility()
 	addtimer(CALLBACK(src, .proc/uncoma, M), 300)
 
 /datum/symptom/heal/coma/proc/uncoma(mob/living/M)
@@ -152,8 +150,6 @@
 		M.cure_fakedeath(TRAIT_REGEN_COMA)
 	else
 		M.SetUnconscious(0)
-	M.update_stat()
-	M.update_mobility()
 
 /datum/symptom/heal/coma/Heal(mob/living/carbon/M, datum/disease/advance/A, actual_power)
 	var/heal_amt = 4 * actual_power

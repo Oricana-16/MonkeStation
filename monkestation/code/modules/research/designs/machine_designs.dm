@@ -8,14 +8,6 @@
 	category = list ("Misc. Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_CARGO
 
-/datum/design/board/liquid_output_pump
-	name = "Machine Design (Liquid Output Pump Machine)"
-	desc = "The circuit board for a smoke machine."
-	id = "liquid_output_pump"
-	build_path = /obj/item/circuitboard/machine/liquid_output_pump
-	category = list ("Engineering Machinery")
-	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
-
 /datum/design/board/electrolyzer
 	name = "Machine Design (Electrolyzer Board)"
 	desc = "The circuit board for an electrolyzer."
@@ -29,5 +21,13 @@
 	desc = "The circuit board for a crystallizer."
 	id = "crystallizer"
 	build_path = /obj/item/circuitboard/machine/crystallizer
+	category = list ("Engineering Machinery")
+	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
+
+/datum/design/board/atmos_machine
+	name = "Machine Design (Evaporation Machine)"
+	desc = "The circuit board for a evaporation machine."
+	id = "evaporation_machine"
+	build_path = /obj/item/circuitboard/machine/atmos_machine
 	category = list ("Engineering Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING

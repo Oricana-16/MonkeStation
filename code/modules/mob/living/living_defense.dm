@@ -188,14 +188,12 @@
 				log_combat(user, src, "grabbed", addition="neck grab")
 				visible_message("<span class='danger'>[user] grabs [src] by the neck!</span>",\
 								"<span class='userdanger'>[user] grabs you by the neck!</span>")
-				update_mobility() //we fall down
 				if(!buckled && !density)
 					Move(user.loc)
 			if(GRAB_KILL)
 				log_combat(user, src, "strangled", addition="kill grab")
 				visible_message("<span class='danger'>[user] is strangling [src]!</span>", \
 								"<span class='userdanger'>[user] is strangling you!</span>")
-				update_mobility() //we fall down
 				if(!buckled && !density)
 					Move(user.loc)
 		user.set_pull_offsets(src, grab_state)
@@ -405,16 +403,6 @@
 		used_item = get_active_held_item()
 	..()
 	setMovetype(movement_type & ~FLOATING) // If we were without gravity, the bouncing animation got stopped, so we make sure we restart the bouncing after the next movement.
-
-/mob/living/extrapolator_act(mob/user, var/obj/item/extrapolator/E, scan = TRUE)
-	if(istype(E) && diseases.len)
-		if(scan)
-			E.scan(src, diseases, user)
-		else
-			E.extrapolate(src, diseases, user)
-		return TRUE
-	else
-		return FALSE
 
 /mob/living/proc/sethellbound()
 	if(mind)
