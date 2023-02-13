@@ -8,7 +8,7 @@
 
 /obj/item/mimic_organ
 	name = "mimic organ"
-	desc = "A mass of black goo. Grind it down to get rezadone. The E.X.P.E.R.I-MENTOR can also turn it into a neuromod
+	desc = "A mass of black goo. Grind it down to get rezadone. The E.X.P.E.R.I-MENTOR can also turn it into a neuromod"
 	icon = 'monkestation/icons/obj/misc/neuromods.dmi'
 	icon_state = "mimic_organ"
 	item_state = "mimic_organ"
