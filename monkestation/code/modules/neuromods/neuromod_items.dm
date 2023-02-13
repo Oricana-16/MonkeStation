@@ -8,10 +8,11 @@
 
 /obj/item/mimic_organ
 	name = "mimic organ"
-	desc = "A mass of black goo. The E.X.P.E.R.I-MENTOR could probably do something with this."
-	icon = 'icons/obj/bureaucracy.dmi'
-	icon_state = "stamp-clown"
-	item_state = "stamp-clown"
+	desc = "A mass of black goo. Grind it down to get rezadone. The E.X.P.E.R.I-MENTOR can also turn it into a neuromod
+	icon = 'monkestation/icons/obj/misc/neuromods.dmi'
+	icon_state = "mimic_organ"
+	item_state = "mimic_organ"
+	grind_results = list(/datum/reagent/medicine/rezadone = 15)
 	w_class = WEIGHT_CLASS_SMALL
 	var/static/list/neuromod_list = list(
 		//SPECIAL
