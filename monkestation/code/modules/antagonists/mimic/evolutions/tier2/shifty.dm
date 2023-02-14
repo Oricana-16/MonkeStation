@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier2/shifty
 	name = "shifty mimic"
 	real_name = "shifty mimic"
-	icon_state = "shifty"
-	icon_living = "shifty"
+	// icon_state = "shifty"
+	// icon_living = "shifty"
 	hivemind_modifier = "Shifty"
 	melee_damage = 5
 	playstyle_string = "<span class='big bold'>You are a shifty mimic,</span></b> you can teleport around, bringing whoever you're latched onto with you<b>"

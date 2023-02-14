@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier2/kinetic
 	name = "kinetic mimic"
 	real_name = "kinetic mimic"
-	icon_state = "kinetic"
-	icon_living = "kinetic"
+	// icon_state = "kinetic"
+	// icon_living = "kinetic"
 	hivemind_modifier = "Kinetic"
 	melee_damage = 6
 	secondary_damage_type = BRUTE

@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier3/transportive
 	name = "transportive mimic"
 	real_name = "transportive mimic"
-	icon_state = "shifty"
-	icon_living = "shifty"
+	// icon_state = "shifty"
+	// icon_living = "shifty"
 	hivemind_modifier = "Transportive"
 	melee_damage = 6
 	playstyle_string = "<span class='big bold'>You are a transportive mimic,</span></b> you can teleport around like before, but you can also use teleport to and summon any other mimic<b>"

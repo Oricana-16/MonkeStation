@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier3/oracle
 	name = "oracle mimic"
 	real_name = "oracle mimic"
-	icon_state = "oracle"
-	icon_living = "oracle"
+	// icon_state = "oracle"
+	// icon_living = "oracle"
 	hivemind_modifier = "oracle"
 	melee_damage = 8
 	playstyle_string = "<span class='big bold'>You are an oracle mimic,</span></b> you can temporarily shed your body to see the truth of the world.<b>"

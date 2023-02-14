@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic
 	name = "voltaic mimic"
 	real_name = "voltaic mimic"
-	icon_state = "voltaic"
-	icon_living = "voltaic"
+	// icon_state = "voltaic"
+	// icon_living = "voltaic"
 	melee_damage = 5
 	secondary_damage_type = BURN
 	hivemind_modifier = "Voltaic"

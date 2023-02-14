@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier3/surging
 	name = "surging mimic"
 	real_name = "surging mimic"
-	icon_state = "voltaic"
-	icon_living = "voltaic"
+	// icon_state = "voltaic"
+	// icon_living = "voltaic"
 	hivemind_modifier = "surging"
 	melee_damage = 7
 	secondary_damage_type = BURN

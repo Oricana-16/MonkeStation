@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier2/greater
 	name = "greater mimic"
 	real_name = "greater mimic"
-	icon_state = "greater"
-	icon_living = "greater"
+	// icon_state = "greater"
+	// icon_living = "greater"
 	maxHealth = 175
 	health = 175
 	melee_damage = 9

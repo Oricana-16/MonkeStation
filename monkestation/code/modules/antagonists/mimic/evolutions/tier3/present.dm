@@ -3,8 +3,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier3/present
 	name = "present mimic"
 	real_name = "present mimic"
-	icon_state = "kinetic"
-	icon_living = "kinetic"
+	// icon_state = "kinetic"
+	// icon_living = "kinetic"
 	hivemind_modifier = "present"
 	melee_damage = 8
 	secondary_damage_type = BRUTE

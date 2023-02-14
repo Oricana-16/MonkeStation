@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier2/thermal
 	name = "thermal mimic"
 	real_name = "thermal mimic"
-	icon_state = "thermal"
-	icon_living = "thermal"
+	// icon_state = "thermal"
+	// icon_living = "thermal"
 	melee_damage = 7
 	melee_damage_type = BURN
 	maxbodytemp = INFINITY

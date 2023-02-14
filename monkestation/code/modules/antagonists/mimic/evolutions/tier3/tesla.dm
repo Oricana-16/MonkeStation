@@ -1,8 +1,8 @@
 /mob/living/simple_animal/hostile/alien_mimic/tier3/tesla
 	name = "tesla mimic"
 	real_name = "tesla mimic"
-	icon_state = "voltaic"
-	icon_living = "voltaic"
+	// icon_state = "voltaic"
+	// icon_living = "voltaic"
 	hivemind_modifier = "tesla"
 	melee_damage = 7
 	playstyle_string = "<span class='big bold'>You are a tesla mimic,</span></b> shock everyone nearby.<b>"
