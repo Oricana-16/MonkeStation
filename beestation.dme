@@ -3812,6 +3812,8 @@
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\present.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\surging.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\tesla.dm"
+#include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\telepath.dm"
+#include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\explosive.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\transportive.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\spellbook.dm"
 #include "monkestation\code\modules\bitmask_smoothing\code\decals.dm"

@@ -4,3 +4,4 @@
 	can_evolve = FALSE
 	disguised_move_delay = 0.4 SECONDS
 	undisguised_move_delay = 0.05 SECONDS
+	absorption_heal = 60

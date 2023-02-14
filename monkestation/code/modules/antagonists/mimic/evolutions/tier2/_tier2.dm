@@ -5,3 +5,4 @@
 	undisguised_move_delay = 0.05 SECONDS
 	//A full repro cost required to evolve
 	evolution_cost_mult = 2
+	absorption_heal = 40

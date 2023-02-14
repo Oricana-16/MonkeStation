@@ -8,6 +8,9 @@
 	hivemind_modifier = "memetic"
 	playstyle_string = "<span class='big bold'>You are a memetic mimic,</span></b> you deal brute damage, and can control people you latch onto.</b>"
 	var/mob/living/mimic_mezmerized/mind_holder
+	possible_evolutions = list(
+		"telepathic" = /mob/living/simple_animal/hostile/alien_mimic/tier3/telepathic
+	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/Initialize(mapload)
 	. = ..()

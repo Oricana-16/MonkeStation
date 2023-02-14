@@ -76,6 +76,9 @@
 	//For T2s to have a higher cost (or a lower one if any future mimics are like that)
 	var/evolution_cost_mult = 1
 
+	//How much health it heals from absorbing someone
+	var/absorption_heal = 20
+
 	var/list/possible_evolutions = list(
 		"greater" = /mob/living/simple_animal/hostile/alien_mimic/tier2/greater,
 		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic,
@@ -413,7 +416,7 @@
 				carbon_victim.become_husk("burn") //Needs to be "burn" so rezadone and such an fix it, don't want it being an RR due to too many bodies for medbay.
 				mimic_team?.people_absorbed++
 				mimic_team?.total_people_absorbed++
-				adjustHealth(-40)
+				adjustHealth(-absorption_heal)
 			return
 		if(disguised) //Insta latch if youre disguised
 			if(victim.stat == DEAD)

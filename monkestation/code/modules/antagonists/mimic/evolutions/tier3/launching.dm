@@ -36,7 +36,7 @@
 	var/launch_target = get_edge_target_turf(user, user.dir)
 
 	user.Immobilize(1 SECONDS)
-	user.safe_throw_at(launch_target, 16, 2, force = MOVE_FORCE_EXTREMELY_STRONG, spin = FALSE)
+	user.safe_throw_at(launch_target, 15, 2, force = MOVE_FORCE_EXTREMELY_STRONG, spin = FALSE)
 
 /obj/effect/proc_holder/spell/self/mimic_launch/can_cast(mob/user = usr)
 	if(!ismimic(user))
