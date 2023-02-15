@@ -29,6 +29,10 @@
 /obj/effect/proc_holder/spell/self/mimic_dimensional_walk/cast(mob/user = usr)
 	if(!ismimic(user))
 		return
+
+	if(movement_type & VENTCRAWLING)
+		return
+
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
 	var/list/possible_targets = mimic_user.mimic_team.members
 	possible_targets -= mimic_user.mind //Don't wanna teleport to yourself

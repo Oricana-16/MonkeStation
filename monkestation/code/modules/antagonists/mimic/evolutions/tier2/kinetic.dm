@@ -24,6 +24,9 @@
 	charge_max = 45 SECONDS
 
 /obj/effect/proc_holder/spell/self/mimic_kinetic_blast/cast(mob/user)
+	if(movement_type & VENTCRAWLING)
+		return
+
 	user.add_emitter(/obj/emitter/mimic/kinetic_blast,"kinetic_blast",burst_mode=TRUE)
 	playsound(get_turf(user),'sound/magic/repulse.ogg', 100, 1)
 	user.visible_message("<span class='danger'>[user] sends out a wave of dark energy, knocking everything around!</span>","<span class='danger'>You push everything away!</span>")

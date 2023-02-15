@@ -10,6 +10,10 @@
 	hivemind_modifier = "Thermal"
 	playstyle_string = "<span class='big bold'>You are a thermal mimic,</span></b> you deal burn and DNA damage, are immunte to fire, and \
 						set fire to things you attack.</b>"
+	possible_evolutions = list(
+		"explosive" = /mob/living/simple_animal/hostile/alien_mimic/tier3/explosive,
+		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/tier3/burning
+	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/thermal/death(gibbed)
 	new /obj/effect/hotspot(get_turf(src))

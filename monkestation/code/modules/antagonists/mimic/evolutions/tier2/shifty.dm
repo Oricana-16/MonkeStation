@@ -25,6 +25,9 @@
 	charge_max = 30 SECONDS
 
 /obj/effect/proc_holder/spell/pointed/mimic_phantom_shift/cast(list/targets,mob/user = usr)
+	if(movement_type & VENTCRAWLING)
+		return
+
 	for(var/target in targets)
 		var/turf/target_turf = get_turf(target)
 		if(!(target_turf in view(7, get_turf(user))))

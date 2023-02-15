@@ -17,6 +17,7 @@
 	AddSpell(explode)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier3/explosive/death(gibbed)
+	explosion(get_turf(src),-1,2,5, flame_range = 5)
 	..()
 
 /mob/living/simple_animal/hostile/alien_mimic/tier3/explosive/latch(mob/living/target)
@@ -36,6 +37,9 @@
 
 /obj/effect/proc_holder/spell/self/mimic_explosion/cast(mob/user = usr)
 	if(!ismimic(user))
+		return
+
+	if(movement_type & VENTCRAWLING)
 		return
 
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user

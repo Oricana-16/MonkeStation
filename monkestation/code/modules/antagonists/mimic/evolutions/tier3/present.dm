@@ -31,6 +31,9 @@
 	if(!ismimic(user))
 		return
 
+	if(movement_type & VENTCRAWLING)
+		return
+
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
 
 	if(mimic_user.disguised)

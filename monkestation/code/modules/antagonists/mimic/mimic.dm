@@ -19,7 +19,7 @@
 	var/disguised_move_delay = 0.2 SECONDS
 	var/undisguised_move_delay = 0.025 SECONDS
 	a_intent = INTENT_HARM
-	stop_automated_movement = 1
+	stop_automated_movement = TRUE
 	status_flags = CANPUSH
 	stat_attack = UNCONSCIOUS
 	mob_size = MOB_SIZE_SMALL
@@ -440,7 +440,7 @@
 /mob/living/simple_animal/hostile/alien_mimic/MoveToTarget(list/possible_targets)
 	if(fleeing)
 		SSmove_manager.move_away(src, target, 15, move_to_delay)
-		stop_automated_movement = 1
+		stop_automated_movement = TRUE
 		if(!target || !CanAttack(target))
 			LoseTarget()
 			return FALSE
