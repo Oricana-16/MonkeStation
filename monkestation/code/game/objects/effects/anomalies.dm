@@ -355,6 +355,8 @@
 	icon_state = "bhole3"
 	lifespan = 20 SECONDS //about maybe 5 walters
 	var/active = TRUE
+	var/sentience = FALSE
+	var/list/sentience_candidates = list()
 
 /obj/effect/anomaly/walterverse/anomalyEffect(delta_time)
 	..()
@@ -364,9 +366,14 @@
 
 	if(active)
 		active = FALSE
-		var/selected_spawn = pick(subtypesof(/mob/living/simple_animal/pet/dog/bullterrier/walter))
-		new selected_spawn(src.loc)
-		return
+		var/mob/living/selected_spawn = pick(subtypesof(/mob/living/simple_animal/pet/dog/bullterrier/walter))
+		selected_spawn = new selected_spawn(src.loc)
+		if(!sentience)
+			return
+
+		if(LAZYLEN(sentience_candidates))
+			var/mob/dead/observer/chosen_candidate = pick_n_take(sentience_candidates)
+			selected_spawn.key = chosen_candidate.key
 	active = TRUE
 
 /obj/effect/anomaly/walterverse/detonate()

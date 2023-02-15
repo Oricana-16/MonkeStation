@@ -81,17 +81,6 @@
 	gold_core_spawnable = FRIENDLY_SPAWN
 	speak = list("barks!", "woofs!", "honks!", "Walter", "firetrucks", "monstertrucks")
 
-/mob/living/simple_animal/pet/dog/bullterrier/walter/wizard
-	name = "Magic Walter"
-	real_name = "Magic Walter"
-	desc = "Assistants and secoffs are nothing compared to the might of this magic loving dog."
-	icon = 'monkestation/icons/mob/walterverse.dmi'
-	icon_state = "wizard"
-	icon_living = "wizard"
-	icon_dead = "wizard_dead"
-	gold_core_spawnable = FRIENDLY_SPAWN
-	speak = list("ONI SOMA", "CLANG!", "UN'LTD P'WAH", "AULIE OXIN FIERA", "GIN'YU`CAPAN")
-
 /mob/living/simple_animal/pet/dog/bullterrier/walter/ookter
 	name = "Ookter"
 	real_name = "Ookter"
@@ -103,8 +92,9 @@
 	gold_core_spawnable = FRIENDLY_SPAWN
 	speak = list("OOK!", "EEP!", "OOP!", "AHH OOP!")
 
-//Special Walters - Below here so the less special ones are easier to manage
+//Special Walters
 
+// Small
 /mob/living/simple_animal/pet/dog/bullterrier/walter/smallter
 	name = "Smallter"
 	real_name = "Smallter"
@@ -131,6 +121,7 @@
 	resize = 2
 	update_transform()
 
+// French
 /mob/living/simple_animal/pet/dog/bullterrier/walter/french
 	name = "French Walter"
 	real_name = "French Walter"
@@ -167,6 +158,7 @@
 			message += pick(" Honh honh honh!"," Honh!"," Zut Alors!")
 	speech_args[SPEECH_MESSAGE] = trim(message)
 
+// British
 /mob/living/simple_animal/pet/dog/bullterrier/walter/british
 	name = "Bri'ish Wal'ah"
 	real_name = "Bri'ish Wal'ah"
@@ -209,3 +201,31 @@
 		if(prob(8))
 			message += pick(british_appends)
 	speech_args[SPEECH_MESSAGE] = trim(message)
+
+// Wizard
+/mob/living/simple_animal/pet/dog/bullterrier/walter/wizard
+	name = "Magic Walter"
+	real_name = "Magic Walter"
+	desc = "Assistants and secoffs are nothing compared to the might of this magic loving dog."
+	icon = 'monkestation/icons/mob/walterverse.dmi'
+	icon_state = "wizard"
+	icon_living = "wizard"
+	icon_dead = "wizard_dead"
+	gold_core_spawnable = FRIENDLY_SPAWN
+	speak = list("ONI SOMA", "CLANG!", "UN'LTD P'WAH", "AULIE OXIN FIERA", "GIN'YU`CAPAN")
+
+/mob/living/simple_animal/pet/dog/bullterrier/walter/wizard/Initialize(mapload)
+	// Gambling with spells :) (We can change it if it becomes a problem but this sounded funny)
+	for(var/i in 1 to 3)
+		var/picked_spell = pick(subtypesof(/obj/effect/proc_holder/spell))
+		var/obj/effect/proc_holder/spell/cur_spell = new picked_spell
+		cur_spell.clothes_req = FALSE
+
+		if(istype(cur_spell, /obj/effect/proc_holder/spell/targeted/eminence))
+			var/obj/effect/proc_holder/spell/targeted/eminence/cur_eminence_spell = cur_spell
+			cur_eminence_spell.cog_cost = 0
+			AddSpell(cur_eminence_spell)
+		else
+			AddSpell(cur_spell)
+
+	. = ..()
