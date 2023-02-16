@@ -80,14 +80,14 @@
 	var/absorption_heal = 20
 
 	var/list/possible_evolutions = list(
-		"greater" = /mob/living/simple_animal/hostile/alien_mimic/tier2/greater,
-		"voltaic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic,
-		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/tier2/thermal,
-		"shifty" = /mob/living/simple_animal/hostile/alien_mimic/tier2/shifty,
-		"kinetic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/kinetic,
-		"insightful" = /mob/living/simple_animal/hostile/alien_mimic/tier2/insightful,
-		"memetic" = /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic,
-		"etheric" = /mob/living/simple_animal/hostile/alien_mimic/tier2/etheric,
+		"greater - become tankier and disguise as bigger objects" = /mob/living/simple_animal/hostile/alien_mimic/tier2/greater,
+		"voltaic - EMP and zap people on hit" = /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic,
+		"thermal - burn people on hit" = /mob/living/simple_animal/hostile/alien_mimic/tier2/thermal,
+		"shifty - teleport anywhere in sight" = /mob/living/simple_animal/hostile/alien_mimic/tier2/shifty,
+		"kinetic - force everyone nearby away from you" = /mob/living/simple_animal/hostile/alien_mimic/tier2/kinetic,
+		"insightful - see through walls" = /mob/living/simple_animal/hostile/alien_mimic/tier2/insightful,
+		"memetic - take control of people you latch onto" = /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic,
+		"etheric - deal toxic damage and clone yourself" = /mob/living/simple_animal/hostile/alien_mimic/tier2/etheric,
 	)
 
 	//This is so they can't just close and open the menu to reroll evolutions

@@ -8,7 +8,7 @@
 	playstyle_string = "<span class='big bold'>You are a insightful mimic,</span></b> you can ghost more often and you also deal more damage and can see through walls.<b>"
 	sight = SEE_THRU
 	possible_evolutions = list(
-		"oracle" = /mob/living/simple_animal/hostile/alien_mimic/tier3/oracle
+		"oracle - ghost around to gain information" = /mob/living/simple_animal/hostile/alien_mimic/tier3/oracle
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/insightful/Initialize(mapload)

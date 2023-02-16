@@ -7,7 +7,9 @@
 	secondary_damage_type = TOX
 	hivemind_modifier = "etheric"
 	playstyle_string = "<span class='big bold'>You are an etheric mimic,</span></b> you deal poison damage and can temporarily summon another mimic.</b>"
-
+	possible_evolutions = list(
+		"plentiful - 2 clones" = /mob/living/simple_animal/hostile/alien_mimic/tier3/plentiful
+	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/etheric/Initialize(mapload)
 	. = ..()
@@ -70,6 +72,7 @@
 	clothes_req = FALSE
 	action_background_icon_state = "bg_alien"
 	charge_max = 30 SECONDS
+	var/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/clone_mimic
 
 /obj/effect/proc_holder/spell/self/mimic_clone_request/cast(mob/living/simple_animal/hostile/alien_mimic/tier2/etheric/user)
 	if(!istype(user))
@@ -82,7 +85,7 @@
 	if(LAZYLEN(possible_clones))
 		var/mob/dead/observer/picked_clone = pick(possible_clones)
 
-		var/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/clone_mimic = new(user)
+		clone_mimic = new(user)
 		clone_mimic.origin_mimic = user
 		clone_mimic.name = "etheric mimic"
 		clone_mimic.real_name = user.real_name + "'s clone"

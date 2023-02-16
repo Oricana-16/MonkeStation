@@ -8,7 +8,7 @@
 	secondary_damage_type = BRUTE
 	playstyle_string = "<span class='big bold'>You are a kinetic mimic,</span></b> you only deal brute damage, and can push things away with your kinetic blast.<b>"
 	possible_evolutions = list(
-		"present" = /mob/living/simple_animal/hostile/alien_mimic/tier3/present
+		"present - force everyone nearby down" = /mob/living/simple_animal/hostile/alien_mimic/tier3/present
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/kinetic/Initialize(mapload)

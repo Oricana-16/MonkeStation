@@ -12,6 +12,12 @@
 	. = ..()
 	held_mind = new(src)
 
+
+
+
+
+
+// Back Seat
 /mob/living/mimic_telepath_mind
 	name = "telepath mind"
 	real_name = "telepath mind"
@@ -23,7 +29,6 @@
 
 	if(owner.stat == DEAD)
 		qdel(src)
-
 
 /mob/living/mimic_telepath_mind/say(message, bubble_type, var/list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null)
 	to_chat(src, "<span class='warning'>You are not in control of your body!</span>")

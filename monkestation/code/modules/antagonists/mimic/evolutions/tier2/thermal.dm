@@ -11,8 +11,8 @@
 	playstyle_string = "<span class='big bold'>You are a thermal mimic,</span></b> you deal burn and DNA damage, are immunte to fire, and \
 						set fire to things you attack.</b>"
 	possible_evolutions = list(
-		"explosive" = /mob/living/simple_animal/hostile/alien_mimic/tier3/explosive,
-		"thermal" = /mob/living/simple_animal/hostile/alien_mimic/tier3/burning
+		"explosive - explode, dealing damage to enemies and yourself" = /mob/living/simple_animal/hostile/alien_mimic/tier3/explosive,
+		"burning - shoot lines of fire at people" = /mob/living/simple_animal/hostile/alien_mimic/tier3/burning
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/thermal/death(gibbed)

@@ -9,8 +9,8 @@
 	playstyle_string = "<span class='big bold'>You are a voltaic mimic,</span></b> you deal brute and burn damage, stun and electrocute people on hit, and \
 						can activate an emp.</b>"
 	possible_evolutions = list(
-		"surging" = /mob/living/simple_animal/hostile/alien_mimic/tier3/surging,
-		"tesla" = /mob/living/simple_animal/hostile/alien_mimic/tier3/tesla
+		"surging - dash and zap everyone in your path" = /mob/living/simple_animal/hostile/alien_mimic/tier3/surging,
+		"tesla - shock nearby enemies" = /mob/living/simple_animal/hostile/alien_mimic/tier3/tesla
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/voltaic/Initialize(mapload)

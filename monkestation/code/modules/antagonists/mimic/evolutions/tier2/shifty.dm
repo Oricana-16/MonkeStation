@@ -7,7 +7,7 @@
 	melee_damage = 5
 	playstyle_string = "<span class='big bold'>You are a shifty mimic,</span></b> you can teleport around, bringing whoever you're latched onto with you<b>"
 	possible_evolutions = list(
-		"transportive" = /mob/living/simple_animal/hostile/alien_mimic/tier3/transportive
+		"transportive - teleport to and summon other mimics" = /mob/living/simple_animal/hostile/alien_mimic/tier3/transportive
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/shifty/Initialize(mapload)

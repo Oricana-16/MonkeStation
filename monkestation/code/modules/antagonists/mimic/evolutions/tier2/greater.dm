@@ -11,7 +11,7 @@
 	playstyle_string = "<span class='big bold'>You are a greater mimic,</span></b> you deal more damage to both people and objects, though only brute damage, \
 						have more health, and can disguise as bigger objects.</b>"
 	possible_evolutions = list(
-		"launching" = /mob/living/simple_animal/hostile/alien_mimic/tier3/launching
+		"launching - launch yourself into people to deal damage" = /mob/living/simple_animal/hostile/alien_mimic/tier3/launching
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/greater/allowed(atom/movable/target_item)

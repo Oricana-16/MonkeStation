@@ -40,7 +40,13 @@
 		return
 
 	for(var/target in targets)
-		var/list/turfs = get_line(get_turf(user),get_turf(target))
+		var/turf/target_turf = get_turf(target)
+		var/turf/user_turf = get_turf(user)
+		if(!(target_turf in view(7, user_turf)))
+			revert_cast(user)
+			return
+
+		var/list/turfs = get_line(user_turf,target_turf)
 
 		firestrike(turfs)
 		return
