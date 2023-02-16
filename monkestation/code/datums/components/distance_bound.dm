@@ -41,6 +41,10 @@
 		qdel(src)
 		return
 
+	if(QDELETED(owner) || owner.stat == DEAD)
+		qdel(src)
+		return
+
 /datum/component/distance_bound/Destroy()
 	STOP_PROCESSING(SSdcs, src)
 	return ..()
