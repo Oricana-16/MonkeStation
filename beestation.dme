@@ -3811,6 +3811,7 @@
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\banishing.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\burning.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\explosive.dm"
+#include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\infesting.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\launching.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\necromantic.dm"
 #include "monkestation\code\modules\antagonists\mimic\evolutions\tier3\oracle.dm"

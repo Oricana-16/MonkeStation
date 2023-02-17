@@ -40,7 +40,7 @@
 		return
 
 	for(var/mob/living/target in targets)
-		if(!(target_turf in view(7, get_turf(user))))
+		if(!(get_turf(target) in view(7, get_turf(user))))
 			revert_cast(user)
 			return
 

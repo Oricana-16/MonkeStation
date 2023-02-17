@@ -664,6 +664,8 @@
 	background_icon_state = "bg_alien"
 
 /datum/action/innate/mimic_hivemind/Activate()
+	if(usr.stat == DEAD)
+		return
 	if(!ismimic(usr))
 		to_chat(usr, "<span class='warning'>You shouldn't have this ability!</span>")
 		return

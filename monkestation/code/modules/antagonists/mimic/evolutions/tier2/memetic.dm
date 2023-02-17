@@ -28,7 +28,12 @@
 	action_background_icon_state = "bg_alien"
 	charge_max = 3 MINUTES
 
-/obj/effect/proc_holder/spell/self/mimic_control/cast(mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/user)
+/obj/effect/proc_holder/spell/self/mimic_control/cast(mob/user)
+	if(!ismimic(user))
+		return
+
+	var/mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/mimic_user = user
+
 	if(isliving(user.buckled))
 		var/mob/living/control_target = user.buckled
 
@@ -38,15 +43,15 @@
 		to_chat(control_target,"<span class='userdanger'>[user] takes control!</span>")
 		control_target.visible_message("<span class='warning'>[user] melts into [control_target]'s body.</span>","<span class'notice'>You melt into [control_target] and gain control of their body.</span>")
 
-		control_target.mind.transfer_to(user.mind_holder)
+		control_target.mind.transfer_to(mimic_user.mind_holder)
 		user.mind.transfer_to(control_target)
 		user.forceMove(control_target)
-		user.toggle_ai(AI_OFF) //Prevent the mimic from attacking the target from inside it's body
+		mimic_user.toggle_ai(AI_OFF) //Prevent the mimic from attacking the target from inside it's body
 
 		control_target.SetAllImmobility(0) //Don't waste time being stunned
 		control_target.set_resting(FALSE)
 
-		addtimer(CALLBACK(src, .proc/undo_control, user, control_target, user.mind_holder), 30 SECONDS)
+		addtimer(CALLBACK(src, .proc/undo_control, user, control_target, mimic_user.mind_holder), 30 SECONDS)
 	else
 		revert_cast(user)
 
