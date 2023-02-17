@@ -62,6 +62,7 @@
 /obj/effect/proc_holder/spell/self/mimic_clone/proc/unsummon_mimic(mob/living/simple_animal/hostile/alien_mimic/tier2/etheric/user)
 	clone_mimic.forceMove(user)
 	clone_mimic.visible_message("<span class='danger'>[clone_mimic] disappears into thin air!</span>")
+	clone_mimic.revive()
 
 
 /obj/effect/proc_holder/spell/self/mimic_clone_request

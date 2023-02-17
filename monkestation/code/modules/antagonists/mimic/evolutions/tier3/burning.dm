@@ -50,6 +50,7 @@
 
 		firestrike(turfs)
 		return
+
 	revert_cast(user)
 
 /obj/effect/proc_holder/spell/pointed/mimic_firestrike/proc/firestrike(list/turf_list)

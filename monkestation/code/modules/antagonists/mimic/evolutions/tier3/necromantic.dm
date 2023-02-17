@@ -27,13 +27,13 @@
 	// TODO: add husk check
 	// TODO: set corpse's language
 
-	for(var/target in targets)
-		if(!isliving(target))
+	for(var/mob/living/target in targets)
+		if(HAS_TRAIT(target, TRAIT_HUSK))
+			to_chat(user,"<span class='notice'>Their corpse is too damaged to raise!</span>")
 			revert_cast(user)
 			return
-		var/mob/living/living_target = target
 
-		if(living_target.stat != DEAD)
+		if(target.stat != DEAD)
 			to_chat(user,"<span class='notice'>They aren't dead!</span>")
 			revert_cast(user)
 			return
@@ -50,15 +50,15 @@
 		to_chat(user,"<span class='notice'>A ghost has taken control of the corpse!</span>")
 
 		var/mob/dead/observer/chosen_candidate = pick(candidates)
-		living_target.key = chosen_candidate.key
+		target.key = chosen_candidate.key
 
-		to_chat(living_target,"<span class='notice big'>You have been summoned by a necromantic mimic</span><span class='notice'> if you stray too far from your summoner, you will die!</span>")
+		to_chat(target,"<span class='notice big'>You have been summoned by a necromantic mimic</span><span class='notice'> if you stray too far from your summoner, you will die!</span>")
 
-		living_target.revive(TRUE)
-		living_target.AddComponent(/datum/component/distance_bound, user, 15, TRUE)
-		living_target.add_emitter(/obj/emitter/mimic/necro_summon,"necro_summon")
-		living_target.copy_languages(user)
-		RegisterSignal(living_target, COMSIG_MOB_DEATH, .proc/unsummon)
+		target.revive(TRUE)
+		target.AddComponent(/datum/component/distance_bound, user, 15, TRUE)
+		target.add_emitter(/obj/emitter/mimic/necro_summon,"necro_summon")
+		target.copy_languages(user)
+		RegisterSignal(target, COMSIG_MOB_DEATH, .proc/unsummon)
 		return
 	revert_cast(user)
 

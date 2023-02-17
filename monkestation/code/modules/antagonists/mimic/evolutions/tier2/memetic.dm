@@ -9,7 +9,7 @@
 	playstyle_string = "<span class='big bold'>You are a memetic mimic,</span></b> you deal brute damage, and can control people you latch onto.</b>"
 	var/mob/living/mimic_mezmerized/mind_holder
 	possible_evolutions = list(
-		"telepathic - have another mind control people for you" = /mob/living/simple_animal/hostile/alien_mimic/tier3/telepathic
+		"necromantic - raise dead as minions" = /mob/living/simple_animal/hostile/alien_mimic/tier3/necromantic
 	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/Initialize(mapload)
