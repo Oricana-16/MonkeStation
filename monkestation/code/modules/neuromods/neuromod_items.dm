@@ -8,7 +8,7 @@
 
 /obj/item/mimic_organ
 	name = "mimic organ"
-	desc = "A mass of black goo. The E.X.P.E.R.I-MENTOR could probably do something with this."
+	desc = "A mass of black goo. The E.X.P.E.R.I-MENTOR could probably do something with this. You can also Grind it down to get rezadone."
 	icon = 'monkestation/icons/obj/misc/neuromods.dmi'
 	icon_state = "mimic_organ"
 	item_state = "mimic_organ"
@@ -143,4 +143,3 @@
 		activate(target)
 	else
 		to_chat(owner, "<span class='warning'>That place is out of your reach.</span>")
-
