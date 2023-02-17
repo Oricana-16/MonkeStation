@@ -29,11 +29,13 @@
 
 	for(var/target in targets)
 		if(!isliving(target))
+			revert_cast(user)
 			return
 		var/mob/living/living_target = target
 
 		if(living_target.stat != DEAD)
 			to_chat(user,"<span class='notice'>They aren't dead!</span>")
+			revert_cast(user)
 			return
 
 		to_chat(user,"<span class='notice'>You start summoning a ghost to overtake the corpse!</span>")
@@ -55,12 +57,18 @@
 		living_target.revive(TRUE)
 		living_target.AddComponent(/datum/component/distance_bound, user, 15, TRUE)
 		living_target.add_emitter(/obj/emitter/mimic/necro_summon,"necro_summon")
-		RegisterSignal(living_target,COMSIG_MOB_DEATH, .proc/unsummon)
+		living_target.copy_languages(user)
+		RegisterSignal(living_target, COMSIG_MOB_DEATH, .proc/unsummon)
 		return
 	revert_cast(user)
 
 /obj/effect/proc_holder/spell/pointed/mimic_necromancy/proc/unsummon(mob/target)
 	SIGNAL_HANDLER
+
+	UnregisterSignal(target, COMSIG_MOB_DEATH)
+
+	target.language_holder = null
+	target.update_atom_languages()
 
 	target.remove_emitter("necro_summon")
 
@@ -75,6 +83,6 @@
 	lifespan = 0.5 SECONDS
 	fade = 0.2 SECONDS
 	position = generator("box", list(-10,10), list(10,20), UNIFORM_RAND)
-	velocity = generator("box", -5, 5, NORMAL_RAND)
+	velocity = generator("circle", -5, 5, NORMAL_RAND)
 	friction = 0.15
 	color = "#9b319b"
