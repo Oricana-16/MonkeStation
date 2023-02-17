@@ -52,11 +52,12 @@
 		var/mob/dead/observer/chosen_candidate = pick(candidates)
 		target.key = chosen_candidate.key
 
-		to_chat(target,"<span class='notice big'>You have been summoned by a necromantic mimic</span><span class='notice'> if you stray too far from your summoner, you will die!</span>")
+		to_chat(target,"<span class='notice big'>You have been summoned by a necromantic mimic</span><span class='notice'> if you stray too far from your summoner, <b>you will die!</b></span>")
 
 		target.revive(TRUE)
 		target.AddComponent(/datum/component/distance_bound, user, 15, TRUE)
 		target.add_emitter(/obj/emitter/mimic/necro_summon,"necro_summon")
+		target.remove_all_languages()
 		target.copy_languages(user)
 		RegisterSignal(target, COMSIG_MOB_DEATH, .proc/unsummon)
 		return

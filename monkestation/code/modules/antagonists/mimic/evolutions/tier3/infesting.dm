@@ -33,6 +33,11 @@
 	melee_damage = 5
 	playstyle_string = "<span class='big bold'>You are an infesting mimic clone,</span></b> you can explode in a poisonous gas cloud.</b>"
 
+/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/infesting/Initialize(mapload)
+	. = ..()
+	var/obj/effect/proc_holder/spell/self/mimic_infestation_explode/destruct = new
+	AddSpell(destruct)
+
 /mob/living/simple_animal/hostile/alien_mimic/etheric_clone/infesting/death(gibbed)
 	. = ..()
 	var/datum/effect_system/smoke_spread/chem/smoke = new

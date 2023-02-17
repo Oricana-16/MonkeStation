@@ -237,6 +237,7 @@
 	pixel_y = initial(pixel_y)
 	pixel_x = initial(pixel_x)
 	density = target.density
+	ventcrawler = VENTCRAWLER_NONE
 
 
 	if(isliving(target))
@@ -260,6 +261,7 @@
 	animate_movement = SLIDE_STEPS
 	maptext = null
 	density = initial(density)
+	ventcrawler = VENTCRAWLER_ALWAYS
 
 	visible_message("<span class='warning'>A mimic jumps out of \the [src]!</span>", \
 					"<span class='notice'>You reform to your normal body.</span>")
@@ -404,6 +406,9 @@
 				return
 			if(NOHUSK in carbon_victim.dna.species.species_traits)
 				to_chat(src, "<span class='warning'>You can't absorb this person!</span>")
+				return
+			if(disguised)
+				to_chat(src, "<span class='warning'>You can't absorb people while disguised!</span>")
 				return
 			visible_message("<span class='warning'>[src] starts absorbing [carbon_victim]!</span>", \
 						"<span class='userdanger'>You start absorbing [carbon_victim].</span>")
