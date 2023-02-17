@@ -94,8 +94,6 @@
 	var/list/evolution_options = list()
 	var/datum/team/mimic/mimic_team
 
-	var/has_organ = TRUE
-
 	var/fleeing = FALSE
 	mobchatspan = "blob"
 	discovery_points = 2000
