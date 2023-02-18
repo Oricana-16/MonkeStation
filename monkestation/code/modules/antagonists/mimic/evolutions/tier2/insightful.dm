@@ -11,6 +11,3 @@
 		"oracle - ghost around to gain information" = /mob/living/simple_animal/hostile/alien_mimic/tier3/oracle
 	)
 
-/mob/living/simple_animal/hostile/alien_mimic/tier2/insightful/Initialize(mapload)
-	. = ..()
-

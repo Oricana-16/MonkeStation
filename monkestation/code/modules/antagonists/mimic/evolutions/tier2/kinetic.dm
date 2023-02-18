@@ -10,28 +10,26 @@
 	possible_evolutions = list(
 		"present - force everyone nearby down" = /mob/living/simple_animal/hostile/alien_mimic/tier3/present
 	)
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/self/mimic/kinetic_blast
+	)
 
-/mob/living/simple_animal/hostile/alien_mimic/tier2/kinetic/Initialize(mapload)
-	. = ..()
-	var/obj/effect/proc_holder/spell/self/mimic_kinetic_blast/kinetic_blast = new
-	AddSpell(kinetic_blast)
-
-/obj/effect/proc_holder/spell/self/mimic_kinetic_blast
+/obj/effect/proc_holder/spell/self/mimic/kinetic_blast
 	name = "Kinetic Blast"
 	desc = "Knock everything away."
-	clothes_req = FALSE
-	action_background_icon_state = "bg_alien"
 	charge_max = 45 SECONDS
 
-/obj/effect/proc_holder/spell/self/mimic_kinetic_blast/cast(mob/user)
-	if(movement_type & VENTCRAWLING)
+/obj/effect/proc_holder/spell/self/mimic/kinetic_blast/cast(mob/user)
+	. = ..()
+	if(.)
 		return
 
-	playsound(get_turf(user),'sound/magic/repulse.ogg', 100, 1)
+	var/turf/user_turf = get_turf(user)
+
+	playsound(user_turf,'sound/magic/repulse.ogg', 100, 1)
 	user.add_emitter(/obj/emitter/mimic/kinetic_blast,"kinetic_blast",burst_mode=TRUE)
 	user.visible_message("<span class='danger'>[user] sends out a wave of dark energy, knocking everything around!</span>","<span class='danger'>You push everything away!</span>")
 
-	var/turf/user_turf = get_turf(user)
 	var/list/thrown_items = list()
 
 	for(var/atom/movable/to_throw as mob|obj in orange(7, user_turf))

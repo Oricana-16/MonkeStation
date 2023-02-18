@@ -6,33 +6,20 @@
 	hivemind_modifier = "oracle"
 	melee_damage = 8
 	playstyle_string = "<span class='big bold'>You are an oracle mimic,</span></b> you can temporarily shed your body to see the truth of the world.<b>"
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/self/mimic/divine
+	)
 
-/mob/living/simple_animal/hostile/alien_mimic/tier3/oracle/Initialize(mapload)
-	. = ..()
-	var/obj/effect/proc_holder/spell/self/mimic_divine/divine = new
-	AddSpell(divine)
-
-/obj/effect/proc_holder/spell/self/mimic_divine
+/obj/effect/proc_holder/spell/self/mimic/divine
 	name = "Divination"
 	desc = "Shed your body and see everything."
-	clothes_req = FALSE
-	action_background_icon_state = "bg_alien"
 	charge_max = 45 SECONDS
 
 	var/mob/living/body = null
 
-/obj/effect/proc_holder/spell/self/mimic_divine/cast(mob/user)
-	if(!ismimic(user))
-		return
-
-	if(movement_type & VENTCRAWLING)
-		return
-
-	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
-
-	if(mimic_user.disguised)
-		to_chat(mimic_user, "<span class='notice'>You can't divine while disguised!</span>")
-		revert_cast(user)
+/obj/effect/proc_holder/spell/self/mimic/divine/cast(mob/user)
+	. = ..()
+	if(.)
 		return
 
 	body = user

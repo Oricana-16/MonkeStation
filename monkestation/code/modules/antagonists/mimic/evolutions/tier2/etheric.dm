@@ -11,11 +11,10 @@
 		"plentiful - summon 2 clones instead of 1" = /mob/living/simple_animal/hostile/alien_mimic/tier3/plentiful,
 		"infesting - summon weaker clones that explode into poisonous clouds" = /mob/living/simple_animal/hostile/alien_mimic/tier3/infesting
 	)
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/self/mimic/clone_request
+	)
 
-/mob/living/simple_animal/hostile/alien_mimic/tier2/etheric/Initialize(mapload)
-	. = ..()
-	var/obj/effect/proc_holder/spell/self/mimic_clone_request/request_clone = new
-	AddSpell(request_clone)
 
 // Mimic Clone
 /mob/living/simple_animal/hostile/alien_mimic/etheric_clone
@@ -36,26 +35,17 @@
 		qdel(src)
 
 // Abilities
-/obj/effect/proc_holder/spell/self/mimic_clone
+/obj/effect/proc_holder/spell/self/mimic/clone
 	name = "Clone"
 	desc = "Temporarily split into two mimics."
 	action_icon = 'icons/mob/actions/actions_hive.dmi'
 	action_icon_state = "warp"
-	clothes_req = FALSE
-	action_background_icon_state = "bg_alien"
 	charge_max = 90 SECONDS
 	var/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/clone_mimic
 
-/obj/effect/proc_holder/spell/self/mimic_clone/cast(mob/user)
-	if(!ismimic(user))
-		revert_cast(user)
-		return
-
-	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
-
-	if(mimic_user.disguised)
-		to_chat(user,"<span class='notice'>You can't clone yourself while disguised!</span>")
-		revert_cast(user)
+/obj/effect/proc_holder/spell/self/mimic/clone/cast(mob/user)
+	. = ..()
+	if(.)
 		return
 
 	clone_mimic.forceMove(get_turf(user))
@@ -64,7 +54,7 @@
 
 	addtimer(CALLBACK(src, .proc/unsummon_mimic, user), 45 SECONDS)
 
-/obj/effect/proc_holder/spell/self/mimic_clone/proc/unsummon_mimic(mob/user)
+/obj/effect/proc_holder/spell/self/mimic/clone/proc/unsummon_mimic(mob/user)
 	clone_mimic.forceMove(user)
 	clone_mimic.visible_message("<span class='danger'>[clone_mimic] disappears into thin air!</span>")
 	clone_mimic.revive(TRUE)
@@ -72,21 +62,19 @@
 	clone_mimic.summoned = FALSE
 
 
-/obj/effect/proc_holder/spell/self/mimic_clone_request
+/obj/effect/proc_holder/spell/self/mimic/clone_request
 	name = "Request Clone"
 	desc = "Request a ghost to become your clone."
 	action_icon = 'icons/mob/actions/actions_hive.dmi'
 	action_icon_state = "warp"
-	clothes_req = FALSE
-	action_background_icon_state = "bg_alien"
 	charge_max = 30 SECONDS
 	//The type of mimic that gets summoned
 	var/mimic_type = /mob/living/simple_animal/hostile/alien_mimic/etheric_clone
 	var/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/clone_mimic
 
-/obj/effect/proc_holder/spell/self/mimic_clone_request/cast(mob/user)
-	if(!ismimic(user))
-		revert_cast(user)
+/obj/effect/proc_holder/spell/self/mimic/clone_request/cast(mob/user)
+	. = ..()
+	if(.)
 		return
 
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
@@ -107,7 +95,7 @@
 		clone_mimic.key = picked_clone.key
 		to_chat(user, "<span class='notice'>You created a clone!</span>")
 
-		var/obj/effect/proc_holder/spell/self/mimic_clone/clone = new
+		var/obj/effect/proc_holder/spell/self/mimic/clone/clone = new
 		user.AddSpell(clone)
 		clone.clone_mimic = clone_mimic
 		qdel(src)

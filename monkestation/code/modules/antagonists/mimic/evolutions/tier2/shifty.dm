@@ -9,23 +9,19 @@
 	possible_evolutions = list(
 		"transportive - teleport to and summon other mimics" = /mob/living/simple_animal/hostile/alien_mimic/tier3/transportive
 	)
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/pointed/mimic/phantom_shift
+	)
 
-/mob/living/simple_animal/hostile/alien_mimic/tier2/shifty/Initialize(mapload)
-	. = ..()
-	var/obj/effect/proc_holder/spell/pointed/mimic_phantom_shift/shift = new
-	AddSpell(shift)
-
-/obj/effect/proc_holder/spell/pointed/mimic_phantom_shift
+/obj/effect/proc_holder/spell/pointed/mimic/phantom_shift
 	name = "Phantom Shift"
 	desc = "Quickly reform at another position, and bring anyone you're latched on to."
-	clothes_req = FALSE
-	action_icon = 'monkestation/icons/mob/actions/actions_neuromods.dmi'
-	action_icon_state = "phantom_shift"
-	action_background_icon_state = "bg_alien"
 	charge_max = 30 SECONDS
+	can_use_disguised = TRUE
 
-/obj/effect/proc_holder/spell/pointed/mimic_phantom_shift/cast(list/targets,mob/user = usr)
-	if(movement_type & VENTCRAWLING)
+/obj/effect/proc_holder/spell/pointed/mimic/phantom_shift/cast(list/targets,mob/user = usr)
+	. = ..()
+	if(.)
 		return
 
 	for(var/target in targets)

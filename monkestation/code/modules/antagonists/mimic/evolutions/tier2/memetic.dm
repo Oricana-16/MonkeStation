@@ -7,29 +7,30 @@
 	secondary_damage_type = BRUTE
 	hivemind_modifier = "memetic"
 	playstyle_string = "<span class='big bold'>You are a memetic mimic,</span></b> you deal brute damage, and can control people you latch onto.</b>"
-	var/mob/living/mimic_mezmerized/mind_holder
 	possible_evolutions = list(
 		"necromantic - raise dead as minions" = /mob/living/simple_animal/hostile/alien_mimic/tier3/necromantic
 	)
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/self/mimic/control
+	)
+	var/mob/living/mimic_mezmerized/mind_holder
+
 
 /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/Initialize(mapload)
 	. = ..()
-	var/obj/effect/proc_holder/spell/self/mimic_control/mezmerize = new
-	AddSpell(mezmerize)
 
 	mind_holder = new(src)
 
-/obj/effect/proc_holder/spell/self/mimic_control
+/obj/effect/proc_holder/spell/self/mimic/control
 	name = "Mezmerize"
 	desc = "Take control of a person you're latched onto temporarily."
 	action_icon = 'icons/mob/actions/actions_hive.dmi'
 	action_icon_state = "warp"
-	clothes_req = FALSE
-	action_background_icon_state = "bg_alien"
 	charge_max = 3 MINUTES
 
-/obj/effect/proc_holder/spell/self/mimic_control/cast(mob/user)
-	if(!ismimic(user))
+/obj/effect/proc_holder/spell/self/mimic/control/cast(mob/user)
+	. = ..()
+	if(.)
 		return
 
 	var/mob/living/simple_animal/hostile/alien_mimic/tier2/memetic/mimic_user = user
@@ -55,7 +56,7 @@
 	else
 		revert_cast(user)
 
-/obj/effect/proc_holder/spell/self/mimic_control/proc/undo_control(mob/living/mimic_body, mob/living/controlled_body, mob/living/mind_holder)
+/obj/effect/proc_holder/spell/self/mimic/control/proc/undo_control(mob/living/mimic_body, mob/living/controlled_body, mob/living/mind_holder)
 	controlled_body.visible_message("<span class='warning'>[mimic_body] melts out of [controlled_body]'s body.</span>","<span class'notice'>You come out of [controlled_body]'s body.</span>")
 
 	controlled_body.mind.transfer_to(mimic_body)

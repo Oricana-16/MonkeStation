@@ -57,7 +57,7 @@
 	//If someone is attempting to evolve
 	var/static/evolving = FALSE
 
-	var/evolve_cooldown = FALSE
+	var/evolve_cooldown = 0
 
 	//The target npc mimic's try to disguise as.
 	var/atom/movable/ai_disg_target = null
@@ -89,6 +89,9 @@
 		"memetic - take control of people you latch onto" = /mob/living/simple_animal/hostile/alien_mimic/tier2/memetic,
 		"etheric - deal toxic damage and clone yourself" = /mob/living/simple_animal/hostile/alien_mimic/tier2/etheric,
 	)
+
+	//Abilities the mimic gets when it spawns
+	var/list/mimic_abilities = list()
 
 	//This is so they can't just close and open the menu to reroll evolutions
 	var/list/evolution_options = list()
@@ -291,6 +294,10 @@
 		evolve_request_action.Grant(src)
 	ADD_TRAIT(src, TRAIT_SHOCKIMMUNE, INNATE_TRAIT) //Needs this so breaking down a single door doesnt kill em
 	set_varspeed(undisguised_move_delay)
+
+	for(var/ability in mimic_abilities)
+		AddSpell(new ability())
+
 	. = ..()
 
 /mob/living/simple_animal/hostile/alien_mimic/Life()
@@ -749,6 +756,53 @@
 /datum/action/innate/mimic_evolution/Activate()
 	var/mob/living/simple_animal/hostile/alien_mimic/mimic = owner
 	mimic.evolve()
+
+//base version of evolution abilities
+/obj/effect/proc_holder/spell/self/mimic
+	clothes_req = FALSE
+	action_background_icon_state = "bg_alien"
+	action_icon = 'monkestation/icons/mob/actions/actions_neuromods.dmi'
+	action_icon_state = "phantom_shift"
+	charge_max = 30 SECONDS
+	//Whether it can be used while disguised or not
+	var/can_use_disguised = FALSE
+
+/obj/effect/proc_holder/spell/self/mimic/cast(list/targets, mob/user = usr)
+	if(!ismimic(user))
+		return
+
+	if(movement_type & VENTCRAWLING)
+		return
+
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
+
+	if(mimic_user.disguised && !can_use_disguised)
+		to_chat(user, "<span class='danger'>You can't use this while disguised!</span>")
+		revert_cast(mimic_user)
+		return
+
+/obj/effect/proc_holder/spell/pointed/mimic
+	clothes_req = FALSE
+	action_background_icon_state = "bg_alien"
+	action_icon = 'monkestation/icons/mob/actions/actions_neuromods.dmi'
+	action_icon_state = "phantom_shift"
+	charge_max = 30 SECONDS
+	//Whether it can be used while disguised or not
+	var/can_use_disguised = FALSE
+
+/obj/effect/proc_holder/spell/pointed/mimic/cast(list/targets, mob/user = usr)
+	if(!ismimic(user))
+		return
+
+	if(movement_type & VENTCRAWLING)
+		return
+
+	var/mob/living/simple_animal/hostile/alien_mimic/mimic_user = user
+
+	if(mimic_user.disguised && !can_use_disguised)
+		to_chat(user, "<span class='danger'>You can't use this while disguised!</span>")
+		revert_cast(mimic_user)
+		return
 
 #undef MIMIC_HEALTH_FLEE_AMOUNT
 #undef MIMIC_DISGUISE_COOLDOWN

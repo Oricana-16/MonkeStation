@@ -5,27 +5,19 @@
 	secondary_damage_type = BRUTE
 	hivemind_modifier = "necromantic"
 	playstyle_string = "<span class='big bold'>You are a necromantic mimic,</span></b> you can make minds control corpses.</b>"
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/pointed/mimic/necromancy
+	)
 
-/mob/living/simple_animal/hostile/alien_mimic/tier3/necromantic/Initialize(mapload)
-	. = ..()
-	var/obj/effect/proc_holder/spell/pointed/mimic_necromancy/shift = new
-	AddSpell(shift)
-
-/obj/effect/proc_holder/spell/pointed/mimic_necromancy
+/obj/effect/proc_holder/spell/pointed/mimic/necromancy
 	name = "Raise Dead"
 	desc = "Raise a corpse as a minion. <b>WARNING:</b> if you move too far from a raised corpse, it will die."
-	clothes_req = FALSE
-	action_icon = 'monkestation/icons/mob/actions/actions_neuromods.dmi'
-	action_icon_state = "phantom_shift"
-	action_background_icon_state = "bg_alien"
 	charge_max = 45 SECONDS
 
-/obj/effect/proc_holder/spell/pointed/mimic_necromancy/cast(list/targets,mob/user = usr)
-	if(movement_type & VENTCRAWLING)
+/obj/effect/proc_holder/spell/pointed/mimic/necromancy/cast(list/targets,mob/user = usr)
+	. = ..()
+	if(.)
 		return
-
-	// TODO: add husk check
-	// TODO: set corpse's language
 
 	for(var/mob/living/target in targets)
 		if(HAS_TRAIT(target, TRAIT_HUSK))
@@ -63,7 +55,7 @@
 		return
 	revert_cast(user)
 
-/obj/effect/proc_holder/spell/pointed/mimic_necromancy/proc/unsummon(mob/target)
+/obj/effect/proc_holder/spell/pointed/mimic/necromancy/proc/unsummon(mob/target)
 	SIGNAL_HANDLER
 
 	UnregisterSignal(target, COMSIG_MOB_DEATH)

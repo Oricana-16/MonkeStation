@@ -7,11 +7,9 @@
 	secondary_damage_type = TOX
 	hivemind_modifier = "infesting"
 	playstyle_string = "<span class='big bold'>You are an infesting mimic,</span></b> you can summon weak mimics that drop poison clouds on death.</b>"
-
-/mob/living/simple_animal/hostile/alien_mimic/tier3/infesting/Initialize(mapload)
-	. = ..()
-	var/obj/effect/proc_holder/spell/self/mimic_clone_request/infestation/request_clone = new
-	AddSpell(request_clone)
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/self/mimic/clone_request/infestation
+	)
 
 /mob/living/simple_animal/hostile/alien_mimic/tier3/infesting/death(gibbed)
 	. = ..()
@@ -32,11 +30,9 @@
 	real_name = "infesting mimic"
 	melee_damage = 5
 	playstyle_string = "<span class='big bold'>You are an infesting mimic clone,</span></b> you can explode in a poisonous gas cloud.</b>"
-
-/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/infesting/Initialize(mapload)
-	. = ..()
-	var/obj/effect/proc_holder/spell/self/mimic_infestation_explode/destruct = new
-	AddSpell(destruct)
+	mimic_abilities = list(
+		/obj/effect/proc_holder/spell/self/mimic/infestation_explode
+	)
 
 /mob/living/simple_animal/hostile/alien_mimic/etheric_clone/infesting/death(gibbed)
 	. = ..()
@@ -52,27 +48,19 @@
 	visible_message("<span class='danger'>[src] explodes in a could of poisonous gas!</span>")
 
 // Abilities
-/obj/effect/proc_holder/spell/self/mimic_infestation_explode
+/obj/effect/proc_holder/spell/self/mimic/infestation_explode
 	name = "Self Destruct"
 	desc = "Die, spilling poisonous gas everywhere."
 	action_icon = 'icons/mob/actions/actions_hive.dmi'
 	action_icon_state = "warp"
-	clothes_req = FALSE
-	action_background_icon_state = "bg_alien"
 	charge_max = 10 SECONDS
-	var/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/infesting/clone_mimic
 
-/obj/effect/proc_holder/spell/self/mimic_infestation_explode/cast(mob/user)
-	if(!ismimic(user))
-		revert_cast(user)
+/obj/effect/proc_holder/spell/self/mimic/infestation_explode/cast(mob/user)
+	. = ..()
+	if(.)
 		return
 
-	var/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/mimic_user = user
-
-	if(mimic_user.disguised)
-		to_chat(user,"<span class='notice'>You can't self destruct while disguised!</span>")
-		revert_cast(user)
-		return
+	var/mob/living/simple_animal/hostile/alien_mimic/etheric_clone/infesting/mimic_user = user
 
 	if(mimic_user.summoned)
 		to_chat(user,"<span class='notice'>You can't self destruct while you aren't summoneed!</span>")
@@ -83,6 +71,6 @@
 		victim.Knockdown(3 SECONDS)
 	user.death()
 
-/obj/effect/proc_holder/spell/self/mimic_clone_request/infestation
+/obj/effect/proc_holder/spell/self/mimic/clone_request/infestation
 	name = "Request Infestation Clone"
 	mimic_type = /mob/living/simple_animal/hostile/alien_mimic/etheric_clone/infesting

@@ -12,6 +12,7 @@
 	icon = 'monkestation/icons/obj/misc/neuromods.dmi'
 	icon_state = "mimic_organ"
 	item_state = "mimic_organ"
+	grind_results = list(/datum/reagent/medicine/rezadone = 15)
 	w_class = WEIGHT_CLASS_SMALL
 	var/static/list/neuromod_list = list(
 		//SPECIAL
