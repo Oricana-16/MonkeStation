@@ -62,6 +62,9 @@
 		. += organ.desc
 
 /obj/item/autosurgeon/neuromod/attack_self(mob/user)
+	if(user.getorganslot(ORGAN_SLOT_BRAIN_NEUROMOD))
+		to_chat(user,"<span class='warning'>You already have a neuromod, any more would ruin your brain!</span>")
+		return
 	..()
 	if(!uses)
 		desc = "[initial(desc)] Looks like it's been used up."

@@ -30,10 +30,10 @@
 	owner.add_emitter(/obj/emitter/mimic/mindjack,"mindjack")
 	if(do_mob(owner,owner,5 SECONDS))
 		owner.remove_emitter("mindjack")
-		to_chat(owner,"<span class='notice'>You send your command directly to your target's brain.</span>")
 		if(get_dist(owner,target) <= max_distance)
 			COOLDOWN_RESET(src, neuromod_cooldown)
 			return
+		to_chat(owner,"<span class='notice'>You send your command directly to your target's brain.</span>")
 		mind_control(command,target)
 	owner.remove_emitter("mindjack")
 
