@@ -26,6 +26,7 @@
 		/obj/item/autosurgeon/neuromod/mindjack = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/weapon_transformation = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/divination = NEUROMOD_RARE,
+		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_RARE,
 		//UNCOMMON
 		/obj/item/autosurgeon/neuromod/biomatter_transfer = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/kinetic_blast = NEUROMOD_UNCOMMON,
@@ -33,7 +34,6 @@
 		/obj/item/autosurgeon/neuromod/grasp = NEUROMOD_UNCOMMON,
 		/obj/item/autosurgeon/neuromod/corpseswap = NEUROMOD_UNCOMMON,
 		//COMMON
-		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/superthermal = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/psychoshock = NEUROMOD_COMMON,
 		/obj/item/autosurgeon/neuromod/scramble_electronics = NEUROMOD_COMMON,
@@ -62,9 +62,6 @@
 		. += organ.desc
 
 /obj/item/autosurgeon/neuromod/attack_self(mob/user)
-	if(user.getorganslot(ORGAN_SLOT_BRAIN_NEUROMOD))
-		to_chat(user,"<span class='warning'>You already have a neuromod, any more would ruin your brain!</span>")
-		return
 	..()
 	if(!uses)
 		desc = "[initial(desc)] Looks like it's been used up."

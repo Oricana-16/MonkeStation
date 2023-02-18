@@ -35,6 +35,7 @@
 			COOLDOWN_RESET(src, neuromod_cooldown)
 			return
 		mind_control(command,target)
+	owner.remove_emitter("mindjack")
 
 /obj/item/organ/cyberimp/neuromod/targeted/mindjack/proc/mind_control(command, mob/living/target)
 	to_chat(target, "<span class='userdanger'>Your mind goes blank, and you can only think of a single command...</span>")
