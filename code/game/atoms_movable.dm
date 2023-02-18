@@ -74,9 +74,9 @@
 	. = ..()
 	switch(blocks_emissive)
 		if(EMISSIVE_BLOCK_GENERIC)
-			var/mutable_appearance/gen_emissive_blocker = mutable_appearance(icon, icon_state, EMISSIVE_BLOCKER_LAYER, EMISSIVE_BLOCKER_PLANE)
+			var/mutable_appearance/gen_emissive_blocker = mutable_appearance(icon, icon_state, plane = EMISSIVE_PLANE, alpha = src.alpha)
+			gen_emissive_blocker.color = GLOB.em_block_color
 			gen_emissive_blocker.dir = dir
-			gen_emissive_blocker.alpha = alpha
 			gen_emissive_blocker.appearance_flags |= appearance_flags
 			add_overlay(list(gen_emissive_blocker))
 		if(EMISSIVE_BLOCK_UNIQUE)
@@ -95,9 +95,9 @@
 	if(!blocks_emissive)
 		return
 	else if (blocks_emissive == EMISSIVE_BLOCK_GENERIC)
-		var/mutable_appearance/gen_emissive_blocker = mutable_appearance(icon, icon_state, EMISSIVE_BLOCKER_LAYER, EMISSIVE_BLOCKER_PLANE)
+		var/mutable_appearance/gen_emissive_blocker = mutable_appearance(icon, icon_state, plane = EMISSIVE_PLANE, alpha = src.alpha)
+		gen_emissive_blocker.color = GLOB.em_block_color
 		gen_emissive_blocker.dir = dir
-		gen_emissive_blocker.alpha = alpha
 		gen_emissive_blocker.appearance_flags |= appearance_flags
 		return gen_emissive_blocker
 	else if(blocks_emissive == EMISSIVE_BLOCK_UNIQUE)
@@ -1012,6 +1012,7 @@
 	. += "<option value='?_src_=holder;[HrefToken()];admingetmovable=[REF(src)]'>Get</option>"
 
 	VV_DROPDOWN_OPTION(VV_HK_EDIT_PARTICLES, "Edit Particles")
+	VV_DROPDOWN_OPTION(VV_HK_EDIT_DISPLACEMENT_LARGE, "Edit Large Displacement")
 	VV_DROPDOWN_OPTION(VV_HK_ADD_EMITTER, "Add Emitter")
 	VV_DROPDOWN_OPTION(VV_HK_REMOVE_EMITTER, "Remove Emitter")
 
@@ -1022,6 +1023,20 @@
 			return
 		var/client/interacted_client = usr.client
 		interacted_client?.open_particle_editor(src)
+
+	if(href_list[VV_HK_EDIT_DISPLACEMENT_LARGE])
+		if(!check_rights(R_VAREDIT))
+			return
+		switch(alert("Should this be a pre-filled displacement (Note: If you choose a blank one directional displacement may prove more difficult)?",,"Yes","No","Cancel"))
+			if("Yes")
+				var/choice = input(usr, "Choose a displacement to add", "Choose a Displacement") as null|anything in subtypesof(/obj/effect/distortion/large)
+				if(!choice)
+					return
+				apply_large_displacement_icon(choice)
+			if("No")
+				apply_large_displacement_icon(/obj/effect/distortion/large)
+			else
+				return
 
 	if(href_list[VV_HK_ADD_EMITTER])
 		if(!check_rights(R_VAREDIT))
