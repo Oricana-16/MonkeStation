@@ -25,6 +25,7 @@ Like connecting a person to a wheelchair so they get dragged behind it
 	RegisterSignal(target, COMSIG_MOVABLE_PRE_MOVE, .proc/on_attachment_move)
 	RegisterSignal(owner, COMSIG_MOVABLE_PRE_MOVE, .proc/on_parent_move)
 	RegisterSignal(owner, COMSIG_ATOM_ATTACK_HAND, .proc/on_parent_touched)
+	RegisterSignal(owner, COMSIG_ATOM_TOOL_ACT(TOOL_WIRECUTTER), .proc/on_parent_wirecutters)
 
 /datum/component/chain/Destroy(force, silent)
 	. = ..()
@@ -37,12 +38,12 @@ Like connecting a person to a wheelchair so they get dragged behind it
 		qdel(src)
 		return
 
-	if(owner.anchored)
-		return COMPONENT_MOVABLE_BLOCK_PRE_MOVE
-
 	var/dist = get_dist(owner,newloc)
 	if(dist < max_dist)
 		return
+
+	if(owner.anchored)
+		return COMPONENT_MOVABLE_BLOCK_PRE_MOVE
 
 	owner.Move(get_step_towards(parent,mover))
 
@@ -61,14 +62,17 @@ Like connecting a person to a wheelchair so they get dragged behind it
 		qdel(src)
 		return
 
-	if(attachment_point.anchored)
-		return COMPONENT_MOVABLE_BLOCK_PRE_MOVE
-
 	var/dist = get_dist(attachment_point,newloc)
 	if(dist < max_dist)
 		return
 
-	if(dist >= max_dist)
+	if(attachment_point.anchored)
+		return COMPONENT_MOVABLE_BLOCK_PRE_MOVE
+
+	if(dist > max_dist)
+		qdel(src)
+
+	if(dist == max_dist && isliving(owner))
 		var/mob/living/living_owner = owner
 		living_owner.Knockdown(1 SECONDS)
 		to_chat(owner,"<span class='notice'>You trip on the tether!</span>")
@@ -87,3 +91,11 @@ Like connecting a person to a wheelchair so they get dragged behind it
 	if(do_mob(user, owner, 10 SECONDS))
 		qdel(src)
 
+/datum/component/chain/proc/on_parent_wirecutters(datum/source, mob/user)
+	SIGNAL_HANDLER
+
+	if(user == owner)
+		user.visible_message("<span class='notice'>[user] cuts \himself free.</span>","<span class='notice'>You cut yourself free.</span>")
+	else
+		user.visible_message("<span class='notice'>[user] cuts [owner] free.</span>","<span class='notice'>[user] cuts you free] free.</span>")
+	qdel(src)

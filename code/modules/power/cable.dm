@@ -609,11 +609,9 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list (new/datum/stack_recipe("cable restrai
 		return
 
 	user.visible_message("<span class='notice'>[user] begins tying the other end of the cable [target]</span>","<span class='notice'>You begin tying the other end of the cable [target]</span>")
-	if(do_after(user, 5 SECONDS, target=target))
+	if(do_after(user, 8 SECONDS, target=target))
 		target.AddComponent(/datum/component/chain, tether_target, 3)
-
 		use(1)
-
 		qdel(temp_tether)
 		temp_tether = null
 		tether_target = null
