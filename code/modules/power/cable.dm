@@ -602,7 +602,7 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list (new/datum/stack_recipe("cable restrai
 		tether_target = null
 
 	if(!tether_target)
-		if(istype(target, /obj/vehicle/ridden))
+		if(istype(target, /obj/vehicle))
 			to_chat(user,"<span class='notice'>You tie one end of the cable around [target]</span>")
 			tether_target = target
 			temp_tether = target.AddComponent(/datum/component/chain, user, 4)
