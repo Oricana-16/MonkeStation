@@ -9,16 +9,18 @@ Like connecting a person to a wheelchair so they get dragged behind it
 
 	var/atom/movable/owner
 	var/max_dist
+	var/equal_force
 
 	var/datum/beam/tether_beam
 
-/datum/component/chain/Initialize(target, max_dist=3)
+/datum/component/chain/Initialize(target, max_dist=3, equal_force = TRUE)
 	if(!ismovableatom(parent) || !ismovableatom(target))
 		return COMPONENT_INCOMPATIBLE
 
 	owner = parent
 	attachment_point = target
 	src.max_dist = max_dist
+	src.equal_force = equal_force
 
 	tether_beam = owner.Beam(target, "usb_cable_beam", 'icons/obj/wiremod.dmi')
 
@@ -42,10 +44,8 @@ Like connecting a person to a wheelchair so they get dragged behind it
 	if(dist < max_dist)
 		return
 
-	if(owner.anchored)
-		return COMPONENT_MOVABLE_BLOCK_PRE_MOVE
-
-	owner.Move(get_step_towards(parent,mover))
+	if(!owner.anchored)
+		owner.Move(get_step_towards(owner,mover))
 
 	if(isliving(owner))
 		var/mob/living/living_owner = owner
@@ -66,13 +66,19 @@ Like connecting a person to a wheelchair so they get dragged behind it
 	if(dist < max_dist)
 		return
 
+	if(dist > max_dist)
+		qdel(src)
+		return
+
 	if(attachment_point.anchored)
 		return COMPONENT_MOVABLE_BLOCK_PRE_MOVE
 
-	if(dist > max_dist)
-		qdel(src)
+	attachment_point.Move(get_step_towards(attachment_point,mover))
 
-	if(dist == max_dist && isliving(owner))
+	if(equal_force)
+		return
+
+	if(isliving(owner))
 		var/mob/living/living_owner = owner
 		living_owner.Knockdown(1 SECONDS)
 		to_chat(owner,"<span class='notice'>You trip on the tether!</span>")
@@ -99,3 +105,4 @@ Like connecting a person to a wheelchair so they get dragged behind it
 	else
 		user.visible_message("<span class='notice'>[user] cuts [owner] free.</span>","<span class='notice'>[user] cuts you free] free.</span>")
 	qdel(src)
+	return COMPONENT_BLOCK_TOOL_ATTACK

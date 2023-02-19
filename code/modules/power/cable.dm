@@ -605,18 +605,23 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list (new/datum/stack_recipe("cable restrai
 		if(istype(target, /obj/vehicle/ridden))
 			to_chat(user,"<span class='notice'>You tie one end of the cable around [target]</span>")
 			tether_target = target
-			temp_tether = target.AddComponent(/datum/component/chain, user, 3)
+			temp_tether = target.AddComponent(/datum/component/chain, user, 4)
 		return
 
 	user.visible_message("<span class='notice'>[user] begins tying the other end of the cable [target]</span>","<span class='notice'>You begin tying the other end of the cable [target]</span>")
 	if(do_after(user, 8 SECONDS, target=target))
-		target.AddComponent(/datum/component/chain, tether_target, 3)
+		target.AddComponent(/datum/component/chain, tether_target, 4)
 		use(1)
 		qdel(temp_tether)
 		temp_tether = null
 		tether_target = null
 
-
+/obj/item/stack/cable_coil/dropped(mob/user)
+	. = ..()
+	if(temp_tether)
+		qdel(temp_tether)
+	temp_tether = null
+	tether_target = null
 
 
 ///////////////////////////////////////////////
