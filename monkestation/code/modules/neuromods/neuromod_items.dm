@@ -20,12 +20,12 @@
 		//SUPER RARE
 		/obj/item/autosurgeon/neuromod/stalk = NEUROMOD_SUPER_RARE,
 		/obj/item/autosurgeon/neuromod/electrostatic_burst = NEUROMOD_SUPER_RARE,
+		/obj/item/autosurgeon/neuromod/divination = NEUROMOD_SUPER_RARE,
 		//RARE
 		/obj/item/autosurgeon/neuromod/phantom_shift = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/smuggle = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/mindjack = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/weapon_transformation = NEUROMOD_RARE,
-		/obj/item/autosurgeon/neuromod/divination = NEUROMOD_RARE,
 		/obj/item/autosurgeon/neuromod/mimic_composition = NEUROMOD_RARE,
 		//UNCOMMON
 		/obj/item/autosurgeon/neuromod/biomatter_transfer = NEUROMOD_UNCOMMON,
