@@ -7,6 +7,7 @@
 	icon_state = "daemon_mask"
 	item_state = "daemon_mask"
 	clothing_flags = SHOWEROKAY
+	resistance_flags = FIRE_PROOF | ACID_PROOF
 	//Whether a spirit is in the mask or not
 	var/possessed = FALSE
 	var/mob/living/simple_animal/shade/spirit = null
