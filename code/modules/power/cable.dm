@@ -594,7 +594,10 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list (new/datum/stack_recipe("cable restrai
 	update_icon()
 
 //MONKESTATION EDIT: Tethering people to vehicles
-/obj/item/stack/cable_coil/afterattack(atom/movable/target, mob/user)
+/obj/item/stack/cable_coil/afterattack(atom/movable/target, mob/user, proximity_flag)
+	if(!proximity_flag)
+		return
+
 	if(!istype(target))
 		return ..()
 
