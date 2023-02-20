@@ -13,7 +13,7 @@ Like connecting a person to a wheelchair so they get dragged behind it
 
 	var/datum/beam/tether_beam
 
-/datum/component/chain/Initialize(target, max_dist=3, equal_force = TRUE)
+/datum/component/chain/Initialize(target, max_dist=3, equal_force = TRUE, draw_beam = TRUE)
 	if(!ismovableatom(parent) || !ismovableatom(target))
 		return COMPONENT_INCOMPATIBLE
 
@@ -22,16 +22,31 @@ Like connecting a person to a wheelchair so they get dragged behind it
 	src.max_dist = max_dist
 	src.equal_force = equal_force
 
-	tether_beam = owner.Beam(target, "usb_cable_beam", 'icons/obj/wiremod.dmi')
+	if(draw_beam)
+		tether_beam = owner.Beam(target, "usb_cable_beam", 'icons/obj/wiremod.dmi', maxdistance = max_dist+1)
 
 	RegisterSignal(target, COMSIG_MOVABLE_PRE_MOVE, .proc/on_attachment_move)
 	RegisterSignal(owner, COMSIG_MOVABLE_PRE_MOVE, .proc/on_parent_move)
 	RegisterSignal(owner, COMSIG_ATOM_ATTACK_HAND, .proc/on_parent_touched)
 	RegisterSignal(owner, COMSIG_ATOM_TOOL_ACT(TOOL_WIRECUTTER), .proc/on_parent_wirecutters)
 
+	if(draw_beam)
+		RegisterSignal(owner, COMSIG_MOVABLE_MOVED, .proc/on_atom_moved)
+		RegisterSignal(target, COMSIG_MOVABLE_MOVED, .proc/on_atom_moved)
+
 /datum/component/chain/Destroy(force, silent)
 	. = ..()
-	qdel(tether_beam)
+	if(tether_beam)
+		qdel(tether_beam)
+		tether_beam = null
+	owner = null
+	attachment_point = null
+
+/datum/component/chain/proc/on_atom_moved(atom/movable/mover, old_loc, movement_dir, forced, old_locs, momentum_change)
+	SIGNAL_HANDLER
+
+	spawn(0)
+		tether_beam.recalculate()
 
 /datum/component/chain/proc/on_attachment_move(atom/movable/mover, newloc)
 	SIGNAL_HANDLER
@@ -54,6 +69,7 @@ Like connecting a person to a wheelchair so they get dragged behind it
 	if(dist > max_dist)
 		owner.visible_message("<span class='notice'>The tether snaps!</span>")
 		qdel(src)
+		return
 
 /datum/component/chain/proc/on_parent_move(atom/movable/mover, newloc)
 	SIGNAL_HANDLER

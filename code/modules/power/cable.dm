@@ -598,8 +598,9 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list (new/datum/stack_recipe("cable restrai
 	if(!istype(target))
 		return ..()
 
-	if(!temp_tether)
+	if(QDELETED(temp_tether))
 		tether_target = null
+		temp_tether = null
 
 	if(!tether_target)
 		if(istype(target, /obj/vehicle))
