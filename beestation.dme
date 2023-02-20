@@ -3817,6 +3817,7 @@
 #include "monkestation\code\modules\clothing\head\misc_special.dm"
 #include "monkestation\code\modules\clothing\masks\breath.dm"
 #include "monkestation\code\modules\clothing\masks\miscellaneous.dm"
+#include "monkestation\code\modules\clothing\neck\miscellaneous.dm"
 #include "monkestation\code\modules\clothing\outfits\special.dm"
 #include "monkestation\code\modules\clothing\shoes\magboots.dm"
 #include "monkestation\code\modules\clothing\shoes\miscellaneous.dm"
