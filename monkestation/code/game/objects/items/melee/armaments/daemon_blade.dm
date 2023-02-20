@@ -13,8 +13,8 @@
 	. = ..()
 
 /obj/item/armament/daemon_blade/attack_self(mob/user)
-	. = ..()
 	if(!COOLDOWN_FINISHED(src,armament_cooldown)) //Can't turn it on if its on cooldown
+		to_chat(user, "<span class='warning'>You must wait [COOLDOWN_TIMELEFT(src, armament_cooldown)*0.1] seconds to use [src] again!</span>")
 		flame_toggle = FALSE
 		return
 	flame_toggle = !flame_toggle
@@ -27,13 +27,16 @@
 	return
 
 /obj/item/armament/daemon_blade/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
-	if(flame_toggle)
-		. = ..()
-		var/turflist = get_line(user, get_turf(target))
-		flame_turf(turflist)
-		flame_toggle = FALSE
-		icon_state = "daemon_blade"
-		to_chat(user, "<span class='warning'>[src] stops glowing.</span>")
+	if(!flame_toggle)
+		return
+	. = ..()
+	if(.)
+		return
+	var/turflist = get_line(user, get_turf(target))
+	flame_turf(turflist)
+	flame_toggle = FALSE
+	icon_state = "daemon_blade"
+	to_chat(user, "<span class='warning'>[src] stops glowing.</span>")
 
 /obj/item/armament/daemon_blade/proc/flame_turf(turflist)
 	var/turf/previous_turf = get_turf(src)

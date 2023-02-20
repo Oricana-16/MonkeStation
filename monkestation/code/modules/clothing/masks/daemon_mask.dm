@@ -302,7 +302,7 @@
 
 /obj/effect/proc_holder/spell/self/summon_armament
 	name = "Summon Armament"
-	desc = "Summon your weapon."
+	desc = "Summon your weapon. Examine it to see what it does."
 	action_icon = 'monkestation/icons/obj/items_and_weapons.dmi'
 	action_icon_state = "daemon_blade"
 	clothes_req = FALSE

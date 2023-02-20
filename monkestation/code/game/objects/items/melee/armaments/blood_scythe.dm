@@ -16,13 +16,14 @@
 
 /obj/item/armament/blood_scythe/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	if(!proximity_flag && get_dist(user,target) < 7)
+		if(!isliving(target))
+			return
 		. = ..()
 		if(.)
-			return
-		if(!isliving(target))
 			return
 		var/target_turf = get_step(user, user.dir)
 		var/mob/living/living_target = target
 		if(isopenturf(target_turf))
 			do_teleport(living_target, target_turf, channel = TELEPORT_CHANNEL_FREE, no_effects = TRUE, teleport_mode = TELEPORT_MODE_DEFAULT)
-			living_target.Stun(3 SECONDS)
+			living_target.Stun(1 SECONDS)
+			living_target.Knockdown(3 SECONDS)

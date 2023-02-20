@@ -16,9 +16,8 @@
 
 /obj/item/armament/hell_hammer/attack_self(mob/user)
 	. = ..()
-	if(!COOLDOWN_FINISHED(src,armament_cooldown))
-		return TRUE
-	COOLDOWN_START(src,armament_cooldown,ability_cooldown)
+	if(.)
+		return
 	user.visible_message("<span class='danger'>[user] slams [src] onto the ground, creating a shockwave.</span>", "<span class='notice'>You slam [src] into the ground, creating a shockwave.</span>")
 	playsound(src, 'sound/effects/grillehit.ogg', 100)
 	for(var/atom/movable/shockwave_target as mob|obj in oview(5,user))

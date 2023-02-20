@@ -16,6 +16,7 @@
 /obj/item/armament/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	. = ..()
 	if(!COOLDOWN_FINISHED(src,armament_cooldown))
+		to_chat(user, "<span class='warning'>You must wait [COOLDOWN_TIMELEFT(src, armament_cooldown)*0.1] seconds to use [src] again!</span>")
 		return TRUE
 	COOLDOWN_START(src,armament_cooldown,ability_cooldown)
 
@@ -23,5 +24,6 @@
 /obj/item/armament/attack_self(mob/user)
 	. = ..()
 	if(!COOLDOWN_FINISHED(src,armament_cooldown))
+		to_chat(user, "<span class='warning'>You must wait [COOLDOWN_TIMELEFT(src, armament_cooldown)*0.1] seconds to use [src] again!</span>")
 		return TRUE
 	COOLDOWN_START(src,armament_cooldown,ability_cooldown)
