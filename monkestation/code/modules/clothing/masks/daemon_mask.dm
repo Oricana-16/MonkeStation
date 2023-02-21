@@ -219,7 +219,7 @@
 	school = "transmutation"
 
 /obj/effect/proc_holder/spell/self/truesight/cast(mob/living/user)
-	to_chat(user,"<span class='notice'>Your eyes glow brighter as you see through the walls.</span>")
+	to_chat(user,"<span class='notice'>Your eyes glow brighter as you see through walls.</span>")
 	user.sight |= SEE_THRU
 
 	addtimer(CALLBACK(src, .proc/undo_cast, user), 10 SECONDS)
