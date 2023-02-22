@@ -70,6 +70,23 @@
 	deathmessage = "gets ejected"
 	speak = list("barks!", "woofs!", "sus!", "Walter", "firetrucks", "monstertrucks", "tasks")
 
+/mob/living/simple_animal/pet/dog/bullterrier/walter/wallter
+	name = "Wallter"
+	real_name = "Wallter"
+	desc = "Keeping people out is nothing for this wall-shaped dog."
+	icon = 'monkestation/icons/mob/walterverse.dmi'
+	icon_state = "wallter"
+	icon_living = "wallter"
+	icon_dead = "wallter_dead"
+	gold_core_spawnable = FRIENDLY_SPAWN
+	move_force = MOVE_FORCE_VERY_STRONG
+	move_resist = MOVE_FORCE_VERY_STRONG
+	mob_size = MOB_SIZE_LARGE
+	a_intent = INTENT_HARM
+	status_flags = NONE
+	deathmessage = "crumbles"
+	speak = list("barks!", "woofs!", "Wallter", "firetrucks", "monstertrucks", "walls")
+
 /mob/living/simple_animal/pet/dog/bullterrier/walter/clown
 	name = "Clown Walter"
 	real_name = "Clown Walter"
@@ -211,7 +228,6 @@
 	icon_state = "wizard"
 	icon_living = "wizard"
 	icon_dead = "wizard_dead"
-	gold_core_spawnable = FRIENDLY_SPAWN
 	speak = list("ONI SOMA", "CLANG!", "UN'LTD P'WAH", "AULIE OXIN FIERA", "GIN'YU`CAPAN")
 
 /mob/living/simple_animal/pet/dog/bullterrier/walter/wizard/Initialize(mapload)
