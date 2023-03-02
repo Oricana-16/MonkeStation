@@ -605,6 +605,13 @@ GLOBAL_LIST_INIT(cable_coil_recipes, list (new/datum/stack_recipe("cable restrai
 		tether_target = null
 		temp_tether = null
 
+	if(target == tether_target)
+		to_chat(user,"<span class='notice'>You untie the cable from [target].</span>")
+		qdel(temp_tether)
+		tether_target = null
+		temp_tether = null
+		return
+
 	if(!tether_target)
 		if(istype(target, /obj/vehicle))
 			to_chat(user,"<span class='notice'>You tie one end of the cable around [target]</span>")
